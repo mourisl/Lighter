@@ -1,0 +1,419 @@
+%% BioMed_Central_Tex_Template_v1.06
+%%                                      %
+%  bmc_article.tex            ver: 1.06 %
+%                                       %
+
+%%IMPORTANT: do not delete the first line of this template
+%%It must be present to enable the BMC Submission system to 
+%%recognise this template!!
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                     %%
+%%  LaTeX template for BioMed Central  %%
+%%     journal article submissions     %%
+%%                                     %%
+%%         <14 August 2007>            %%
+%%                                     %%
+%%                                     %%
+%% Uses:                               %%
+%% cite.sty, url.sty, bmc_article.cls  %%
+%% ifthen.sty. multicol.sty		   %%
+%%				      	   %%
+%%                                     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%	
+%% For instructions on how to fill out this Tex template           %%
+%% document please refer to Readme.pdf and the instructions for    %%
+%% authors page on the biomed central website                      %%
+%% http://www.biomedcentral.com/info/authors/                      %%
+%%                                                                 %%
+%% Please do not use \input{...} to include other tex files.       %%
+%% Submit your LaTeX manuscript as one .tex document.              %%
+%%                                                                 %%
+%% All additional figures and files should be attached             %%
+%% separately and not embedded in the \TeX\ document itself.       %%
+%%                                                                 %%
+%% BioMed Central currently use the MikTex distribution of         %%
+%% TeX for Windows) of TeX and LaTeX.  This is available from      %%
+%% http://www.miktex.org                                           %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\documentclass[10pt]{article}    
+
+
+
+% Load packages
+\usepackage{cite} % Make references as [1-4], not [1,2,3,4]
+\usepackage{url}  % Formatting web addresses  
+\usepackage{ifthen}  % Conditional 
+\usepackage{multicol}   %Columns
+\usepackage{hhline}
+\usepackage[utf8]{inputenc} %unicode support
+\usepackage{graphicx}
+\usepackage{verbatim}
+%\usepackage[applemac]{inputenc} %applemac support if unicode package fails
+%\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
+\urlstyle{rm}
+ 
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+%%                                             %%
+%%  If you wish to display your graphics for   %%
+%%  your own use using includegraphic or       %%
+%%  includegraphics, then comment out the      %%
+%%  following two lines of code.               %%   
+%%  NB: These line *must* be included when     %%
+%%  submitting to BMC.                         %% 
+%%  All figure files must be submitted as      %%
+%%  separate graphics through the BMC          %%
+%%  submission process, not included in the    %% 
+%%  submitted article.                         %% 
+%%                                             %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     
+
+
+%\def\includegraphic{}
+%\def\includegraphics{}
+
+
+
+\setlength{\topmargin}{0.0cm}
+\setlength{\textheight}{21.5cm}
+\setlength{\oddsidemargin}{0cm} 
+\setlength{\textwidth}{16.5cm}
+\setlength{\columnsep}{0.6cm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                              %%
+%% You may change the following style settings  %%
+%% Should you wish to format your article       %%
+%% in a publication style for printing out and  %%
+%% sharing with colleagues, but ensure that     %%
+%% before submitting to BMC that the style is   %%
+%% returned to the Review style setting.        %%
+%%                                              %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+
+%Review style settings
+%\newenvironment{bmcformat}{\begin{raggedright}\baselineskip20pt\sloppy\setboolean{publ}{false}}{\end{raggedright}\baselineskip20pt\sloppy}
+
+%Publication style settings
+%\newenvironment{bmcformat}{\fussy\setboolean{publ}{true}}{\fussy}
+
+%New style setting
+
+% Begin ...
+\begin{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the title of your article here     %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{A Probablistic Space-efficient Method of Obtaining Solid Kmers with An Appliction of Error Correction}
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors here                   %%
+%%                                          %%
+%% Ensure \and is entered between all but   %%
+%% the last two authors. This will be       %%
+%% replaced by a comma in the final article %%
+%%                                          %%
+%% Ensure there are no trailing spaces at   %% 
+%% the ends of the lines                    %%     	
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\author{Li Song$^1$%
+       Liliana Florea$^2$
+      Ben Langmead$^{*3}$ %
+      }
+\date{}     
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors' addresses here        %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The Abstract begins here                 %%
+%%                                          %%  
+%% Please refer to the Instructions for     %%
+%% authors on http://www.biomedcentral.com  %%
+%% and include the section headings         %%
+%% accordingly for your article type.       %%   
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{abstract}
+        % Do not use inserted blank lines (ie \\) until main body of text.
+Text for this section.        
+\end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The Main Body begins here                %%
+%%                                          %%
+%% Please refer to the instructions for     %%
+%% authors on:                              %%
+%% http://www.biomedcentral.com/info/authors%%
+%% and include the section headings         %%
+%% accordingly for your article type.       %% 
+%%                                          %%
+%% See the Results and Discussion section   %%
+%% for details on how to create sub-sections%%
+%%                                          %%
+%% use \cite{...} to cite references        %%
+%%  \cite{koon} and                         %%
+%%  \cite{oreg,khar,zvai,xjon,schn,pond}    %%
+%%  \nocite{smith,marg,hunn,advi,koha,mouse}%%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section*{Introduction}
+\section*{Method}
+The framework of Lighter is demonstrated in Figure \ref{fig:lighter_framework}. Lighter will read the sequence file three times. In the first two times, it will obtain the solid kmers using bloom filters. With the solid kmer information, Lighter can correct the errors in the third pass.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.75\textwidth]{lighter_framework.png}
+\caption{The framework of Lighter\label{fig:lighter_framework}}
+\end{center}
+\end{figure}
+
+\subsection*{Bloom filter}
+Bloom filter[cite] is a compact probablistic data structure. It is particular useful to add and test whether an element is in a set and uses much less memory comparing with hash table. A bloom filter is a very large bit array of size $n$. When adding an element, it uses $h$ independent hash functions to map this element to $d$ positions in the array and set the bits to 1 on those positions. When testing whether an element is in the bloom filter, it uses the same hash functions and if all the bits of the positions mapped to are 1s, it claims that this elements. Since it does not store the elements in the table, when querying a non-existing element, the mapped positions might be all set to 1 by other elements. Suppose we added n different kmers, the false positive rate of querying an element is about $(1-e^{-h\frac{n}{m}})^h$, which can be very small by selecting appropriate $m$ and $h$. 
+
+\subsection*{Down Sampling and Solid Kmers}
+We scan all the reads and for each kmer we store it into the bloom filter, say $A$, with probability $\alpha$. With appropriate $\alpha$, most of the kmers with low count will be filtered out and $A$ holds many of the kmers from the real genome and some low-count kmers.  In other words, the size of $A$ depends almost only on the genome size. For $75\times$ coverage sequence data, we can let $\alpha$ be $0.05$.
+
+For each position in a read, it can affect up to $x$ kmers where $1\le x\le k$. If that position is wrong, these $x$ kmers will not show up many times and they are mostly likely not in $A$. Suppose, a kmer with frequency less than $f$ is very weak, then the probability of such kmer be in $A$ is less than $P=1-(1-\alpha)^f$. For the $x$ kmers containing the specific position, we can assume that the number of those stored in $A$ follows a binomial distribution with parameter $(x,P)$. We can decide whether the nucleotide of a position is trusted by one-tail hypothesis testing. The null hypothesis is that this position is wrong and the p-value can be get from test again $(x,P)$ using the actual number of kmers in $A$ containing that position. We use $y$ to denote this actual number of kmers. In our method, suppose $y'$ is the first number whose p-value is smaller than 0.005, if $y>y'$, we reject the null hypothes and the position is trusted. The benefit of using hypothesis testing instead of using a fixed threshold is that we can handle the case where $x<k$ in a uniform way and it can tolerate the ill-chosen $\alpha$. Notice that, the position near the left and right boundary or near the error may never be trusted.
+
+To show that we can keep the size of $A$ nearly constant regardless of the coverage. Considering in one case 1, we have the coverage $C$. And in the next case 2, we double the coverage. Theoretically, the occurence time of error-free kmers should be doubled and so is the counting of the kmers showing up only one or two times. In case 1, we sample the kmers with probability $\alpha_1$, and $\alpha_2$ in case 2. In case 1, A kmer is solid if it showed up $t$ times; a kmer is weak if it showed up less than $f$ times. We can set $f$ is proportional to $t$ and is much smaller than $t$, like $t=0.05f$. So in case 2, a solid kmer showed up at least about $2t$ times while a weak kmer showed up at most about $2f$ times. If we want the same null hypothesis binomial distribution for the same position in these two cases, we need $P_1=P_2$ as the base, where $P_1=1-(1-\alpha_1)^f$, $P_2=1-(1-\alpha_2)^{2f}$. 
+$$P_2=1-(1-\alpha_2)^{2f}=1-(1-2\alpha_2+\alpha_2^2)^f=P_1=1-(1-\alpha_1)^f$$
+$$\Leftrightarrow 1-2\alpha_2+\alpha_2^2=1-\alpha \Leftrightarrow \alpha_2=1 \pm \sqrt{1-\alpha_1}$$
+Since $\alpha_2$ is no more than 1, $\alpha_2=1-\sqrt{1-\alpha_1}$
+
+Similarly, we can show the same relationship for the hypothesis distribution, $P'_1$ and $P'_2$, where $P_1=1-(1-1-\alpha_1)^t$, $P_2=1-(1-1-\alpha_2)^{2t}$. So we can change the $\alpha$ to make the hypothesis testing from different coverage data set equivalent.
+
+In practice, $\alpha_1$ is very small, so $\alpha_2$ is also very small. If we ignore this quadratic term $\alpha_2^2$, we have $\alpha_2=\alpha_1 / 2$. Considering the kmers showing up only once, they takes most of the space and the number of them sampled into table $A$ is the same in case 1 and 2 with parameter $\alpha_1$ and $\alpha_2/2$ respectively. This shows that our method has the property of keeping the space complexity near constant. 
+
+After marking each positions, if there are consecutive k trusted positions, we store the corresponding kmer, which is called solid kmer, in another bloom filter $B$. Because these kmers are likely from the real genome, the size of $B$ also only depends on the genome size. 
+
+In both table $A$ and $B$, we only store the cannonical form of a kmer, that is the kmer itself or its rever complement depending on who has smaller lexicographical order. We know that there is nearly linear relationship between $1/\alpha$ and $f$ the frequency for the weak kmers, in Lighter, we set $f=max\{2,0.1/\alpha\}$ and the user will choose $\alpha$. A rule of thumb for choosing $\alpha$ is by applying the nearly linear relationship between $1/\alpha$ and the coverage, and in this paper we choose $\alpha=0.05$ when the coverage is $70\times$. So given the coverage $C$, we can set $\alpha$ to $0.05\frac{70}{C}$. 
+
+\subsection*{Error correction}
+To show that our method of getting and storing solid kmers is reliable, we designed an error correction method just using the kmers stored in bloom filter $B$.
+
+The correction is done read by read. For a read of length $|r|$, we have $|r|-k+1$ kmers and $k_i$ denote the kmer starts at position $i$ where $1\le i\le|r|-k+1$. We start the correction by finding a longest consecutive kmers that are stored in $B$, and then do the correction by scanning towards left and right. Since the correction towards left and right are symmetric, we only demonstrate the correction for the right-hand scanning. Ideally, when we move from the solid kmers towards right, the first time we see an weak kmer, say $k_i$, there must be an error at position $i+k-1$. There are three candidates or four(if the position is N) to replace this position. For each candidate, we see how many consecutive kmers is solid starting from $k_i$ with this new character. We choose the candidate creating most solid kmers. Then we resume scanning towards right starting from the next unstored kmer. If none of the candidate makes $k_i$ solid or more than one candidate create most solid kmers, we say position $i+k-1$ is ambiguous and stop there. If $i+k-1$ is far from the end of the read, we do the error correction on the substring from $i+k-1$ to the end of a read.
+
+The scheme of this greedy error correction method is shown in Figure \ref{fig:error_correction}, where we choose found the error because there is no kmer CCGATTC. We choose A to replace C since it gives us most consecutive solid kmers up to the end of the read.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.75\textwidth]{ErrorCorrection.png}
+\caption{The framework of Lighter\label{fig:error_correction}}
+\end{center}
+\end{figure}
+
+\subsection*{Parallization}
+As shown in Figure \ref{fig:lighter_framework}, Lighter works in three stages: sampling kmers, obtaining solid kmers and error correction. For the sampling kmers stage, because $\alpha$ is very small, most of the time is spent on scanning the reads namely reading the files. As a result, the overhead of parallilize this part will dominate the benefits, so we decide to remain this stage serial. In the second stage, each thread will handle different reads independently. Reading bloom filter in parallel is very efficient since there is no data race. When a thread find a solid kmer, it firstly tests whether this kmer is stored in table B or not. If this kmer is not in table B, then we write this kmer into the table. In this way, we can avoid many writing locks for table B because a solid kmer shows up many times. The thrid stage can parallized embarrsingly.
+
+\section*{Evaluation}
+\subsection*{Simulated data set}
+We compared the our result with other released programs, Quake[cite], Musket[cite] and Bless[cite]. We use Mason[cite] to generate a set of data sets with ecoli as the reference genome. The K12 strain of ecoli is fully sequenced and has the decent length for us to generated different scenarios easily. 
+
+In the simulated data set, we considered the coverage of $35$x, $75$x, $140$x, and the average error rate of $1\%$ and $3\%$. So there are totally 6 data sets. Because Mason can also specifiy the error rate of the first and the last base repsectively, suppose the average error rate is $e$, we set the error rate of the first base to $e/2$ and the error rate of the last base is $3e$. This setting is more realistic than a uniform error rate model. 
+%TODO: define recall,...
+
+We say a base is true positive(TP) if we identify the error and correct it into the right one; a base is false positive(FP) if we correct an original error-free base; a base is false negative(FN) if it is wrong and we either fail to detect its error or we make a wrong correction. As tradition[cite], we use four measurement to evaluate the error correction methods: recall=TP/(TP$+$NP), precision=TP/(TP$+$FP), F-score=2$\times$recall$\times$precision/(recall$+$precision) which is a kind of average of recall and precision and Gain=(TP-FP)/(TP+FN) which measure the benefit of using error correction.
+
+% Insert the table here.
+\mbox{
+\begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
+Coverage &	& \multicolumn{2}{|c|}{$35\times$}  & \multicolumn{2}{|c|}{$70\times$} & \multicolumn{2}{|c|}{$140\times$} \\ \hline
+Error rate & & $1\%$ & $3\%$ & $1\%$ & $3\%$ & $1\%$ & $3\%$ \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& quake	& 89.59	& 48.77	& 89.64	& 48.82	& 89.59	& 48.78 \\ \cline{2-8}
+Recall	& musket	& 92.61	& 92.04	& 92.60	& 92.05	& 92.60	& 92.03 \\ \cline{2-8}
+	& bless	& 98.68	& 97.29	& 98.69	& 97.48	& 98.65	& 97.47 \\ \cline{2-8}
+	& lighter	& 99.40	& 97.99	& 99.33	& 98.71	& 99.37	& 98.87 \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& quake	& 99.99	& 99.99	& 99.99	& 99.99	& 99.99	& 99.99 \\ \cline{2-8}
+Precision	& musket	& 99.78	& 99.63	& 99.78	& 99.63	& 99.78	& 99.63 \\ \cline{2-8}
+	& bless	& 98.90	& 98.59	& 98.88	& 98.62	& 98.88	& 98.61 \\ \cline{2-8}
+	& lighter	& 99.11	& 99.13	& 99.08	& 99.16	& 99.07	& 99.17 \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& quake	& 94.51	& 65.56	& 94.54	& 65.61	& 94.51	& 65.57 \\ \cline{2-8}
+F-score	& musket	& 96.06	& 95.68	& 96.05	& 95.69	& 96.05	& 95.68 \\ \cline{2-8}
+	& bless	& 98.79	& 97.94	& 98.78	& 98.04	& 98.77	& 98.04 \\ \cline{2-8}
+	& lighter	& 99.25	& 98.56	& 99.20	& 98.94	& 99.22	& 99.02 \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& quake	& 89.58	& 48.76	& 89.64	& 48.82	& 89.59	& 48.78 \\ \cline{2-8}
+Gain	& musket	& 92.40	& 91.70	& 92.39	& 91.71	& 92.39	& 91.69 \\ \cline{2-8}
+	& bless	& 97.58	& 95.90	& 97.57	& 96.11	& 97.54	& 96.09 \\ \cline{2-8}
+	& lighter	& 98.50	& 97.14	& 98.41	& 97.88	& 98.43	& 98.04 \\ \hhline{|=|=|=|=|=|=|=|=|}
+
+\end{tabular}
+}
+
+The $\alpha$ value for the $35\times$, $70\times$, $140\times$ is $0.1$, $0.05$ and $0.025$ respectively. 
+
+For Quake, we only measured the performance of the reported reads. Because Quake trimmed the untrusted tail of a read and throw away unfixable reads, it has a particularly high precision. But even if we only count the original errors in those reported reads, its sensitivity is very low. Lighter is among the best on different measurement and scenarios. This shows that our sampling method is able to distinguish most solid and weak kmer, and the error correction method is very effective.
+
+To further test the performance of Lighter, we showed how many kmers from the reference genome is stored in table $B$. We used the simulated data with $70$x coverage and $1\%$ error rate. There are totally 4,553,699 distinct kmers from the genome on one strand, and 4,553,653 of them are in table $B$ which is almost all of them. We lose some kmers from the genome mostly due to the low coverage at the two ends of the chromosome.
+
+The 6 simulated data sets are for haploid case, there are many species with a pair of chromosome in a cell, like human. Here we consider the case of diploid. We still use the e.coli genome as the reference genome and then introduce $0.1\%$ SNPs to generate the second reference genome. Mason then will sample the same amount of reads from the two genomes, totally form an $70$x coverage data set. There are 159,117 kmers containing the SNP position from one strand, and table $B$ holds 158,972 of them. Though the performance is not as good as haploid case, it still hold almost all of them. 
+
+% test the performance of alpha
+The sampling rate $\alpha$ is the key in Lighter which ensures the near constant space complexity. We did an evaluation on the simulated data set with $35\times$ coverage and $1\%$ error rate. And in this evaluation, we fix $f=2$ instead of $f=max\{2,0.1/\alpha\}$. The result is shown in Figure \ref{fig:alpha}.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\textwidth]{alpha.png}
+\caption{The effect of $\alpha$\label{fig:alpha}}
+\end{center}
+\end{figure}
+
+If $\alpha$ is too small, too much solid kmers will be failed to get in table $A$ and too many positions will fail the hypothesis test. As a result, Lighter will try to correct those error-free region which also brings down the precision. And if $\alpha$ become even smaller, then there is no kmer in $B$, so Lighter will fail to correct all the reads because there is no candidate kmers. 
+
+If $\alpha$ is larger, the hypothesis test is an adaptive threshold and handle this case nicely even if there are too many elements in $A$ and the false positive rate of $A$ is higher. However, when $\alpha$ is too large, number $k$ will have a p-value larger than 0.005, and all the positions will be regarded as untrusted. We can observe this from the dramatic drop in Figure \ref{fig:alpha}.
+
+\subsection*{Real data set}
+\subsubsection*{E.Coli data set}
+We use ERR022075 data set which is a very deep coverage sequencing data set of ecoli K-12 strain genome. We still used Quake, Musket, Bless and Lighter to run this data set. Since usually we do not need that much of coverage, we uniformly sampled some reads from this data set and got a data set with roughly 75x coverage. The reads in this data set is paired-end and the read length is 100 and 102. Because Bless can not handle paired-end reads with different length, we truncate the last 2 base to form a 100-length paired-end data set.
+
+Since the genome of E.Coli K-12 strain is fully sequenced, we measured that 4,519,535 out of 4,553,699 kmers from the genome is stored in table $B$, which is more than $99\%$. This number can be slightly improved using larger $\alpha$. 
+ 
+% Result of bowtie2
+We can also measure the error corrections' affect on the alignment. We use Bowtie2[cite] to align the reads to the reference genome and count the total number of the matched position.
+
+\begin{tabular}{|c|c|c|c|c|}\hline
+  & Total Matched Pos & Improvement & Total reads & Mapped \\ \hline
+Original	& 343,081,567	& - & 1,748,808	& 99.04\% \\ \hline
+Quake	& 327,813,255	& -4.45\%	& 1,684,792	& 99.98\% \\ \hline
+Musket	& 345,403,149	& 0.71\%	& 1,748,808	& 99.15\% \\ \hline
+Bless	& 345,947,230	& 0.83\%	& 1,748,808	& 99.30\% \\ \hline
+Lighter	&  346,273,158 & 0.92\%	& 1,748,808	& 99.39\% \\ \hline
+\end{tabular}
+
+For Quake, the number is very low mainly due to unreported reads and trimmed 3' end. It turns out Lighter gives the most improvement. We use samtools to do the SNP calling. 
+
+For those reads not got trimmed and alinged to the genome without indels (cigar field like 100M in the SAM file), we measure the matched ratio for each position shown in Figure \ref{fig:ecoli_perbase}. Since many of the reads in this data set start with N, the first base's matching ratio of the original data set is very low.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\textwidth]{per_base.png}
+\caption{The matching ratio for each base in E.Coli data set\label{fig:ecoli_perbase}}
+\end{center}
+\end{figure}
+
+% Result of SOAPDenovo2
+Another common measurement for error correction is to run the de novo assembly and see the change of the N50 of the contigs and scaffolds. We use SOAPDenovo2[cite] to assemble the reads. SOAPDenovo2 is a de novo assembly software based on De Brujin graph. The parameter for SOAPDenovo2 especially the kmer size in the De Brujin graph is very important to the performance. We ran the SOAPdenovo2 on different parameters and choose the one with best N50 contig size. 
+
+\begin{table}
+\begin{tabular}{|c|c|c|} \hline
+	  & contig N50 & scaffold N50 \\ \hline 
+Original  &	53584	&	80924 \\ \hline 
+Quake &	54854	&	89802 \\ \hline 
+Musket&	47826	&	89873 \\ \hline 
+Bless &	50573	&	84353 \\ \hline 
+Lighter &	48777	&	86836 \\ \hline 
+\end{tabular}
+\caption{De novo assembly of E.Coli data set\label{table:ecoli_sd2}}
+\end{table}
+
+\subsubsection*{Human Chr14}
+So far, we only tested the data on the genome of E.Coli, which is a pretty small. In this section, we use a data set from Gage[cite] on human chromosome 14. This data set is about 35x coverage and 101bp pair-end reads.
+
+% Result of SOAPDenovo2
+Again, we use SOAPDenovo2 to measure the affect of error correction. 
+
+\begin{table}
+\begin{tabular}{|c|c|c|} \hline
+		& contig N50	& scaffold N50 \\ \hline
+Original	& 3372	& 9219 \\ \hline
+Quake	& 3203	& 8727 \\ \hline
+Musket	& 3760	& 6142 \\ \hline
+Bless	& 3763	& 9254 \\ \hline
+Lighter	&  3757	& 9012 \\ \hline
+\end{tabular}
+\caption{De novo assembly of chr14 data set\label{table:chr14}}
+\end{table}
+
+The results of the de novo assembly of the two real data set show that Lighter's result is comparable with other methods.
+
+\subsection*{Running Time and Space Usage}
+%describe the machine
+The programs were run on a machine with 48 2.1GHz processors, 512G memory and 74T disk space. 
+
+%The memory or disk usage from different programs 
+Musket, Bless and Lighter are all aimming for low memory consumption. So we compared the peak memory usage as well as the peak disk consumption on the simulated data set with different coverage and with $1\%$ error rate and the chr14 real data from Gage.
+
+\begin{tabular}{|c|c|c||c|c||c|c||c|c|} \hline
+		& \multicolumn{2}{|c||}{$35\times$} & \multicolumn{2}{|c||}{$70\times$}  & \multicolumn{2}{|c||}{$140\times$} & \multicolumn{2}{|c|}{chr14}  \\ \hline
+		& memory & disk & memory & disk & memory & disk & memory & disk \\ \hline
+Quake   & 2.8G	& 3.3G & 7.1G & 6.0G & 14G & 12G & 48G & 57G \\ \hline		
+Musket	& 139M	& 0 & 160M & 0 & 241M & 0 & 1.9G & 0 \\ \hline
+Bless	& 10M	& 661M & 11M & 1.3G & 13M & 2.6G & 600M & 15G \\ \hline
+Lighter	& 26M	& 0 & 26M & 0 & 26M & 0 & 354M & 0 \\ \hline
+\end{tabular}
+
+From the table, we can see that Bless and Lighter can achieve nearly constant memory consumption as claimed. Musket took much less memory comparing with Quake but is much worse than Bless and Lighter.
+
+For Bless, we increase the number of temporary files along with the coverage of the data set to achieve the constant memory consumption. Bless uses secondary memory to save the memory consumption, and the overall space consumption is much larger than Musket and Lighter. 
+
+For the chr14 data set, The memory consumption of Bless can be decreased if we create more temporary files. 
+
+%runtime on simulated_70_1
+We compared the running time between Quake, Musket and Lighter using different number of threads on the simulated data set with $70\times$ coverage and $1\%$ error in Figure \ref{fig:runtime}. Musket requires at least 2 threads due to its master-slave style parallelism, so its figure start at when number of threads is 2. 
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\textwidth]{runtime.png}
+\end{center}
+\caption{The running time on simulated data set with different number of threads\label{fig:runtime}}
+\end{figure}
+
+So far, Bless can only run in single-thread mode and it takes 1475s to finish which is much slower than Musket and Lighter.
+
+The result shows that Lighter is very efficient and scalable. 
+
+\section*{Discussion}
+In this paper, we propose a probabilitic method of obtaining solid kmers without counting. It is the first method that is able to find solid kmer with near constant space complexity and it is very easy to implement.
+
+We use this method to implement an error correction program Lighter for DNA-seq reads, which is comparable with other programs. This shows that our method of finding solid kmer is quite reliable. 
+
+Another immediate application of our method is getting solid kmers' count, which can be done by scanning the reads again to get the real count for the solid kmers stored in table $B$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Author's contributions}
+    Text for this section \ldots
+
+    
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Acknowledgements}
+  Text for this section \ldots
+ 
+\end{document}
+
+
+
+
+
+
+
