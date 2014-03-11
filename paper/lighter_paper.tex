@@ -189,7 +189,7 @@ Text for this section.
 
 \section*{Introduction}
 \section*{Method}
-The framework of Lighter is demonstrated in Figure \ref{fig:lighter_framework}. Lighter will read the sequence file three times. In the first two times, it will obtain the solid kmers using bloom filters. With the solid kmer information, Lighter can correct the errors in the third pass.
+Lighter's workflow is illustrated in Figure \ref{fig:lighter_framework}. Lighter makes three passes over the input reads.  The first pass obtains a sample of the k-mers present in the input reads, storing it in Bloom filter A.  The second pass uses Bloom filter A to identify ``solid'' k-mers and stores these in Bloom filter B.  The third pass uses Bloom filter B to detect and correct errors in the input reads.
 
 \begin{figure}[h!]
 \begin{center}
@@ -199,10 +199,19 @@ The framework of Lighter is demonstrated in Figure \ref{fig:lighter_framework}. 
 \end{figure}
 
 \subsection*{Bloom filter}
-Bloom filter[cite] is a compact probablistic data structure. It is particular useful to add and test whether an element is in a set and uses much less memory comparing with hash table. A bloom filter is a very large bit array of size $n$. When adding an element, it uses $h$ independent hash functions to map this element to $d$ positions in the array and set the bits to 1 on those positions. When testing whether an element is in the bloom filter, it uses the same hash functions and if all the bits of the positions mapped to are 1s, it claims that this elements. Since it does not store the elements in the table, when querying a non-existing element, the mapped positions might be all set to 1 by other elements. Suppose we added n different kmers, the false positive rate of querying an element is about $(1-e^{-h\frac{n}{m}})^h$, which can be very small by selecting appropriate $m$ and $h$. 
+A Bloom filter \cite{bloom1970space} is a compact probabilistic data structure representing a set.  It consists of an array of $m$ bits, initialized to 0.  To add an object $o$, $h$ independent hash functions $H_0(o), H_1(o),...,H_{h-1}(o)$ are applied.  Each maps $o$ to an integer in $[0, m)$.  The corresponding array bits are set to 1. To test if an object $q$ is a member, the same hash functions are applied to $q$; $q$ is a member if and only if all corresponding bits are set to 1.  A false positive occurs when the corresponding bits are set to 1 ``by coincidence,'' that is, because of objects besides $q$ that were added previously.  Assuming the hash functions map objects to bit array elements with equal probability, the Bloom filter's false positive rate is approximately $(1-e^{-h\frac{n}{m}})^h$, where $n$ is the  number of objects added, also called the \emph{occupancy}.  Given $n$, which is usually determined by the dataset, $m$ and $h$ can be adjusted to achieve a desired false positive rate.  Greater values of $m$ incur more memory usage, and greater values of $k$ require we calculate more hash functions.
 
-\subsection*{Down Sampling and Solid Kmers}
-We scan all the reads and for each kmer we store it into the bloom filter, say $A$, with probability $\alpha$. With appropriate $\alpha$, most of the kmers with low count will be filtered out and $A$ holds many of the kmers from the real genome and some low-count kmers.  In other words, the size of $A$ depends almost only on the genome size. For $75\times$ coverage sequence data, we can let $\alpha$ be $0.05$.
+An alternative way to represent a set is with a hash table.  Hash tables have the advantage of never yielding false positives.  But Bloom filters are far smaller.  Whereas a Bloom filter is an array of bits, a hash table is an array of buckets, each large enough to store a pointer, key, or both.  If chaining is used, lists associated with buckets incur additional overhead.  While the Bloom filter's small size comes at the expense of false positives, these can be tolerated in many settings including in error correction.
+
+\subsection*{First pass: downsampling}
+
+Consider a k-mer drawn from a read.  The k-mer is \emph{incorrect} if its sequence has been altered by one or more sequencing errors.  Otherwise it is \emph{correct}.  Others have noted that, given a dataset with high average coverage, incorrect k-mers occur rarely (usually just once) while correct k-mers occur many times, proportionally to coverage \cite{pevzner2001eulerian, chaisson2004fragment}.
+
+In the first pass over the input reads, Lighter examines each k-mer of each read, storing it in Bloom filter $A$ with probability $\alpha \leq 1$.  $\alpha$ is an adjustable parameter; smaller values result in more k-mers being discarded.  Say a particular k-mer sequence occurs a total of $N_k$ times in the dataset.  If the $\alpha$ filter discards all $N_k$ occurrences, the k-mer is never added to $A$ and $A$'s occupancy is reduced by one.  Thus, reducing $\alpha$ in turn reduces $A$'s occupancy.  Because correct k-mers are more numerous, incorrect k-mers tend to be discarded from $A$ before correct k-mers as $\alpha$ decreases.
+
+In other words, the size of $A$ depends almost only on the genome size. For $75\times$ coverage sequence data, we can let $\alpha$ be $0.05$.
+
+\subsection*{Second pass: obtaining solid k-mers}
 
 For each position in a read, it can affect up to $x$ kmers where $1\le x\le k$. If that position is wrong, these $x$ kmers will not show up many times and they are mostly likely not in $A$. Suppose, a kmer with frequency less than $f$ is very weak, then the probability of such kmer be in $A$ is less than $P=1-(1-\alpha)^f$. For the $x$ kmers containing the specific position, we can assume that the number of those stored in $A$ follows a binomial distribution with parameter $(x,P)$. We can decide whether the nucleotide of a position is trusted by one-tail hypothesis testing. The null hypothesis is that this position is wrong and the p-value can be get from test again $(x,P)$ using the actual number of kmers in $A$ containing that position. We use $y$ to denote this actual number of kmers. In our method, suppose $y'$ is the first number whose p-value is smaller than 0.005, if $y>y'$, we reject the null hypothes and the position is trusted. The benefit of using hypothesis testing instead of using a fixed threshold is that we can handle the case where $x<k$ in a uniform way and it can tolerate the ill-chosen $\alpha$. Notice that, the position near the left and right boundary or near the error may never be trusted.
 
@@ -219,7 +228,7 @@ After marking each positions, if there are consecutive k trusted positions, we s
 
 In both table $A$ and $B$, we only store the cannonical form of a kmer, that is the kmer itself or its rever complement depending on who has smaller lexicographical order. We know that there is nearly linear relationship between $1/\alpha$ and $f$ the frequency for the weak kmers, in Lighter, we set $f=max\{2,0.1/\alpha\}$ and the user will choose $\alpha$. A rule of thumb for choosing $\alpha$ is by applying the nearly linear relationship between $1/\alpha$ and the coverage, and in this paper we choose $\alpha=0.05$ when the coverage is $70\times$. So given the coverage $C$, we can set $\alpha$ to $0.05\frac{70}{C}$. 
 
-\subsection*{Error correction}
+\subsection*{Third pass: error correction}
 To show that our method of getting and storing solid kmers is reliable, we designed an error correction method just using the kmers stored in bloom filter $B$.
 
 The correction is done read by read. For a read of length $|r|$, we have $|r|-k+1$ kmers and $k_i$ denote the kmer starts at position $i$ where $1\le i\le|r|-k+1$. We start the correction by finding a longest consecutive kmers that are stored in $B$, and then do the correction by scanning towards left and right. Since the correction towards left and right are symmetric, we only demonstrate the correction for the right-hand scanning. Ideally, when we move from the solid kmers towards right, the first time we see an weak kmer, say $k_i$, there must be an error at position $i+k-1$. There are three candidates or four(if the position is N) to replace this position. For each candidate, we see how many consecutive kmers is solid starting from $k_i$ with this new character. We choose the candidate creating most solid kmers. Then we resume scanning towards right starting from the next unstored kmer. If none of the candidate makes $k_i$ solid or more than one candidate create most solid kmers, we say position $i+k-1$ is ambiguous and stop there. If $i+k-1$ is far from the end of the read, we do the error correction on the substring from $i+k-1$ to the end of a read.
@@ -408,7 +417,10 @@ Another immediate application of our method is getting solid kmers' count, which
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgements}
   Text for this section \ldots
- 
+
+\bibliographystyle{abbrv}
+\bibliography{lighter_paper}
+
 \end{document}
 
 
