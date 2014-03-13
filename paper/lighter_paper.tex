@@ -287,6 +287,18 @@ The $\alpha$ value for the $35\times$, $70\times$, $140\times$ is $0.1$, $0.05$ 
 
 For Quake, we only measured the performance of the reported reads. Because Quake trimmed the untrusted tail of a read and throw away unfixable reads, it has a particularly high precision. But even if we only count the original errors in those reported reads, its sensitivity is very low. Lighter is among the best on different measurement and scenarios. This shows that our sampling method is able to distinguish most solid and weak kmer, and the error correction method is very effective.
 
+For the three data sets with different coverage, we can show Lighter can achieve near constant space usage if the portion of set bits, namely occupancy rate, in the bloom filters stays almost the same. And this is true as shown in Table \ref{table:bloom_occupancy_coverage}.
+
+\begin{table}
+\begin{tabular}{|c|c|c|}\hline
+Coverage & Table A & Table B \\ \hline
+$35\times$ & 41.35 & 35.33 \\ \hline
+$70\times$ &41.37  &  35.44 \\ \hline
+$140\times$ & 41.37	& 35.41 \\ \hline
+\end{tabular}
+\caption{Occupancy rate(\%) for each table for different coverages\label{table:bloom_occupancy_coverage}}
+\end{table}
+
 To further test the performance of Lighter, we showed how many kmers from the reference genome is stored in table $B$. We used the simulated data with $70$x coverage and $1\%$ error rate. There are totally 4,553,699 distinct kmers from the genome on one strand, and 4,553,653 of them are in table $B$ which is almost all of them. We lose some kmers from the genome mostly due to the low coverage at the two ends of the chromosome.
 
 The 6 simulated data sets are for haploid case, there are many species with a pair of chromosome in a cell, like human. Here we consider the case of diploid. We still use the e.coli genome as the reference genome and then introduce $0.1\%$ SNPs to generate the second reference genome. Mason then will sample the same amount of reads from the two genomes, totally form an $70$x coverage data set. There are 159,117 kmers containing the SNP position from one strand, and table $B$ holds 158,972 of them. Though the performance is not as good as haploid case, it still hold almost all of them. 
@@ -305,6 +317,15 @@ If $\alpha$ is too small, too much solid kmers will be failed to get in table $A
 
 If $\alpha$ is larger, the hypothesis test is an adaptive threshold and handle this case nicely even if there are too many elements in $A$ and the false positive rate of $A$ is higher. However, when $\alpha$ is too large, number $k$ will have a p-value larger than 0.005, and all the positions will be regarded as untrusted. We can observe this from the dramatic drop in Figure \ref{fig:alpha}.
 
+This explanation can also be verified by looking at the occupancy rate of table A and B when changing $\alpha$ shown in Figure \ref{fig:bloom_occupancy_alpha}.
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\textwidth]{bloom_occupancy_alpha.png}
+\caption{The effect of $\alpha$\label{fig:bloom_occupancy_alpha}}
+\end{center}
+\end{figure}
+
+
 \subsection*{Real data set}
 \subsubsection*{E.Coli data set}
 We use ERR022075 data set which is a very deep coverage sequencing data set of ecoli K-12 strain genome. We still used Quake, Musket, Bless and Lighter to run this data set. Since usually we do not need that much of coverage, we uniformly sampled some reads from this data set and got a data set with roughly 75x coverage. The reads in this data set is paired-end and the read length is 100 and 102. Because Bless can not handle paired-end reads with different length, we truncate the last 2 base to form a 100-length paired-end data set.
@@ -315,12 +336,12 @@ Since the genome of E.Coli K-12 strain is fully sequenced, we measured that 4,51
 We can also measure the error corrections' affect on the alignment. We use Bowtie2[cite] to align the reads to the reference genome and count the total number of the matched position.
 
 \begin{tabular}{|c|c|c|c|c|}\hline
-  & Total Matched Pos & Improvement & Total reads & Mapped \\ \hline
+  & Total Matched Pos & Improvement(\%) & Total pairs & Mapped \\ \hline
 Original	& 343,081,567	& - & 1,748,808	& 99.04\% \\ \hline
 Quake	& 327,813,255	& -4.45\%	& 1,684,792	& 99.98\% \\ \hline
-Musket	& 345,403,149	& 0.71\%	& 1,748,808	& 99.15\% \\ \hline
-Bless	& 345,947,230	& 0.83\%	& 1,748,808	& 99.30\% \\ \hline
-Lighter	&  346,273,158 & 0.92\%	& 1,748,808	& 99.39\% \\ \hline
+Musket	& 345,403,149	& 0.68\%	& 1,748,808	& 99.15\% \\ \hline
+Bless	& 345,947,230	& 0.84\%	& 1,748,808	& 99.30\% \\ \hline
+Lighter	&  346,273,158 & 0.93\%	& 1,748,808	& 99.39\% \\ \hline
 \end{tabular}
 
 For Quake, the number is very low mainly due to unreported reads and trimmed 3' end. It turns out Lighter gives the most improvement. We use samtools to do the SNP calling. 
@@ -352,8 +373,24 @@ Lighter &	48777	&	86836 \\ \hline
 \subsubsection*{Human Chr14}
 So far, we only tested the data on the genome of E.Coli, which is a pretty small. In this section, we use a data set from Gage[cite] on human chromosome 14. This data set is about 35x coverage and 101bp pair-end reads.
 
+Like for the E.Coli data set, we evaluate the result using both Bowtie2 and SOAPdenovo2.
+
+The result of Bowtie2 is shown in Table \ref{table:chr14_bowtie2}.
+
+\begin{table}
+\begin{tabular}{|c|c|c|c|c|}\hline
+  & Total Matched Pos & Improvement(\%) & Total pairs & Mapped \\ \hline
+Original &	3581034345	&	& 18252400 & 98.60\% \\ \hline
+Quake	& 3040192216	& -15.10 &	16280259 &	99.96\% \\ \hline
+Musket	& 3631477901	& 1.41	& 18252400	& 99.38\% \\ \hline
+Bless	& 3636682539	& 1.55	& 18252400	& 99.43\% \\ \hline
+Lighter	& 3631446457	& 1.41	& 18252400	& 99.38\% \\ \hline
+\end{tabular}
+\caption{Alignment of chr14 data set\label{table:chr14_bowtie2}}
+\end{table}
+
 % Result of SOAPDenovo2
-Again, we use SOAPDenovo2 to measure the affect of error correction. 
+And the result 
 
 \begin{table}
 \begin{tabular}{|c|c|c|} \hline
