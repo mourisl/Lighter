@@ -317,11 +317,12 @@ If $\alpha$ is too small, too much solid kmers will be failed to get in table $A
 
 If $\alpha$ is larger, the hypothesis test is an adaptive threshold and handle this case nicely even if there are too many elements in $A$ and the false positive rate of $A$ is higher. However, when $\alpha$ is too large, number $k$ will have a p-value larger than 0.005, and all the positions will be regarded as untrusted. We can observe this from the dramatic drop in Figure \ref{fig:alpha}.
 
-This explanation can also be verified by looking at the occupancy rate of table A and B when changing $\alpha$ shown in Figure \ref{fig:bloom_occupancy_alpha}.
+This explanation can also be verified by looking at the occupancy rate of table A and B from the simulated data sets with 3 different coverage and $1\%$ error rate when changing $\alpha$ shown in Figure \ref{fig:bloom_occupancy_alpha_all}. Also, we can see the occupancy rate of table A is almost the same given the same $\alpha\times\mbox{coverage}$ across the 3 data sets. And the occupancy rate of table B is very steady because the solid kmers from the genome are the same for the 3 data sets. When $\alpha$ is way too large than the optimal value, like in the $140\times$ data set, too much weak kmers get sampled and more likely to pass the binomial test which cause the failure of filtering non-solid kmers.
+
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=0.5\textwidth]{bloom_occupancy_alpha.png}
-\caption{The effect of $\alpha$ on occupancy rate\label{fig:bloom_occupancy_alpha}}
+\includegraphics[width=0.5\textwidth]{bloom_occupancy_alpha_all.png}
+\caption{The effect of $\alpha$ on occupancy rate\label{fig:bloom_occupancy_alpha_all}}
 \end{center}
 \end{figure}
 
