@@ -364,7 +364,7 @@ int main( int argc, char *argv[] )
 
 	// Step 3: error correction
 	reads.Rewind() ;
-	if ( 1 ) //numOfThreads == 1 )
+	if ( numOfThreads == 1 )
 	{
 		while ( reads.Next() )
 		{
