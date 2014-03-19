@@ -293,14 +293,17 @@ The $\alpha$ value for the $35\times$, $70\times$, $140\times$ is $0.1$, $0.05$ 
 
 For Quake, we only measured the performance of the reported reads. Because Quake trimmed the untrusted tail of a read and throw away unfixable reads, it has a particularly high precision. But even if we only count the original errors in those reported reads, its sensitivity is very low. Lighter is among the best on different measurement and scenarios. This shows that our sampling method is able to distinguish most solid and weak kmer, and the error correction method is very effective.
 
-For the three data sets with different coverage, we can show Lighter can achieve near constant space usage if the portion of set bits, namely occupancy rate, in the bloom filters stays almost the same. And this is true as shown in Table \ref{table:bloom_occupancy_coverage}.
+We can show Lighter can achieve near constant space usage if the portion of set bits, namely occupancy rate, in the bloom filters stays almost the same. And this is true as shown in Table \ref{table:bloom_occupancy_coverage} given different coverages using simulated data set with 1\% error rate. When the coverage is very low, the occupancy rate in table $B$ is significant lower. This is because that when the coverage is very low, the count of the solid kmers is not very different from the weak kmers and the binomial test fails no matter how the $\alpha$ is set.
 
 \begin{table}
 \begin{tabular}{|c|c|c|}\hline
 Coverage & Table A & Table B \\ \hline
+$10\times$	& 42.21	& 23.21 \\ \hline
+$20\times$	& 42.21	& 34.62  \\ \hline
 $35\times$ & 41.35 & 35.33 \\ \hline
 $70\times$ &41.37  &  35.44 \\ \hline
 $140\times$ & 41.37	& 35.41 \\ \hline
+$280\times$ & 41.37	& 35.44 \\ \hline
 \end{tabular}
 \caption{Occupancy rate(\%) for each table for different coverages\label{table:bloom_occupancy_coverage}}
 \end{table}
