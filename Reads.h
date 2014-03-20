@@ -77,6 +77,10 @@ class Reads
 			}
 			char buffer[1024], fileName[1024] ;
 			fp[ fpUsed ] = fopen( file, "r" ) ;
+			if(fp[fpUsed] == NULL) {
+				printf( "Could not open read file \"%s\"\n", file);
+				exit(1);
+			}
 			fscanf( fp[ fpUsed ], "%s", buffer ) ;
 			if ( buffer[0] == '>' )
 			{
@@ -89,6 +93,10 @@ class Reads
 			}
 			fclose( fp[fpUsed] ) ;
 			fp[fpUsed] = fopen( file, "r" ) ;
+			if(fp[fpUsed] == NULL) {
+				printf( "Could not open read file \"%s\"\n", file);
+				exit(1);
+			}
 
 			GetFileName( file, fileName ) ;
 			if ( FILE_TYPE[ fpUsed ] == 1 )
