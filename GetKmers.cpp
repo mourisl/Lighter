@@ -25,7 +25,7 @@ void *SampleKmers_Thread( void *arg )
 				  if ( id[len - 1] == '\n')
 				  id[len - 1] = '\0' ;*/
 				
-				len = strlen( read ) ;
+				len = (int)strlen( read ) ;
 				if ( read[len - 1] == '\n' )
 					read[len - 1] = '\0' ;
 
@@ -47,10 +47,10 @@ void *SampleKmers_Thread( void *arg )
 
 void SampleKmersInRead( char *read, char *qual, int kmerLength, double alpha, KmerCode &kmerCode, Store *kmers )
 {
-	int i, j, k ;
+	int i ;
 	double p ;
 	double factor = 1 ;
-	int badQualPartialCount[MAX_READ_LENGTH] ;
+	/*int badQualPartialCount[MAX_READ_LENGTH]*/ ;
 
 	// Get the partial counting sum of not good qualies
 	// NOTICE: we shift one position here
@@ -118,10 +118,10 @@ void *StoreKmers_Thread( void *arg )
 		pthread_mutex_unlock( myArg->lock ) ;
 		if ( tmp != 0 )
 		{
-			int len = strlen( id ) ;		
+			int len = (int)strlen( id ) ;
 			if ( id[len - 1] == '\n')
 				id[len - 1] = '\0' ;
-			len = strlen( read ) ;
+			len = (int)strlen( read ) ;
 			if ( read[len - 1] == '\n' )
 				read[len - 1] = '\0' ;
 
@@ -145,7 +145,7 @@ void StoreTrustedKmers( char *read, char *qual, int kmerLength, char goodQuality
 {
 	bool occur[MAX_READ_LENGTH] ;
 	bool trustedPosition[MAX_READ_LENGTH] ;
-	int i, j, k ;
+	int i, k ;
 
 	kmerCode.Restart() ;
 	for ( i = 0 ; i < kmerLength ; ++i )

@@ -31,7 +31,7 @@ class Reads
 		void GetFileName( char *in, char *out ) 
 		{
 			int i, j ;
-			int len = strlen( in ) ;
+			int len = (int)strlen( in ) ;
 			for ( i = len ; i >= 0 && in[i] != '.' && in[i] != '/' ; --i )
 				;
 			for ( j = len ; j >= 0 && in[j] != '/' ; --j )
@@ -144,10 +144,10 @@ class Reads
 				fgets( qual, sizeof( qual ), lfp ) ;
 			}
 			// Clean the return symbol	
-			len = strlen( id ) ;		
+			len = (int)strlen( id ) ;
 			if ( id[len - 1] == '\n')
 				id[len - 1] = '\0' ;
-			len = strlen( seq ) ;
+			len = (int)strlen( seq ) ;
 			if ( seq[len - 1] == '\n' )
 				seq[len - 1] = '\0' ;
 
@@ -188,10 +188,10 @@ class Reads
 			// Clean the return symbol	
 			if ( removeReturn )
 			{
-				len = strlen( id ) ;		
+				len = (int)strlen( id ) ;
 				if ( id[len - 1] == '\n')
 					id[len - 1] = '\0' ;
-				len = strlen( seq ) ;
+				len = (int)strlen( seq ) ;
 				if ( seq[len - 1] == '\n' )
 					seq[len - 1] = '\0' ;
 
@@ -206,7 +206,7 @@ class Reads
 
 		void Output( int correction, int badPrefix, int badSuffix, bool allowTrimming )
 		{
-			char buffer[1024] ;
+			/* char buffer[1024] ; */
 			if ( correction == 0 && badPrefix == 0 && badSuffix == 0 )
 			{
 				fprintf( outputFp[ currentFpInd ], "%s\n%s\n", id, seq ) ;
@@ -299,7 +299,6 @@ class Reads
 				int badPrefix = readBatch[i].badPrefix ;
 				int badSuffix = readBatch[i].badSuffix ;
 				
-				char buffer[1024] ;
 				if ( correction == 0 && badPrefix == 0 && badSuffix == 0 )
 				{
 					fprintf( outputFp[ currentFpInd ], "%s\n%s\n", id, seq ) ;

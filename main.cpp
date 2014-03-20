@@ -121,8 +121,8 @@ void PrintLog( const char *log )
 int main( int argc, char *argv[] )
 {
 	int kmerLength ;
-	double alpha ;
-	char *readId, *read, *qual ;
+	double alpha = 0.0 ;
+	char *readId/**, read, *qual*/ ;
 	//char buffer[1023] ;
 	double untrustF[100][100] ;
 	double trustF[100][100] ;
@@ -131,15 +131,15 @@ int main( int argc, char *argv[] )
 	int badPrefix, badSuffix ;
 	bool paraOutputAllReads ;
 
-	int i, j, k ;
+	int i, j ;
 	//uint64_t kmerCode ;
 	//uint64_t mask ;
-	uint64_t genomeSize ;
+	uint64_t genomeSize = 0;
 
 	// variables for threads
 	int numOfThreads ;
 	pthread_attr_t pthreadAttr ;
-	pthread_t *threads ;
+	pthread_t *threads = NULL;
 	pthread_mutex_t mutexSampleKmers, mutexStoreKmers ;
 
 	if ( argc == 1 || !strcmp( "-h", argv[1] ) )
@@ -352,7 +352,7 @@ int main( int argc, char *argv[] )
 		
 		for ( i = 0 ; i < numOfThreads ; ++i )
 		{
-			pthread_create( &threads[i], &pthreadAttr, StoreKmers_Thread, (void *)&arg ) ;	
+			pthread_create( &threads[i], &pthreadAttr, StoreKmers_Thread, (void *)&arg ) ;
 		}
 
 		for ( i = 0 ; i < numOfThreads ; ++i )

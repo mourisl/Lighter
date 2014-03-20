@@ -8,7 +8,7 @@ extern bool ALLOW_TRIMMING ;
 
 void *ErrorCorrection_Thread( void *arg )
 {
-	int i, ind ;
+	int ind ;
 	int correction, badPrefix, badSuffix ;
 	struct _ErrorCorrectionThreadArg *myArg = ( struct _ErrorCorrectionThreadArg *)arg ; 	
 	
@@ -488,7 +488,7 @@ int ErrorCorrection_Wrapper( char *read, KmerCode& kmerCode, Store *kmers, int &
 {
 	int correction ;
 	int tmpBadPrefix, tmpBadSuffix ;
-	int len = strlen( read ) ;
+	int len = (int)strlen( read ) ;
 	int interim = 0 ;
 
 	correction = ErrorCorrection( read, kmerCode, MAX_CORRECTION, kmers,

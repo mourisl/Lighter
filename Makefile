@@ -1,12 +1,13 @@
 CXX = g++
-CXXFLAGS= -Wall -lpthread -O
+CXXFLAGS= -Wall -O
+LINKFLAGS = -lpthread
 DEBUG=
 OBJECTS = ErrorCorrection.o KmerCode.o GetKmers.o
 
 all: lighter
 
 lighter: main.o $(OBJECTS)
-	$(CXX) -o $@ $(CXXFLAGS) $(OBJECTS) main.o 
+	$(CXX) -o $@ $(CXXFLAGS) $(LINKFLAGS) $(OBJECTS) main.o 
 
 main.o: main.cpp utils.h Reads.h Store.h bloom_filter.hpp
 #bloom_filter.o: bloom_filter.h 
