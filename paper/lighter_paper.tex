@@ -167,7 +167,7 @@
 \emph{Lighter} is a fast and memory-efficient tool for correcting sequencing errors in high-throughput sequencing datasets.
 \emph{Lighter} avoids counting $k$-mers in the sequencing reads.
 Instead, it uses a pair of Bloom filters, one populated with a sample of the input $k$-mers and the other populated with $k$-mers likely to be correct based on a statistical test.
-As long as the sampling fraction is adjusted proportionally to the dataset's average coverage, the size of the Bloom filters can be held constant while maintaining near-constant occupancy and false positive rate.
+As long as the sampling fraction is adjusted proportionally to the dataset's average coverage, the Bloom filter size can be held constant while maintaining near-constant occupancy and false positive rate.
 \emph{Lighter} is easily applied to very large sequencing datasets.  It uses no secondary storage, and is both faster and more memory-efficient than competing approaches while achieving comparable accuracy.
 \emph{Lighter} is free open source software available from \url{https://github.com/mourisl/Lighter/}.
 \end{abstract}
@@ -193,21 +193,28 @@ As long as the sampling fraction is adjusted proportionally to the dataset's ave
 %%                                          %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% The idea of using a Bloom filter to store the solid k-mers is not new; CUDA-EC does this
+% What's our story w/r/t choosing k-mer length?
+
 \section*{Introduction}
-The cost and throughput of DNA sequencing have improved very rapidly in the past several years.
+The cost and throughput of DNA sequencing have improved very rapidly in the past several years \cite{glenn2011field}.
+Recent advances have reduced the cost of sequencing a single human genome at 30-fold coverage to around \$1,000 \cite{1kgenomeforreal}.
 Consequently, there has been an explosion of new software for analyzing large collections of sequencing reads.
 Correction of sequencing errors is a basic need in many of these tools.
-Removing errors at the outset can improve speed, memory-efficiency and accuracy of downstream tools \cite{}.
-This is particularly true for analyses involving de novo assembly with De Bruijn graphs \cite{}, since the size of the graph increases proportionally to the number of distinct $k$-mers in the dataset.
+Removing errors at the outset can improve speed, memory-efficiency and accuracy of downstream tools \cite{kelley2010quake}.
+This is particularly true for analyses involving de novo assembly with De Bruijn graphs, since the size of the graph increases with the number of distinct $k$-mers in the dataset \cite{pevzner2001eulerian, chaisson2004fragment}.
 
-One important way to study a species is to sequence its genome and analyze its DNA. The need to understand the genome stimulates the rapid development of DNA sequencing technologies. The output of the DNA sequencing is usually an enormous volume of short fragments from the genome. With these small fragments, computational biologists are able to design complicated methods to reconstruct the original genome by assembling or to detect the mutations from the known reference genome by aligning.
+For an error correction tools to be truly usable, time and memory requirements must be very modest.
+When input datasets are extremely large (e.g. billions of reads), and when the genome under study is large (e.g. human), this challenge is particularly pronounced.
+
+%One important way to study a species is to sequence its genome and analyze its DNA. The need to understand the genome stimulates the rapid development of DNA sequencing technologies. The output of the DNA sequencing is usually an enormous volume of short fragments from the genome. With these small fragments, computational biologists are able to design complicated methods to reconstruct the original genome by assembling or to detect the mutations from the known reference genome by aligning.
 
 The volume of the data is so huge that if we align them to the genome, each position is covered by a bunch of reads which is called the coverage. However, the short fragments are not perfect and usually contain a small number of sequecing errors. This affects one of the most important preprocessing stages for the data --- kmer counting, where a kmer is a nucleutide sequence of size k. If there is no sequencing error, all the kmers are from the genome, which are called solid kmers, and its quantity are bounded by the genome size instead of the coverage. This is not true in practice due to the sequecing errors and if the coverage is high enough, like what the sequecing technology gives us nowadays, the kmers containing sequencing errors will dominate the space consumption. To alleviate the impact from those non-solid kmers, various methods have been proposed, like BFcounter[cite]. These methods still suffer from the problem that the space consumption scales up with the coverage. In this paper, we propose a probablitic methods of obtaining solid kmers whose space complexity does not depend on the coverage.
 
 One immediate applicaiton using the information of solid kmers is error correction. Error correction is very important for the De Brujin graph based genome assemblers to save the memory usage. There are mainly three categories methods for error correction[cite], and converting all the kmers to solid kmers is one of them and is particularly successful for Illumina reads where the read errors are mainly substitutions. There are currently many programs for error corrections, and some of them are highlighted for their low memory usage, like Musket[cite] and Bless[cite]. With the help of our method of obtainig solid kmers and the bloom filters which is a compact probabilitc data structure, we also propose the program Lighter(LIGHT-weight ERror correction) that can do error correction with very small memory footprint and no extra disk consumption.
 
 \section*{Method}
-Lighter's workflow is illustrated in Figure \ref{fig:lighter_framework}. Lighter makes three passes over the input reads.  The first pass obtains a sample of the k-mers present in the input reads, storing it in Bloom filter A.  The second pass uses Bloom filter A to identify ``solid'' k-mers and stores these in Bloom filter B.  The third pass uses Bloom filter B to detect and correct errors in the input reads.
+Lighter's workflow is illustrated in Figure \ref{fig:lighter_framework}. Lighter makes three passes over the input reads.  The first pass obtains a sample of the k-mers present in the input reads, storing the sample in Bloom filter A.  The second pass uses Bloom filter A to identify ``solid'' k-mers and stores these in Bloom filter B.  The third pass uses Bloom filter B to detect and correct errors in the input reads.
 
 \begin{figure}[h!]
 \begin{center}
@@ -234,6 +241,10 @@ Assume that, regardless of average coverage, there is always a value of $\alpha$
 %In other words, the size of $A$ depends almost only on the genome size. For $75\times$ coverage sequence data, we can let $\alpha$ be $0.05$.
 
 \subsection*{Second pass: obtaining solid k-mers}
+
+Let $m(r)$ denote the number of times $k$-mer $r$ occurs in the input reads.  We define a threshold $f$ such that a $k$-mer $r$ is considered \emph{weak} when $m(r) \leq f$.  Ignoring false positives, the following inequality bounds the probability $P(\alpha)$ that a particular weak $k$-mer appears in Bloom filter $A$ when the downsampling rate is $\alpha$:
+
+\begin{equation}P(\alpha) \leq 1-(1-\alpha)^f\end{equation}
 
 For each position in a read, it can affect up to $x$ kmers where $1\le x\le k$. If that position is wrong, these $x$ kmers will not show up many times and they are mostly likely not in $A$. Suppose, a kmer with frequency less than $f$ is very weak, then the probability of such kmer be in $A$ is less than $P=1-(1-\alpha)^f$. For the $x$ kmers containing the specific position, we can assume that the number of those stored in $A$ follows a binomial distribution with parameter $(x,P)$. We can decide whether the nucleotide of a position is trusted by one-tail hypothesis testing. The null hypothesis is that this position is wrong and the p-value can be get from test again $(x,P)$ using the actual number of kmers in $A$ containing that position. We use $y$ to denote this actual number of kmers. In our method, suppose $y'$ is the first number whose p-value is smaller than 0.005, if $y>y'$, we reject the null hypothes and the position is trusted. The benefit of using hypothesis testing instead of using a fixed threshold is that we can handle the case where $x<k$ in a uniform way and it can tolerate the ill-chosen $\alpha$. Notice that, the position near the left and right boundary or near the error may never be trusted.
 
