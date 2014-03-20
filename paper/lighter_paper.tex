@@ -119,8 +119,9 @@
 %%                                          %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{A Probablistic Space-efficient Method of Obtaining Solid Kmers with An Appliction of Error Correction}
- 
+%\title{A Probablistic Space-efficient Method of Obtaining Solid Kmers with An Appliction of Error Correction}
+\title{Lighter: fast and memory-efficient error correction without counting}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                          %%
 %% Enter the authors here                   %%
@@ -163,7 +164,12 @@
 
 \begin{abstract}
         % Do not use inserted blank lines (ie \\) until main body of text.
-Text for this section.        
+\emph{Lighter} is a fast and memory-efficient tool for correcting sequencing errors in high-throughput sequencing datasets.
+\emph{Lighter} avoids counting $k$-mers in the sequencing reads.
+Instead, it uses a pair of Bloom filters, one populated with a sample of the input $k$-mers and the other populated with $k$-mers likely to be correct based on a statistical test.
+As long as the sampling fraction is adjusted proportionally to the dataset's average coverage, the size of the Bloom filters can be held constant while maintaining near-constant occupancy and false positive rate.
+\emph{Lighter} is easily applied to very large sequencing datasets.  It uses no secondary storage, and is both faster and more memory-efficient than competing approaches while achieving comparable accuracy.
+\emph{Lighter} is free open source software available from \url{https://github.com/mourisl/Lighter/}.
 \end{abstract}
 
 
@@ -188,6 +194,12 @@ Text for this section.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section*{Introduction}
+The cost and throughput of DNA sequencing have improved very rapidly in the past several years.
+Consequently, there has been an explosion of new software for analyzing large collections of sequencing reads.
+Correction of sequencing errors is a basic need in many of these tools.
+Removing errors at the outset can improve speed, memory-efficiency and accuracy of downstream tools \cite{}.
+This is particularly true for analyses involving de novo assembly with De Bruijn graphs \cite{}, since the size of the graph increases proportionally to the number of distinct $k$-mers in the dataset.
+
 One important way to study a species is to sequence its genome and analyze its DNA. The need to understand the genome stimulates the rapid development of DNA sequencing technologies. The output of the DNA sequencing is usually an enormous volume of short fragments from the genome. With these small fragments, computational biologists are able to design complicated methods to reconstruct the original genome by assembling or to detect the mutations from the known reference genome by aligning.
 
 The volume of the data is so huge that if we align them to the genome, each position is covered by a bunch of reads which is called the coverage. However, the short fragments are not perfect and usually contain a small number of sequecing errors. This affects one of the most important preprocessing stages for the data --- kmer counting, where a kmer is a nucleutide sequence of size k. If there is no sequencing error, all the kmers are from the genome, which are called solid kmers, and its quantity are bounded by the genome size instead of the coverage. This is not true in practice due to the sequecing errors and if the coverage is high enough, like what the sequecing technology gives us nowadays, the kmers containing sequencing errors will dominate the space consumption. To alleviate the impact from those non-solid kmers, various methods have been proposed, like BFcounter[cite]. These methods still suffer from the problem that the space consumption scales up with the coverage. In this paper, we propose a probablitic methods of obtaining solid kmers whose space complexity does not depend on the coverage.
