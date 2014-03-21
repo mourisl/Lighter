@@ -1,4 +1,4 @@
-set terminal png truecolor enhanced linewidth 3
+set terminal png truecolor enhanced linewidth 2
 
 set output "alpha.png"
 

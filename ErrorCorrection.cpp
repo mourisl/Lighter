@@ -176,6 +176,30 @@ int ErrorCorrection( char *read, KmerCode& kmerCode, int maxCorrection, Store *k
 				if ( !kmers->IsIn( kmerCode ) )
 					break ;
 			}
+			
+			// Try to extend 1 position
+			if ( k > to && to == readLength - 1 )
+			{
+				int l, m ;
+				for ( m = 0 ; m < kmerLength - 1 ; ++m )
+				{
+					for ( l = 0 ; l < 4 ; ++l )
+					{
+						KmerCode tmpKmerCode( kmerCode ) ;
+						tmpKmerCode.Append( numToNuc[l] ) ;
+						if ( kmers->IsIn( tmpKmerCode ) )
+							break ;
+					}
+
+					if ( l < 4 )
+					{
+						//printf( "hi\n" ) ;
+						kmerCode.Append( numToNuc[l] ) ;
+						++k ;
+					}
+				}
+			}
+
 			//printf( "hi %d %d\n", k, maxTo ) ;
 
 			if ( k > maxTo )
@@ -316,6 +340,28 @@ int ErrorCorrection( char *read, KmerCode& kmerCode, int maxCorrection, Store *k
 				kmerCode.Prepend( read[k] ) ;	
 				if ( !kmers->IsIn( kmerCode ) )
 					break ;
+			}
+
+			if ( k < to && to == 0 )
+			{
+				int l, m ;
+				for ( m = 0 ; m < kmerLength - 1 ; ++m )
+				{
+					for ( l = 0 ; l < 4 ; ++l )
+					{
+						KmerCode tmpKmerCode( kmerCode ) ;
+						tmpKmerCode.Prepend( numToNuc[l] ) ;
+						if ( kmers->IsIn( tmpKmerCode ) )
+							break ;
+					}
+
+					if ( l < 4 )
+					{
+						//printf( "hi\n" ) ;
+						kmerCode.Prepend( numToNuc[l] ) ;
+						--k ;
+					}
+				}
 			}
 
 			if ( k < minTo )
