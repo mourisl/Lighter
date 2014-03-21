@@ -295,19 +295,19 @@ Error rate & & $1\%$ & $3\%$ & $1\%$ & $3\%$ & $1\%$ & $3\%$ \\ \hhline{|=|=|=|=
 	& quake	& 89.59	& 48.77	& 89.64	& 48.82	& 89.59	& 48.78 \\ \cline{2-8}
 Recall	& musket	& 92.61	& 92.04	& 92.60	& 92.05	& 92.60	& 92.03 \\ \cline{2-8}
 	& bless	& 98.68	& 97.29	& 98.69	& 97.48	& 98.65	& 97.47 \\ \cline{2-8}
-	& lighter	& 99.40	& 97.99	& 99.33	& 98.71	& 99.37	& 98.87 \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& lighter	& 99.40	& 98.00	& 99.33	& 98.73	& 99.38	& 98.88 \\ \hhline{|=|=|=|=|=|=|=|=|}
 	& quake	& 99.99	& 99.99	& 99.99	& 99.99	& 99.99	& 99.99 \\ \cline{2-8}
 Precision	& musket	& 99.78	& 99.63	& 99.78	& 99.63	& 99.78	& 99.63 \\ \cline{2-8}
 	& bless	& 98.90	& 98.59	& 98.88	& 98.62	& 98.88	& 98.61 \\ \cline{2-8}
-	& lighter	& 99.11	& 99.13	& 99.08	& 99.16	& 99.07	& 99.17 \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& lighter	& 99.11 & 99.13	& 99.08	& 99.16	& 99.07	& 99.17 \\ \hhline{|=|=|=|=|=|=|=|=|}
 	& quake	& 94.51	& 65.56	& 94.54	& 65.61	& 94.51	& 65.57 \\ \cline{2-8}
 F-score	& musket	& 96.06	& 95.68	& 96.05	& 95.69	& 96.05	& 95.68 \\ \cline{2-8}
 	& bless	& 98.79	& 97.94	& 98.78	& 98.04	& 98.77	& 98.04 \\ \cline{2-8}
-	& lighter	& 99.25	& 98.56	& 99.20	& 98.94	& 99.22	& 99.02 \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& lighter	& 99.26	& 98.56	& 99.21	& 98.94	& 99.22	& 99.02 \\ \hhline{|=|=|=|=|=|=|=|=|}
 	& quake	& 89.58	& 48.76	& 89.64	& 48.82	& 89.59	& 48.78 \\ \cline{2-8}
 Gain	& musket	& 92.40	& 91.70	& 92.39	& 91.71	& 92.39	& 91.69 \\ \cline{2-8}
 	& bless	& 97.58	& 95.90	& 97.57	& 96.11	& 97.54	& 96.09 \\ \cline{2-8}
-	& lighter	& 98.50	& 97.14	& 98.41	& 97.88	& 98.43	& 98.04 \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& lighter	& 98.51	& 97.15	& 98.42	& 97.89	& 98.44	& 98.05 \\ \hhline{|=|=|=|=|=|=|=|=|}
 
 \end{tabular}
 }
@@ -373,7 +373,7 @@ Original	& 343,081,567	& - & 1,748,808	& 99.04\% \\ \hline
 Quake	& 327,813,255	& -4.45\%	& 1,684,792	& 99.98\% \\ \hline
 Musket	& 345,403,149	& 0.68\%	& 1,748,808	& 99.15\% \\ \hline
 Bless	& 345,947,230	& 0.84\%	& 1,748,808	& 99.30\% \\ \hline
-Lighter	&  346,273,158 & 0.93\%	& 1,748,808	& 99.39\% \\ \hline
+Lighter	&  346,275,465 & 0.93\%	& 1,748,808	& 99.39\% \\ \hline
 \end{tabular}
 
 For Quake, the number is very low mainly due to unreported reads and trimmed 3' end. It turns out Lighter gives the most improvement. We use samtools to do the SNP calling. 
@@ -416,7 +416,7 @@ Original &	3,581,034,345	&	& 18,252,400 & 98.60\% \\ \hline
 Quake	& 3,040,192,216	& -15.10 &	16,280,259 &	99.96\% \\ \hline
 Musket	& 3,631,477,901	& 1.41	& 18,252,400	& 99.38\% \\ \hline
 Bless	& 3,636,682,539	& 1.55	& 18,252,400	& 99.43\% \\ \hline
-Lighter	& 3,631,446,457	& 1.41	& 18,252,400	& 99.38\% \\ \hline
+Lighter	& 3,631,450,048	& 1.41	& 18,252,400	& 99.38\% \\ \hline
 \end{tabular}
 \caption{Alignment of chr14 data set\label{table:chr14_bowtie2}}
 \end{table}
@@ -451,7 +451,7 @@ Musket, Bless and Lighter are all aimming for low memory consumption. So we comp
 Quake   & 2.8G	& 3.3G & 7.1G & 6.0G & 14G & 12G & 48G & 57G \\ \hline		
 Musket	& 139M	& 0 & 160M & 0 & 241M & 0 & 1.9G & 0 \\ \hline
 Bless	& 10M	& 661M & 11M & 1.3G & 13M & 2.6G & 600M & 15G \\ \hline
-Lighter	& 26M	& 0 & 26M & 0 & 26M & 0 & 354M & 0 \\ \hline
+Lighter	& 26M	& 0 & 26M & 0 & 26M & 0 & 387.848M & 0 \\ \hline
 \end{tabular}
 
 From the table, we can see that Bless and Lighter can achieve nearly constant memory consumption as claimed. Musket took much less memory comparing with Quake but is much worse than Bless and Lighter.
