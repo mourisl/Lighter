@@ -247,7 +247,8 @@ int main( int argc, char *argv[] )
 		int d = (int)( 0.05 / alpha * 2 );
 		if ( d < 2 )
 			d = 2 ;
-		GetCumulativeBinomialDistribution( untrustF[i], i, 1 - pow( ( 1 - alpha ), d ) + bloomFilterFP ) ;
+		double p = 1 - pow( ( 1 - alpha ), d ) ;
+		GetCumulativeBinomialDistribution( untrustF[i], i, p + bloomFilterFP - p * bloomFilterFP ) ;
 		//GetCumulativeBinomialDistribution( untrustF[i], i, alpha ) ;
 		//GetCumulativeBinomialDistribution( trustF[i], i, 1 - pow( ( 1 - alpha ), 20 ) ) ;
 	}
