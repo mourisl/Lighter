@@ -125,12 +125,12 @@ int main( int argc, char *argv[] )
 	char *readId/**, read, *qual*/ ;
 	//char buffer[1023] ;
 	double untrustF[100][100] ;
-	double trustF[100][100] ;
+	//double trustF[100][100] ;
 	int threshold[100] ;
 	char goodQuality ;
 	int badPrefix, badSuffix ;
 	bool paraOutputAllReads ;
-
+	double bloomFilterFP = 0.01 ;
 	int i, j ;
 	//uint64_t kmerCode ;
 	//uint64_t mask ;
@@ -225,8 +225,8 @@ int main( int argc, char *argv[] )
 	// Prepare data structures and other data.
 	//Store kmers(1000000000ull) ;
 	//Store trustedKmers(1000000000ull) ;
-	Store kmers((uint64_t)genomeSize * 1.5, 0.01 ) ;
-	Store trustedKmers((uint64_t)genomeSize * 1.5, 0.01 ) ;
+	Store kmers((uint64_t)genomeSize * 1.5, bloomFilterFP ) ;
+	Store trustedKmers((uint64_t)genomeSize * 1.5, bloomFilterFP ) ;
 
 	if ( numOfThreads > 1 )
 	{
@@ -247,9 +247,9 @@ int main( int argc, char *argv[] )
 		int d = (int)( 0.05 / alpha * 2 );
 		if ( d < 2 )
 			d = 2 ;
-		GetCumulativeBinomialDistribution( untrustF[i], i, 1 - pow( ( 1 - alpha ), d ) ) ;
+		GetCumulativeBinomialDistribution( untrustF[i], i, 1 - pow( ( 1 - alpha ), d ) + bloomFilterFP ) ;
 		//GetCumulativeBinomialDistribution( untrustF[i], i, alpha ) ;
-		GetCumulativeBinomialDistribution( trustF[i], i, 1 - pow( ( 1 - alpha ), 20 ) ) ;
+		//GetCumulativeBinomialDistribution( trustF[i], i, 1 - pow( ( 1 - alpha ), 20 ) ) ;
 	}
 	goodQuality = GetGoodQuality( reads ) ;
 	reads.Rewind() ;

@@ -181,7 +181,7 @@ int ErrorCorrection( char *read, KmerCode& kmerCode, int maxCorrection, Store *k
 			if ( k > to && to == readLength - 1 )
 			{
 				int l, m ;
-				for ( m = 0 ; m < kmerLength - 1 ; ++m )
+				for ( m = 0 ; m < kmerLength - 1 - ( to - from + 1 ) ; ++m )
 				{
 					for ( l = 0 ; l < 4 ; ++l )
 					{
@@ -342,10 +342,11 @@ int ErrorCorrection( char *read, KmerCode& kmerCode, int maxCorrection, Store *k
 					break ;
 			}
 
+			// try extension
 			if ( k < to && to == 0 )
 			{
 				int l, m ;
-				for ( m = 0 ; m < kmerLength - 1 ; ++m )
+				for ( m = 0 ; m < kmerLength - 1 - ( from - to + 1 ) ; ++m )
 				{
 					for ( l = 0 ; l < 4 ; ++l )
 					{
