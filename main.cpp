@@ -241,17 +241,7 @@ int main( int argc, char *argv[] )
 		trustedKmers.SetNumOfThreads( numOfThreads ) ;
 	}
 
-	// Compute the distribution of the # of sampled kmers from untrusted and trusted position
-	for ( i = 1 ; i <= kmerLength ; ++i )
-	{
-		int d = (int)( 0.05 / alpha * 2 );
-		if ( d < 2 )
-			d = 2 ;
-		double p = 1 - pow( ( 1 - alpha ), d ) ;
-		GetCumulativeBinomialDistribution( untrustF[i], i, p + bloomFilterFP - p * bloomFilterFP ) ;
-		//GetCumulativeBinomialDistribution( untrustF[i], i, alpha ) ;
-		//GetCumulativeBinomialDistribution( trustF[i], i, 1 - pow( ( 1 - alpha ), 20 ) ) ;
-	}
+	
 	goodQuality = GetGoodQuality( reads ) ;
 	reads.Rewind() ;
 
@@ -274,18 +264,6 @@ int main( int argc, char *argv[] )
 		printf( "\n" ) ;
 	}
 	exit( 1 ) ;*/
-	for ( i = 1 ; i <= kmerLength ; ++i )
-	{
-		for ( j = 0 ; j <= i ; ++j )
-		{
-			if ( untrustF[i][j] >= 1 - 0.5 * 1e-2 )
-			{
-				threshold[i] = j ;
-				break ;
-			}
-		}
-	}
-
 	//Store kmers((uint64_t)50000000 * 4, 0.001 ) ;
 	//Store trustedKmers((uint64_t)50000000 * 2, 0.001 ) ;
 		
@@ -325,8 +303,34 @@ int main( int argc, char *argv[] )
 			pthread_join( threads[i], &pthreadStatus ) ;
 		}
 	}
-	PrintLog( "Finish sampling kmers" ) ;
 
+	// Update the bloom filter's false positive rate.
+	// Compute the distribution of the # of sampled kmers from untrusted and trusted position
+	double tableAFP = kmers.GetFP() ;
+	for ( i = 1 ; i <= kmerLength ; ++i )
+	{
+		int d = (int)( 0.05 / alpha * 2 );
+		if ( d < 2 )
+			d = 2 ;
+		double p = 1 - pow( ( 1 - alpha ), d ) ;
+		GetCumulativeBinomialDistribution( untrustF[i], i, p + tableAFP - p * tableAFP ) ;
+		//GetCumulativeBinomialDistribution( untrustF[i], i, alpha ) ;
+		//GetCumulativeBinomialDistribution( trustF[i], i, 1 - pow( ( 1 - alpha ), 20 ) ) ;
+	}
+
+	for ( i = 1 ; i <= kmerLength ; ++i )
+	{
+		for ( j = 0 ; j <= i ; ++j )
+		{
+			if ( untrustF[i][j] >= 1 - 0.5 * 1e-2 )
+			{
+				threshold[i] = j ;
+				break ;
+			}
+		}
+	}
+
+	PrintLog( "Finish sampling kmers" ) ;
 	// Step 2: Store the trusted kmers
 	//printf( "Begin step2.\n") ; fflush( stdout ) ;
 	reads.Rewind() ;

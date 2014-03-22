@@ -275,6 +275,35 @@ public:
       inserted_element_count_ = 0;
    }
 
+   double occupancy()
+   {
+	   unsigned long long i, j ;
+	   unsigned long long used = 0 ;
+	   //printf( "(%llu)\n", table_size_ ) ;
+	   for ( i = 0, j = 0 ; i <raw_table_size_ ; ++i, j += bits_per_char )
+	   {
+		int tmp = bit_table_[i] ;
+		unsigned long long int t = 0 ;
+		//if ( i >= table_size_ - 10 )
+		//	printf( "(%llu)%llu %d\n", table_size_,i, tmp ) ;
+		while ( tmp != 0 )
+		{
+			if ( j + t < table_size_ )
+				used += ( tmp & 1 ) ;
+			tmp = tmp >> 1 ;
+			++t ;
+		}
+	   }
+	   //printf( "%llu %llu\n", used, total ) ;
+	   return (double)used/table_size_ ;
+   }
+
+   double GetActualFP()
+   {
+   	double f = occupancy() ;
+	return pow( f, salt_.size() ) ;
+   }
+
    inline void insert(const unsigned char* key_begin, const std::size_t& length)
    {
       std::size_t bit_index = 0;

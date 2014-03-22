@@ -70,7 +70,12 @@ public:
 	{
 	}
 
-	
+	double GetFP()
+	{
+		if ( method == 1 )
+			return 0 ;
+		return bf.GetActualFP() ;
+	}
 	int Put( KmerCode &code, bool testFirst = false ) 
 	{
 		if ( !code.IsValid() )
