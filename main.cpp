@@ -179,8 +179,20 @@ int main( int argc, char *argv[] )
 		}
 		else if ( !strcmp( "-k", argv[i] ) )
 		{
+			if(i + 1 >= argc) {
+				printf("Must specify k-mer length, genome size, and alpha after -k\n");
+				exit(1);
+			}
 			kmerLength = atoi( argv[i + 1] ) ;
+			if(i + 2 >= argc) {
+				printf("Must specify k-mer length, genome size, and alpha after -k\n");
+				exit(1);
+			}
 			genomeSize = StringToUint64( argv[i + 2] ) ;
+			if(i + 3 >= argc) {
+				printf("Must specify k-mer length, genome size, and alpha after -k\n");
+				exit(1);
+			}
 			alpha = (double)atof( argv[i + 3] ) ;
 			i += 3 ;
 		}
