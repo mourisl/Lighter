@@ -141,11 +141,6 @@
   Ben Langmead$^{*3}$
 }
 
-\begin{enumerate}
-\item Department of Computer Science, Johns Hopkins University
-\item McKusick-Nathans Institute of Genetic Medicine, Johns Hopkins University
-\end{enumerate}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                          %%
 %% Enter the authors' addresses here        %%
@@ -203,15 +198,15 @@ As long as the sampling fraction is adjusted in inverse proportion to the datase
 \section*{Introduction}
 The cost and throughput of DNA sequencing have improved rapidly in the past several years \cite{glenn2011field}.
 Recent advances have reduced the cost of sequencing a single human genome at 30-fold coverage to around \$1,000 \cite{1kgenomeforreal}.
-With these advances have come an explosion of new software for analyzing large sequencing datasets.
+With these advances came an explosion of new software for analyzing large sequencing datasets.
 Sequencing error correction is a basic need for many of these tools.
 Removing errors at the outset of an analysis can improve accuracy of downstream tools such as variant callers \cite{kelley2010quake}.
 Removing errors can also improve the speed and memory-efficiency of downstream tools.
 This is particularly true for analyses involving de novo assembly with De Bruijn graphs, since the size of the graph increases with the number of distinct $k$-mers in the dataset \cite{pevzner2001eulerian, chaisson2004fragment}.
 
-For error correction software to be useful in practice, it must make economical use of time and memory even when input datasets are extremely large (billions of reads) and when the genome under study is also large (mammalian).
+For error correction software to be useful in practice, it must make economical use of time and memory even when input datasets are extremely large (billions of reads) and when the genome under study is also large (billions of nucleotides).
 Several methods have been proposed, covering a wide tradeoff space between accuracy, speed and memory- and storage-efficiency.
-SHREC \cite{schroder2009shrec} and HiTEC \cite{ilie2011hitec} build a suffix index of the input reads and locate errors by finding instances where a substring is followed by a character less often than would be expected if the character were correct.
+SHREC \cite{schroder2009shrec} and HiTEC \cite{ilie2011hitec} build a suffix index of the input reads and locate errors by finding instances where a substring is followed by a character less often than expected.
 Coral \cite{salmela2011correcting} and ECHO \cite{kao2011echo} find overlaps among reads and use the resulting multiple alignments to detect and correct errors.
 Reptile \cite{yang2010reptile} and Hammer \cite{medvedev2011error} detect and correct errors by examining each $k$-mer's neighborhood in the dataset's $k$-mer Hamming graph.
 
@@ -232,20 +227,25 @@ Reptile \cite{yang2010reptile} and Hammer \cite{medvedev2011error} detect and co
 The most practical and widely used error correction methods descend from the spectral alignment approach introduced in the earliest De Bruijn graph based assemblers \cite{pevzner2001eulerian, chaisson2004fragment}.
 These methods count the number of times each $k$-mer occurs (its \emph{multiplicity}) in the input reads, then apply a threshold such that reads with multiplicity exceeding the threshold are considered \emph{solid}.
 Solid $k$-mers are unlikely to have been altered by sequencing errors.
-$k$-mers with low multiplicity (\emph{weak} $k$-mers) are systematically edited into solid $k$-mers using a dynamic-programming solution to the spectral alignment problem \cite{pevzner2001eulerian, chaisson2004fragment} or, more often, a fast heuristic approximation thereof.
+$k$-mers with low multiplicity (\emph{weak} $k$-mers) are systematically edited into solid $k$-mers using a dynamic-programming solution to the spectral alignment problem \cite{pevzner2001eulerian, chaisson2004fragment} or, more often, a fast heuristic approximation.
 Quake \cite{kelley2010quake}, the most widely used error correction tool, uses a hash-based $k$-mer counter called Jellyfish \cite{marccais2011fast} to determine which $k$-mers are solid.
-CUDA-EC \cite{shi2010parallel} was novel for its use of Bloom filters as space-efficient alternatives to hash tables for counting $k$-mers and for representing the set of solid $k$-mers.
-More recent tools such as Musket \cite{liu2013musket} and BLESS \cite{heo2014bless} also use Bloom filters, sometimes in concert with a hash table, to count $k$-mers or to represent the set of solid $k$-mers.
+CUDA-EC \cite{shi2010parallel} was novel in its use of the Bloom filter as space-efficient alternative to hash tables for counting $k$-mers and for representing the set of solid $k$-mers.
+More recent tools such as Musket \cite{liu2013musket} and BLESS \cite{heo2014bless} use a combination of Bloom filters and hash tables to count $k$-mers or to represent the set of solid $k$-mers.
 
 \emph{Lighter} (LIGHTweight ERror corrector) is also in the family of spectral alignment methods, but differs from previous approaches in that it avoids counting $k$-mers.
 Rather than count $k$-mers, \emph{Lighter} samples $k$-mers randomly, storing the sample in a Bloom filter.
-\emph{Lighter} then uses a statistical test applied to each position of each read to compile a set of solid $k$-mers, which are stored in a second Bloom filter.
+\emph{Lighter} then uses a statistical test applied to each position of each read to compile a set of solid $k$-mers, stored in a second Bloom filter.
 These two Bloom filters are the only sizable data structures used by \emph{Lighter}.
-\emph{Lighter}'s crucial advantage is that its parameters can be set such that the Bloom-filter size and the overall accuracy of the approach are near-constant with respect to the depth of coverage.
-In other words, no matter how deep the coverage, \emph{Lighter} can allocate the same sized Bloom filters and achieve nearly the same (a) Bloom filter occupancy, (b) Bloom filter false positive rate, and (c) error correction accuracy.
-\emph{Lighter} does this without using any secondary memory (e.g. magnetic or solid-state disk space), in contrast to methods like BLESS, which uses more secondary memory as the size of the input data increases.
+
+\emph{Lighter}'s crucial advantage is that its parameters can be set such that the memory footprint and the accuracy of the approach are near-constant with respect to coverage.
+That is, no matter how deep the coverage, \emph{Lighter} can allocate the same sized Bloom filters and achieve nearly the same (a) Bloom filter occupancy, (b) Bloom filter false positive rate, and (c) error correction accuracy.
+\emph{Lighter} does this without using any secondary memory, i.e. disk space.
+This is in contrast to BLESS and Jellyfish (Quake's $k$-mer counter), which use secondary memory to store some or all of the $k$-mer counts.
+\emph{Lighter}'s accuracy is comparable to competing tools, as we show both in simulation experiments where false positives and false negatives can be measured, and in real-world experiments where read alignment scores and assembly statistics can be measured.  
 \emph{Lighter} is also very simple and fast; faster than all other tools tried in our experiments.
-These advantages make \emph{Lighter} quite practical compared to counting-based approaches, all of which require an amount of memory and/or secondary storage that increases with depth of coverage.
+These advantages make \emph{Lighter} quite practical compared to previous counting-based approaches, all of which require an amount of memory and/or secondary storage that increases with depth of coverage.
+
+
 
 %\emph{Lighter} makes a series of three passes over the input reads.  The first pass obtains a sample of the k-mers present in the input reads, storing the sample in a Bloom filter A.  The second pass uses Bloom filter A to identify ``solid'' k-mers and stores these in Bloom filter B.  The third pass uses Bloom filter B to detect and correct errors in the input reads.
 
@@ -337,19 +337,19 @@ Error rate & & $1\%$ & $3\%$ & $1\%$ & $3\%$ & $1\%$ & $3\%$ \\ \hhline{|=|=|=|=
 	& quake	& 89.59	& 48.77	& 89.64	& 48.82	& 89.59	& 48.78 \\ \cline{2-8}
 Recall	& musket	& 92.61	& 92.04	& 92.60	& 92.05	& 92.60	& 92.03 \\ \cline{2-8}
 	& bless	& 98.68	& 97.29	& 98.69	& 97.48	& 98.65	& 97.47 \\ \cline{2-8}
-	& lighter	& 99.40	& 98.00	& 99.33	& 98.73	& 99.38	& 98.88 \\ \hhline{|=|=|=|=|=|=|=|=|}
-	& quake	& 99.99	& 99.99	& 99.99	& 99.99	& 99.99	& 99.99 \\ \cline{2-8}
+	& lighter	& \textbf{99.40}	& \textbf{99.40}	& \textbf{99.40}	& \textbf{99.40} & \textbf{99.40}	& \textbf{99.40} \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& quake	&\textbf{99.99}	& \textbf{99.99}	& \textbf{99.99}	& \textbf{99.99}	& \textbf{99.99}	& \textbf{99.99} \\ \cline{2-8}
 Precision	& musket	& 99.78	& 99.63	& 99.78	& 99.63	& 99.78	& 99.63 \\ \cline{2-8}
 	& bless	& 98.90	& 98.59	& 98.88	& 98.62	& 98.88	& 98.61 \\ \cline{2-8}
 	& lighter	& 99.11 & 99.13	& 99.08	& 99.16	& 99.07	& 99.17 \\ \hhline{|=|=|=|=|=|=|=|=|}
 	& quake	& 94.51	& 65.56	& 94.54	& 65.61	& 94.51	& 65.57 \\ \cline{2-8}
 F-score	& musket	& 96.06	& 95.68	& 96.05	& 95.69	& 96.05	& 95.68 \\ \cline{2-8}
 	& bless	& 98.79	& 97.94	& 98.78	& 98.04	& 98.77	& 98.04 \\ \cline{2-8}
-	& lighter	& 99.26	& 98.56	& 99.21	& 98.94	& 99.22	& 99.02 \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& lighter	& \textbf{99.26}	& \textbf{98.56}	& \textbf{99.21}	& \textbf{98.94}	& \textbf{99.22}	& \textbf{99.02} \\ \hhline{|=|=|=|=|=|=|=|=|}
 	& quake	& 89.58	& 48.76	& 89.64	& 48.82	& 89.59	& 48.78 \\ \cline{2-8}
 Gain	& musket	& 92.40	& 91.70	& 92.39	& 91.71	& 92.39	& 91.69 \\ \cline{2-8}
 	& bless	& 97.58	& 95.90	& 97.57	& 96.11	& 97.54	& 96.09 \\ \cline{2-8}
-	& lighter	& 98.51	& 97.15	& 98.42	& 97.89	& 98.44	& 98.05 \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& lighter	& \textbf{98.51}	& \textbf{97.15}	& \textbf{98.42}	& \textbf{97.89}	& \textbf{98.44}	& \textbf{98.05} \\ \hhline{|=|=|=|=|=|=|=|=|}
 
 \end{tabular}
 }
@@ -517,15 +517,26 @@ So far, Bless can only run in single-thread mode and it takes 1475s to finish wh
 The result shows that Lighter is very efficient and scalable. 
 
 \section*{Discussion}
-In this paper, we propose a probabilitic method of obtaining solid kmers without counting. It is the first method that is able to find solid kmer with near constant space complexity and it is very easy to implement.
+\emph{Lighter} is a software tool for correcting sequencing errors in sequencing datasets.
+At \emph{Lighter}'s core is a method for obtaining a set of solid $k$-mers from a large collection of sequencing reads.
+Unlike previous methods, \emph{Lighter} does this without counting $k$-mers in the reads.
+By setting its parameters appropriately, its memory usage and accuracy can be held almost constant with respect to depth of coverage.
+It is also quite fast and practical.
 
-We use this method to implement an error correction program Lighter for DNA-seq reads. As we expect, Light is space-efficient . Moreover, it is very fast and gives performance is comparable with other programs. This shows that our method of finding solid kmer is quite reliable. 
+Though we demonstrate \emph{Lighter} in the context of sequencing error correction, \emph{Lighter}'s counting-free approach could be applied in other situation where a collection of solid $k$-mers is desired.
+For example, one tool for scaling metagenome sequence assembly uses of a Bloom filter populated with solid $k$-mers as a memory-efficient, probabilistic representation of a De Bruijn graph \cite{pell2012scaling}.
+Other tools use counting Bloom filters \cite{fan2000summary, bonomi2006improved} or the related CountMin sketch \cite{cormode2005improved} to represent De Bruijn graphs for compression \cite{jones2012compression} or digital normalization and related tasks \cite{zhang2013these}.
+We expect Ideas from \emph{Lighter} could be useful in reducing the memory footprint of these and other tools. 
 
-Another immediate application of our method is getting solid kmers' count, which can be done by scanning the reads again to get the real count for the solid kmers stored in table $B$. 
+%We use this method to implement an error correction program Lighter for DNA-seq reads. As we expect, Light is space-efficient . Moreover, it is very fast and gives performance is comparable with other programs. This shows that our method of finding solid kmer is quite reliable. 
 
-Since our method is probabilitic, we may miss few important information. Nevertheless, our method is extremely useful for programs like Quip[cite], where the accurate error correction is not critical. Even more, programs like Quip may directly use the solid kmers get by our method to do the assembly.
+%Another immediate application of our method is getting solid kmers' count, which can be done by scanning the reads again to get the real count for the solid kmers stored in table $B$. 
+
+%Since our method is probabilitic, we may miss few important information. Nevertheless, our method is extremely useful for programs like Quip[cite], where the accurate error correction is not critical. Even more, programs like Quip may directly use the solid kmers get by our method to do the assembly.
 
 In this paper, we did not analyze the affect of $\alpha$ analytically and it is a difficult problem. So far, the size of table $A$ and $B$ are setting by considering unpractical pessimestic scenarios. If we know the effect in some compact form, we can optimize the performance of obtaining solid kmers by setting the best $\alpha$ and also use less space.
+
+\emph{Lighter} is free open source software released under the XXX license.  The software and its source are available from \url{https://github.com/mourisl/Lighter/}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgements}

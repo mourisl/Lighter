@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  24 MAR 2014 22:08
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  24 MAR 2014 23:59
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -429,55 +429,55 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 150.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 150.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 150.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <9> on input line 167.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 167.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 205.
+
 [1
 
 {/usr/local/texlive/2012/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 155.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 155.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 155.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <9> on input line 172.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 172.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 210.
-
-[2] <lighter_framework.png, id=21, 796.47563pt x 597.73312pt>
+<lighter_framework.png, id=18, 796.47563pt x 597.73312pt>
 File: lighter_framework.png Graphic file (type png)
 
 <use lighter_framework.png>
 Package pdftex.def Info: lighter_framework.png used on input line 263.
 (pdftex.def)             Requested size: 352.10284pt x 264.24379pt.
- [3 <./lighter_framework.png (PNG copy)>] [4]
-[5] <ErrorCorrection.png, id=36, 796.47563pt x 453.19313pt>
+ [2 <./lighter_framework.png (PNG copy)>] [3]
+[4] <ErrorCorrection.png, id=33, 796.47563pt x 453.19313pt>
 File: ErrorCorrection.png Graphic file (type png)
 
 <use ErrorCorrection.png>
 Package pdftex.def Info: ErrorCorrection.png used on input line 315.
 (pdftex.def)             Requested size: 352.10284pt x 200.34605pt.
- [6 <./ErrorCorrection.png (PNG copy)>]
+ [5 <./ErrorCorrection.png (PNG copy)>]
 Overfull \hbox (0.40535pt too wide) in paragraph at lines 330--331
 \OT1/cmr/m/n/10 score=2$\OMS/cmsy/m/n/10 ^^B$\OT1/cmr/m/n/10 recall$\OMS/cmsy/m
 /n/10 ^^B$\OT1/cmr/m/n/10 precision/(recall$+$precision) which is a kind of av-
 er-age of re-call and pre-ci-sion and Gain=(TP-
  []
 
-[7] <alpha.png, id=44, 642.4pt x 481.8pt>
+[6] <alpha.png, id=41, 642.4pt x 481.8pt>
 File: alpha.png Graphic file (type png)
  <use alpha.png>
 Package pdftex.def Info: alpha.png used on input line 385.
 (pdftex.def)             Requested size: 234.73523pt x 176.05035pt.
- [8 <./alpha.png (PNG copy)>] <bloom_occupancy_alpha_all.png, id=48, 642.4pt x 
+ [7 <./alpha.png (PNG copy)>] <bloom_occupancy_alpha_all.png, id=46, 642.4pt x 
 481.8pt>
 File: bloom_occupancy_alpha_all.png Graphic file (type png)
 
 <use bloom_occupancy_alpha_all.png>
 Package pdftex.def Info: bloom_occupancy_alpha_all.png used on input line 398.
 (pdftex.def)             Requested size: 234.73523pt x 176.05035pt.
- <per_base.png, id=49, 642.4pt x 481.8pt>
+ <per_base.png, id=47, 642.4pt x 481.8pt>
 File: per_base.png Graphic file (type png)
 
 <use per_base.png>
@@ -487,8 +487,8 @@ Package pdftex.def Info: per_base.png used on input line 427.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[9 <./bloom_occupancy_alpha_all.png (PNG copy)>] [10 <./per_base.png (PNG copy)
->] <runtime.png, id=57, 642.4pt x 481.8pt>
+[8 <./bloom_occupancy_alpha_all.png (PNG copy)>] [9 <./per_base.png (PNG copy)>
+] <runtime.png, id=54, 642.4pt x 481.8pt>
 File: runtime.png Graphic file (type png)
  <use runtime.png>
 Package pdftex.def Info: runtime.png used on input line 510.
@@ -497,13 +497,13 @@ Package pdftex.def Info: runtime.png used on input line 510.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[11] (./lighter_paper.bbl [12 <./runtime.png (PNG copy)>]) [13]
+[10] (./lighter_paper.bbl [11 <./runtime.png (PNG copy)>]) [12]
 (./lighter_paper.aux) ) 
 Here is how much of TeX's memory you used:
- 2122 strings out of 493488
- 29548 string characters out of 3141326
- 105900 words of memory out of 3000000
- 5391 multiletter control sequences out of 15000+200000
+ 2126 strings out of 493488
+ 29621 string characters out of 3141326
+ 105913 words of memory out of 3000000
+ 5395 multiletter control sequences out of 15000+200000
  9806 words of font info for 34 fonts, out of 3000000 for 9000
  957 hyphenation exceptions out of 8191
  37i,8n,23p,1705b,261s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -525,10 +525,10 @@ r/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/
 local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/lo
 cal/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/loc
 al/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pfb>
-Output written on lighter_paper.pdf (13 pages, 518669 bytes).
+Output written on lighter_paper.pdf (12 pages, 524493 bytes).
 PDF statistics:
- 125 PDF objects out of 1000 (max. 8388607)
- 85 compressed objects within 1 object stream
+ 121 PDF objects out of 1000 (max. 8388607)
+ 82 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  31 words of extra memory for PDF output out of 10000 (max. 10000000)
 
