@@ -1,14 +1,25 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.17)  20 MAR 2014 23:52
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  24 MAR 2014 22:08
 entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
  %&-line parsing enabled.
-**lighter_paper
+**lighter_paper.tex
 (./lighter_paper.tex
-LaTeX2e <2009/09/24>
-Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
-yphenation, loaded.
-(/usr/share/texmf-texlive/tex/latex/base/article.cls
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, ge
+rman-x-2012-05-30, ngerman-x-2012-05-30, afrikaans, ancientgreek, ibycus, arabi
+c, armenian, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danis
+h, dutch, ukenglish, usenglishmax, esperanto, estonian, ethiopic, farsi, finnis
+h, french, friulan, galician, german, ngerman, swissgerman, monogreek, greek, h
+ungarian, icelandic, assamese, bengali, gujarati, hindi, kannada, malayalam, ma
+rathi, oriya, panjabi, tamil, telugu, indonesian, interlingua, irish, italian, 
+kurmanji, latin, latvian, lithuanian, mongolian, mongolianlmc, bokmal, nynorsk,
+ polish, portuguese, romanian, romansh, russian, sanskrit, serbian, serbianc, s
+lovak, slovenian, spanish, swedish, turkish, turkmen, ukrainian, uppersorbian, 
+welsh, loaded.
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
-(/usr/share/texmf-texlive/tex/latex/base/size10.clo
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/size10.clo
 File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
@@ -23,20 +34,20 @@ File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 )
-(/usr/share/texmf-texlive/tex/latex/cite/cite.sty
-LaTeX Info: Redefining \cite on input line 285.
-LaTeX Info: Redefining \nocite on input line 356.
-Package: cite 2009/08/29  v 5.2
+(/usr/local/texlive/2012/texmf-dist/tex/latex/cite/cite.sty
+LaTeX Info: Redefining \cite on input line 302.
+LaTeX Info: Redefining \nocite on input line 373.
+Package: cite 2010/09/10  v 5.3
 )
-(/usr/share/texmf-texlive/tex/latex/ltxmisc/url.sty
+(/usr/local/texlive/2012/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip10
 Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
 )
-(/usr/share/texmf-texlive/tex/latex/base/ifthen.sty
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/ifthen.sty
 Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
 )
-(/usr/share/texmf-texlive/tex/latex/tools/multicol.sty
-Package: multicol 2008/12/05 v1.6h multicolumn formatting (FMi)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/tools/multicol.sty
+Package: multicol 2011/06/27 v1.7a multicolumn formatting (FMi)
 \c@tracingmulticols=\count87
 \mult@box=\box26
 \multicol@leftmargin=\dimen103
@@ -81,23 +92,24 @@ Package: multicol 2008/12/05 v1.6h multicolumn formatting (FMi)
 \multicolundershoot=\dimen110
 \mult@nat@firstbox=\box50
 \colbreak@box=\box51
+\multicol@sort@counter=\count95
 )
-(/usr/share/texmf-texlive/tex/latex/tools/hhline.sty
+(/usr/local/texlive/2012/texmf-dist/tex/latex/tools/hhline.sty
 Package: hhline 1994/05/23 v2.03 Table rule package (DPC)
 )
-(/usr/share/texmf-texlive/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2008/03/30 v1.1d Input encoding file
 \inpenc@prehook=\toks14
 \inpenc@posthook=\toks15
 
-(/usr/share/texmf-texlive/tex/latex/base/utf8.def
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
 Now handling font encoding OML ...
 ... no UTF-8 mapping file for font encoding OML
 Now handling font encoding T1 ...
 ... processing UTF-8 mapping file for font encoding T1
 
-(/usr/share/texmf-texlive/tex/latex/base/t1enc.dfu
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/t1enc.dfu
 File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A1 (decimal 161)
    defining Unicode char U+00A3 (decimal 163)
@@ -247,7 +259,7 @@ File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
 Now handling font encoding OT1 ...
 ... processing UTF-8 mapping file for font encoding OT1
 
-(/usr/share/texmf-texlive/tex/latex/base/ot1enc.dfu
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/ot1enc.dfu
 File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A1 (decimal 161)
    defining Unicode char U+00A3 (decimal 163)
@@ -278,7 +290,7 @@ File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
 Now handling font encoding OMS ...
 ... processing UTF-8 mapping file for font encoding OMS
 
-(/usr/share/texmf-texlive/tex/latex/base/omsenc.dfu
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/omsenc.dfu
 File: omsenc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A7 (decimal 167)
    defining Unicode char U+00B6 (decimal 182)
@@ -302,37 +314,45 @@ Now handling font encoding U ...
    defining Unicode char U+2122 (decimal 8482)
    defining Unicode char U+2423 (decimal 9251)
 ))
-(/usr/share/texmf-texlive/tex/latex/graphics/graphicx.sty
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
 
-(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
 \KV@toks@=\toks16
 )
-(/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
 
-(/usr/share/texmf-texlive/tex/latex/graphics/trig.sty
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 )
-(/etc/texmf/tex/latex/config/graphics.cfg
-File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
+(/usr/local/texlive/2012/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
 )
 Package graphics Info: Driver file: pdftex.def on input line 91.
 
-(/usr/share/texmf-texlive/tex/latex/pdftex-def/pdftex.def
-File: pdftex.def 2009/08/25 v0.04m Graphics/color for pdfTeX
-\Gread@gobject=\count95
+(/usr/local/texlive/2012/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count96
 ))
 \Gin@req@height=\dimen111
 \Gin@req@width=\dimen112
 )
-(/usr/share/texmf-texlive/tex/latex/tools/verbatim.sty
+(/usr/local/texlive/2012/texmf-dist/tex/latex/tools/verbatim.sty
 Package: verbatim 2003/08/22 v1.5q LaTeX2e package for verbatim enhancements
 \every@verbatim=\toks17
 \verbatim@line=\toks18
 \verbatim@in@stream=\read1
-) (./lighter_paper.aux)
+)
+(./lighter_paper.aux)
 \openout1 = `lighter_paper.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 113.
@@ -348,99 +368,167 @@ LaTeX Font Info:    ... okay on input line 113.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 113.
 LaTeX Font Info:    ... okay on input line 113.
 
-(/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
+(/usr/local/texlive/2012/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count96
+\scratchcounter=\count97
 \scratchdimen=\dimen113
 \scratchbox=\box52
-\nofMPsegments=\count97
-\nofMParguments=\count98
+\nofMPsegments=\count98
+\nofMParguments=\count99
 \everyMPshowfont=\toks19
-\MPscratchCnt=\count99
+\MPscratchCnt=\count100
 \MPscratchDim=\dimen114
-\MPnumerator=\count100
+\MPnumerator=\count101
+\makeMPintoPDFobject=\count102
 \everyMPtoPDFconversion=\toks20
+) (/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
 )
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 151.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 151.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 151.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <9> on input line 168.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 168.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 205.
- [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-<lighter_framework.png, id=16, 796.47563pt x 597.73312pt>
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Manage graphics extensions (HO)
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
+))
+(/usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 452.
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+[1
+
+{/usr/local/texlive/2012/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 155.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 155.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 155.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <9> on input line 172.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 172.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 210.
+
+[2] <lighter_framework.png, id=21, 796.47563pt x 597.73312pt>
 File: lighter_framework.png Graphic file (type png)
 
-<use lighter_framework.png> [2 <./lighter_framework.png (PNG copy)>] [3]
-<ErrorCorrection.png, id=29, 796.47563pt x 453.19313pt>
+<use lighter_framework.png>
+Package pdftex.def Info: lighter_framework.png used on input line 263.
+(pdftex.def)             Requested size: 352.10284pt x 264.24379pt.
+ [3 <./lighter_framework.png (PNG copy)>] [4]
+[5] <ErrorCorrection.png, id=36, 796.47563pt x 453.19313pt>
 File: ErrorCorrection.png Graphic file (type png)
 
 <use ErrorCorrection.png>
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[4]
-Overfull \hbox (0.40535pt too wide) in paragraph at lines 288--289
+Package pdftex.def Info: ErrorCorrection.png used on input line 315.
+(pdftex.def)             Requested size: 352.10284pt x 200.34605pt.
+ [6 <./ErrorCorrection.png (PNG copy)>]
+Overfull \hbox (0.40535pt too wide) in paragraph at lines 330--331
 \OT1/cmr/m/n/10 score=2$\OMS/cmsy/m/n/10 ^^B$\OT1/cmr/m/n/10 recall$\OMS/cmsy/m
 /n/10 ^^B$\OT1/cmr/m/n/10 precision/(recall$+$precision) which is a kind of av-
 er-age of re-call and pre-ci-sion and Gain=(TP-
  []
 
-[5 <./ErrorCorrection.png (PNG copy)>] [6]
-<alpha.png, id=39, 642.4pt x 481.8pt>
+[7] <alpha.png, id=44, 642.4pt x 481.8pt>
 File: alpha.png Graphic file (type png)
  <use alpha.png>
-<bloom_occupancy_alpha_all.png, id=40, 642.4pt x 481.8pt>
+Package pdftex.def Info: alpha.png used on input line 385.
+(pdftex.def)             Requested size: 234.73523pt x 176.05035pt.
+ [8 <./alpha.png (PNG copy)>] <bloom_occupancy_alpha_all.png, id=48, 642.4pt x 
+481.8pt>
 File: bloom_occupancy_alpha_all.png Graphic file (type png)
 
 <use bloom_occupancy_alpha_all.png>
+Package pdftex.def Info: bloom_occupancy_alpha_all.png used on input line 398.
+(pdftex.def)             Requested size: 234.73523pt x 176.05035pt.
+ <per_base.png, id=49, 642.4pt x 481.8pt>
+File: per_base.png Graphic file (type png)
+
+<use per_base.png>
+Package pdftex.def Info: per_base.png used on input line 427.
+(pdftex.def)             Requested size: 234.73523pt x 176.05035pt.
+
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[7 <./alpha.png (PNG copy)>] <per_base.png, id=46, 642.4pt x 481.8pt>
-File: per_base.png Graphic file (type png)
-
-<use per_base.png> [8 <./bloom_occupancy_alpha_all.png (PNG copy)> <./per_base.
-png (PNG copy)>] [9] <runtime.png, id=53, 642.4pt x 481.8pt>
+[9 <./bloom_occupancy_alpha_all.png (PNG copy)>] [10 <./per_base.png (PNG copy)
+>] <runtime.png, id=57, 642.4pt x 481.8pt>
 File: runtime.png Graphic file (type png)
  <use runtime.png>
-[10 <./runtime.png (PNG copy)>] (./lighter_paper.bbl) [11] (./lighter_paper.aux
-) ) 
+Package pdftex.def Info: runtime.png used on input line 510.
+(pdftex.def)             Requested size: 234.73523pt x 176.05035pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[11] (./lighter_paper.bbl [12 <./runtime.png (PNG copy)>]) [13]
+(./lighter_paper.aux) ) 
 Here is how much of TeX's memory you used:
- 1524 strings out of 495061
- 18834 string characters out of 1182620
- 90123 words of memory out of 3000000
- 4701 multiletter control sequences out of 15000+50000
+ 2122 strings out of 493488
+ 29548 string characters out of 3141326
+ 105900 words of memory out of 3000000
+ 5391 multiletter control sequences out of 15000+200000
  9806 words of font info for 34 fonts, out of 3000000 for 9000
- 28 hyphenation exceptions out of 8191
- 25i,8n,19p,1701b,259s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/sh
-are/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-t
-exlive/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texmf-texlive/fonts
-/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/publ
-ic/amsfonts/cm/cmmi5.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/
-cm/cmmi7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi9.pfb
-></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share
-/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texli
-ve/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fonts/typ
-e1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-texlive/fonts/type1/public/ams
-fonts/cm/cmr8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr9
-.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/
-share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-
-texlive/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-texlive/font
-s/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/pub
-lic/amsfonts/cm/cmti9.pfb>
-Output written on lighter_paper.pdf (11 pages, 527412 bytes).
+ 957 hyphenation exceptions out of 8191
+ 37i,8n,23p,1705b,261s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/local/texlive/2012/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmbx10.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmbx12.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmbx9.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmmi10.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmmi5.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmmi7.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmmi9.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmr10.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+r12.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr1
+7.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.p
+fb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb>
+</usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></u
+sr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></us
+r/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/
+local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/lo
+cal/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/loc
+al/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pfb>
+Output written on lighter_paper.pdf (13 pages, 518669 bytes).
 PDF statistics:
- 116 PDF objects out of 1000 (max. 8388607)
+ 125 PDF objects out of 1000 (max. 8388607)
+ 85 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  31 words of extra memory for PDF output out of 10000 (max. 10000000)
 
