@@ -307,8 +307,54 @@ public:
 
    double GetActualFP()
    {
-   	double f = occupancy() ;
-	return pow( f, salt_.size() ) ;
+   	//return pow( occupancy(), salt_.size() ) ;
+	   unsigned long long i, j, k, tagK ;
+	   unsigned long long used = 0 ;
+	   double sum = 0 ;
+	   double blockFP[BLOCK_SIZE + 1] ;
+
+	   // Precompute the false positive for each possible block's occupancy rate
+	   for ( i = 0 ; i <= BLOCK_SIZE ; ++i )
+	   	blockFP[i] = pow( (double)i / BLOCK_SIZE, salt_.size() ) ;
+	   
+	   //printf( "(%llu)\n", table_size_ ) ;
+	   for ( i = 0, j = 0 ; i <raw_table_size_ ; ++i, j += bits_per_char )
+	   {
+		int tmp = bit_table_[i] ;
+		unsigned long long int t = 0 ;
+		//if ( i >= table_size_ - 10 )
+		//	printf( "(%llu)%llu %d\n", table_size_,i, tmp ) ;
+		while ( t < bits_per_char )
+		{
+			if ( j + t < table_size_ )
+				used += ( tmp & 1 ) ;
+			else
+				break ;
+
+			if ( j + t == BLOCK_SIZE )
+			{
+				tagK = 0 ;
+				k = 0 ;
+			}
+			else if ( j + t > BLOCK_SIZE )
+			{
+				used -= ( bit_table_[k] >> tagK ) & 1 ;
+				//exit( 1 ) ;
+				++tagK ;		
+				if ( tagK >= bits_per_char )
+				{
+					++k ;
+					tagK = 0 ;
+				}
+			}
+			//printf( "%u\n", (unsigned int)used ) ;
+			sum += blockFP[used] ; //pow( (double)used / BLOCK_SIZE, salt_.size() ) ;
+			tmp = tmp >> 1 ;
+			++t ;
+		}
+	   }
+	   //printf( "%llu %llu\n", used, total ) ;
+	   return (double)sum/( table_size_ - BLOCK_SIZE ) ;
    }
 
    inline void insert(const unsigned char* key_begin, const std::size_t& length)

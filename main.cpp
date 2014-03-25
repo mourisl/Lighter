@@ -252,7 +252,6 @@ int main( int argc, char *argv[] )
 		//kmers.SetNumOfThreads( numOfThreads ) ;
 		trustedKmers.SetNumOfThreads( numOfThreads ) ;
 	}
-
 	
 	goodQuality = GetGoodQuality( reads ) ;
 	reads.Rewind() ;
@@ -379,7 +378,7 @@ int main( int argc, char *argv[] )
 	}
 	PrintLog( "Finish storing trusted kmers" ) ;
 	// Step 3: error correction
-	//printf( "%lf %lf\n", kmers.Occupancy(), trustedKmers.Occupancy() ) ;
+	//printf( "%lf %lf\n", kmers.GetFP(), trustedKmers.GetFP() ) ;
 	reads.Rewind() ;
 	if ( numOfThreads == 1 )
 	{
