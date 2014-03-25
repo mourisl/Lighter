@@ -136,11 +136,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\author{Li Song$^1$%
-       Liliana Florea$^2$
-      Ben Langmead$^{*3}$ %
-      }
-\date{}     
+\author{Li Song$^1$
+  Liliana Florea$^2$
+  Ben Langmead$^{*3}$
+}
+
+\begin{enumerate}
+\item Department of Computer Science, Johns Hopkins University
+\item McKusick-Nathans Institute of Genetic Medicine, Johns Hopkins University
+\end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                          %%
@@ -167,7 +171,7 @@
 \emph{Lighter} is a fast and memory-efficient tool for correcting sequencing errors in high-throughput sequencing datasets.
 \emph{Lighter} avoids counting $k$-mers in the sequencing reads.
 Instead, it uses a pair of Bloom filters, one populated with a sample of the input $k$-mers and the other populated with $k$-mers likely to be correct based on a statistical test.
-As long as the sampling fraction is adjusted proportionally to the dataset's average coverage, the Bloom filter size can be held constant while maintaining near-constant occupancy and false positive rate.
+As long as the sampling fraction is adjusted in inverse proportion to the dataset's average coverage, the Bloom filter size can be held constant while maintaining near-constant accuracy.
 \emph{Lighter} is easily applied to very large sequencing datasets.  It uses no secondary storage, and is both faster and more memory-efficient than competing approaches while achieving comparable accuracy.
 \emph{Lighter} is free open source software available from \url{https://github.com/mourisl/Lighter/}.
 \end{abstract}
@@ -197,21 +201,59 @@ As long as the sampling fraction is adjusted proportionally to the dataset's ave
 % What's our story w/r/t choosing k-mer length?
 
 \section*{Introduction}
-The cost and throughput of DNA sequencing have improved very rapidly in the past several years \cite{glenn2011field}.
+The cost and throughput of DNA sequencing have improved rapidly in the past several years \cite{glenn2011field}.
 Recent advances have reduced the cost of sequencing a single human genome at 30-fold coverage to around \$1,000 \cite{1kgenomeforreal}.
-Consequently, there has been an explosion of new software for analyzing large collections of sequencing reads.
-Correction of sequencing errors is a basic need in many of these tools.
-Removing errors at the outset can improve speed, memory-efficiency and accuracy of downstream tools \cite{kelley2010quake}.
+With these advances have come an explosion of new software for analyzing large sequencing datasets.
+Sequencing error correction is a basic need for many of these tools.
+Removing errors at the outset of an analysis can improve accuracy of downstream tools such as variant callers \cite{kelley2010quake}.
+Removing errors can also improve the speed and memory-efficiency of downstream tools.
 This is particularly true for analyses involving de novo assembly with De Bruijn graphs, since the size of the graph increases with the number of distinct $k$-mers in the dataset \cite{pevzner2001eulerian, chaisson2004fragment}.
 
-For an error correction tools to be truly usable, time and memory requirements must be very modest.
-When input datasets are extremely large (e.g. billions of reads), and when the genome under study is large (e.g. human), this challenge is particularly pronounced.
+For error correction software to be useful in practice, it must make economical use of time and memory even when input datasets are extremely large (billions of reads) and when the genome under study is also large (mammalian).
+Several methods have been proposed, covering a wide tradeoff space between accuracy, speed and memory- and storage-efficiency.
+SHREC \cite{schroder2009shrec} and HiTEC \cite{ilie2011hitec} build a suffix index of the input reads and locate errors by finding instances where a substring is followed by a character less often than would be expected if the character were correct.
+Coral \cite{salmela2011correcting} and ECHO \cite{kao2011echo} find overlaps among reads and use the resulting multiple alignments to detect and correct errors.
+Reptile \cite{yang2010reptile} and Hammer \cite{medvedev2011error} detect and correct errors by examining each $k$-mer's neighborhood in the dataset's $k$-mer Hamming graph.
+
+% Citations
+% Quake: 149, used in GAGE, assemblathon, 
+% SHREC: 68, none seem to be users
+% Reptile: 52, no obvious users
+% HiTEC: 46, none seem to be users
+% ECHO: 37, a handful seem to be users
+% Hammer: 35, 
+% Coral: 34, no obvious users
+% CUDA-EC: 33, no obvious users
+% DecGPU: 15
+% Musket: 8
+% BLESS: 0
+% Turtle: 1
+
+The most practical and widely used error correction methods descend from the spectral alignment approach introduced in the earliest De Bruijn graph based assemblers \cite{pevzner2001eulerian, chaisson2004fragment}.
+These methods count the number of times each $k$-mer occurs (its \emph{multiplicity}) in the input reads, then apply a threshold such that reads with multiplicity exceeding the threshold are considered \emph{solid}.
+Solid $k$-mers are unlikely to have been altered by sequencing errors.
+$k$-mers with low multiplicity (\emph{weak} $k$-mers) are systematically edited into solid $k$-mers using a dynamic-programming solution to the spectral alignment problem \cite{pevzner2001eulerian, chaisson2004fragment} or, more often, a fast heuristic approximation thereof.
+Quake \cite{kelley2010quake}, the most widely used error correction tool, uses a hash-based $k$-mer counter called Jellyfish \cite{marccais2011fast} to determine which $k$-mers are solid.
+CUDA-EC \cite{shi2010parallel} was novel for its use of Bloom filters as space-efficient alternatives to hash tables for counting $k$-mers and for representing the set of solid $k$-mers.
+More recent tools such as Musket \cite{liu2013musket} and BLESS \cite{heo2014bless} also use Bloom filters, sometimes in concert with a hash table, to count $k$-mers or to represent the set of solid $k$-mers.
+
+\emph{Lighter} (LIGHTweight ERror corrector) is also in the family of spectral alignment methods, but differs from previous approaches in that it avoids counting $k$-mers.
+Rather than count $k$-mers, \emph{Lighter} samples $k$-mers randomly, storing the sample in a Bloom filter.
+\emph{Lighter} then uses a statistical test applied to each position of each read to compile a set of solid $k$-mers, which are stored in a second Bloom filter.
+These two Bloom filters are the only sizable data structures used by \emph{Lighter}.
+\emph{Lighter}'s crucial advantage is that its parameters can be set such that the Bloom-filter size and the overall accuracy of the approach are near-constant with respect to the depth of coverage.
+In other words, no matter how deep the coverage, \emph{Lighter} can allocate the same sized Bloom filters and achieve nearly the same (a) Bloom filter occupancy, (b) Bloom filter false positive rate, and (c) error correction accuracy.
+\emph{Lighter} does this without using any secondary memory (e.g. magnetic or solid-state disk space), in contrast to methods like BLESS, which uses more secondary memory as the size of the input data increases.
+\emph{Lighter} is also very simple and fast; faster than all other tools tried in our experiments.
+These advantages make \emph{Lighter} quite practical compared to counting-based approaches, all of which require an amount of memory and/or secondary storage that increases with depth of coverage.
+
+%\emph{Lighter} makes a series of three passes over the input reads.  The first pass obtains a sample of the k-mers present in the input reads, storing the sample in a Bloom filter A.  The second pass uses Bloom filter A to identify ``solid'' k-mers and stores these in Bloom filter B.  The third pass uses Bloom filter B to detect and correct errors in the input reads.
 
 %One important way to study a species is to sequence its genome and analyze its DNA. The need to understand the genome stimulates the rapid development of DNA sequencing technologies. The output of the DNA sequencing is usually an enormous volume of short fragments from the genome. With these small fragments, computational biologists are able to design complicated methods to reconstruct the original genome by assembling or to detect the mutations from the known reference genome by aligning.
 
-The volume of the data is so huge that if we align them to the genome, each position is covered by a bunch of reads which is called the coverage. However, the short fragments are not perfect and usually contain a small number of sequecing errors. This affects one of the most important preprocessing stages for the data --- kmer counting, where a kmer is a nucleutide sequence of size k. If there is no sequencing error, all the kmers are from the genome, which are called solid kmers, and its quantity are bounded by the genome size instead of the coverage. This is not true in practice due to the sequecing errors and if the coverage is high enough, like what the sequecing technology gives us nowadays, the kmers containing sequencing errors will dominate the space consumption. To alleviate the impact from those non-solid kmers, various methods have been proposed, like BFcounter[cite]. These methods still suffer from the problem that the space consumption scales up with the coverage. In this paper, we propose a probablitic methods of obtaining solid kmers whose space complexity does not depend on the coverage.
+%The volume of the data is so huge that if we align them to the genome, each position is covered by a bunch of reads which is called the coverage. However, the short fragments are not perfect and usually contain a small number of sequecing errors. This affects one of the most important preprocessing stages for the data --- kmer counting, where a kmer is a nucleutide sequence of size k. If there is no sequencing error, all the kmers are from the genome, which are called solid kmers, and its quantity are bounded by the genome size instead of the coverage. This is not true in practice due to the sequecing errors and if the coverage is high enough, like what the sequecing technology gives us nowadays, the kmers containing sequencing errors will dominate the space consumption. To alleviate the impact from those non-solid kmers, various methods have been proposed, like BFcounter[cite]. These methods still suffer from the problem that the space consumption scales up with the coverage. In this paper, we propose a probablitic methods of obtaining solid kmers whose space complexity does not depend on the coverage.
 
-One immediate applicaiton using the information of solid kmers is error correction. Error correction is very important for the De Brujin graph based genome assemblers to save the memory usage. There are mainly three categories methods for error correction[cite], and converting all the kmers to solid kmers is one of them and is particularly successful for Illumina reads where the read errors are mainly substitutions. There are currently many programs for error corrections, and some of them are highlighted for their low memory usage, like Musket[cite] and Bless[cite]. With the help of our method of obtainig solid kmers and the bloom filters which is a compact probabilitc data structure, we also propose the program Lighter(LIGHT-weight ERror correction) that can do error correction with very small memory footprint and no extra disk consumption.
+%One immediate applicaiton using the information of solid kmers is error correction. Error correction is very important for the De Brujin graph based genome assemblers to save the memory usage. There are mainly three categories methods for error correction[cite], and converting all the kmers to solid kmers is one of them and is particularly successful for Illumina reads where the read errors are mainly substitutions. There are currently many programs for error corrections, and some of them are highlighted for their low memory usage, like Musket[cite] and Bless[cite]. With the help of our method of obtainig solid kmers and the bloom filters which is a compact probabilitc data structure, we also propose the program Lighter(LIGHT-weight ERror correction) that can do error correction with very small memory footprint and no extra disk consumption.
 
 \section*{Method}
 Lighter's workflow is illustrated in Figure \ref{fig:lighter_framework}. Lighter makes three passes over the input reads.  The first pass obtains a sample of the k-mers present in the input reads, storing the sample in Bloom filter A.  The second pass uses Bloom filter A to identify ``solid'' k-mers and stores these in Bloom filter B.  The third pass uses Bloom filter B to detect and correct errors in the input reads.
