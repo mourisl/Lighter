@@ -130,7 +130,7 @@ int main( int argc, char *argv[] )
 	char goodQuality ;
 	int badPrefix, badSuffix ;
 	bool paraOutputAllReads ;
-	double bloomFilterFP = 0.01 ;
+	//double bloomFilterFP = 0.0005 ;
 	int i, j ;
 	//uint64_t kmerCode ;
 	//uint64_t mask ;
@@ -237,8 +237,8 @@ int main( int argc, char *argv[] )
 	// Prepare data structures and other data.
 	//Store kmers(1000000000ull) ;
 	//Store trustedKmers(1000000000ull) ;
-	Store kmers((uint64_t)genomeSize * 1.5, bloomFilterFP ) ;
-	Store trustedKmers((uint64_t)genomeSize * 1.5, bloomFilterFP ) ;
+	Store kmers((uint64_t)genomeSize * 1.5, 0.01 ) ;
+	Store trustedKmers((uint64_t)genomeSize * 1.5, 0.0005 ) ;
 
 	if ( numOfThreads > 1 )
 	{
@@ -378,8 +378,8 @@ int main( int argc, char *argv[] )
 		}
 	}
 	PrintLog( "Finish storing trusted kmers" ) ;
-
 	// Step 3: error correction
+	//printf( "%lf %lf\n", kmers.Occupancy(), trustedKmers.Occupancy() ) ;
 	reads.Rewind() ;
 	if ( numOfThreads == 1 )
 	{

@@ -31,8 +31,6 @@
 // Add by Li
 #include <pthread.h>
 
-#define BLOCK_SIZE 256ull 
-
 static const std::size_t bits_per_char = 0x08;    // 8 bits in 1 char(unsigned)
 static const unsigned char bit_mask[bits_per_char] = {
                                                        0x01,  //00000001
@@ -135,14 +133,14 @@ public:
       double min_m = std::numeric_limits<double>::infinity();
       double min_k = 0.0;
       double curr_m = 0.0;
-      double k = 2.0;
+      double k = 1.0;
 
       while (k < 1000.0)
       {
-         double numerator   = (- k * projected_element_count) ; 
+         double numerator   = (- k * projected_element_count);
          double denominator = std::log(1.0 - std::pow(false_positive_probability, 1.0 / k));
          //double denominator = std::log(1.0 - std::pow(10, -4.0 / k));
-         curr_m = numerator / denominator + BLOCK_SIZE ;
+         curr_m = numerator / denominator;
          if (curr_m < min_m)
          {
             min_m = curr_m;
@@ -159,7 +157,6 @@ public:
       optp.table_size = static_cast<unsigned long long int>(min_m);
       optp.table_size += (((optp.table_size % bits_per_char) != 0) ? (bits_per_char - (optp.table_size % bits_per_char)) : 0);
 
-	//++optp.number_of_hashes ;
       if (optp.number_of_hashes < minimum_number_of_hashes)
          optp.number_of_hashes = minimum_number_of_hashes;
       else if (optp.number_of_hashes > maximum_number_of_hashes)
@@ -212,10 +209,6 @@ public:
       //bit_table_ = new cell_type[static_cast<std::size_t>(raw_table_size_)];
       bit_table_ = new cell_type[(raw_table_size_)];
       std::fill_n(bit_table_,raw_table_size_,0x00);
-      /*blockSize = 1 ;
-      while ( blockSize <= raw_table_size_ )
-      	blockSize *= 2 ;
-	blockSize /= 2 ;*/
    }
 
    bloom_filter(const bloom_filter& filter)
@@ -315,12 +308,9 @@ public:
    {
       std::size_t bit_index = 0;
       std::size_t bit = 0;
-      // Implementation of pattern block bloom filter
-      std::size_t start = 0 ;
-      start = ( hash_ap( key_begin, length, salt_[0] ) ) % ( table_size_ - BLOCK_SIZE + 1 );
-      for (std::size_t i = 0 ; i < salt_.size(); ++i)
+      for (std::size_t i = 0; i < salt_.size(); ++i)
       {
-         compute_indices(hash_ap(key_begin,length,salt_[i]),bit_index,bit, start );
+         compute_indices(hash_ap(key_begin,length,salt_[i]),bit_index,bit);
 
 	 // Add by Li
 	 if ( numOfThreads > 1 )
@@ -364,11 +354,9 @@ public:
    {
       std::size_t bit_index = 0;
       std::size_t bit = 0;
-      std::size_t start = 0 ;
-      start = ( hash_ap( key_begin, length, salt_[0] ) ) % ( table_size_ - BLOCK_SIZE + 1 );
       for (std::size_t i = 0; i < salt_.size(); ++i)
       {
-         compute_indices(hash_ap(key_begin,length,salt_[i]),bit_index,bit,start);
+         compute_indices(hash_ap(key_begin,length,salt_[i]),bit_index,bit);
          if ((bit_table_[bit_index / bits_per_char] & bit_mask[bit]) != bit_mask[bit])
          {
             return false;
@@ -513,12 +501,6 @@ protected:
       bit_index = hash % table_size_;
       bit = bit_index % bits_per_char;
    }
-   
-   inline virtual void compute_indices(const bloom_type& hash, std::size_t& bit_index, std::size_t& bit, const std::size_t & start ) const
-   {
-      bit_index = start + ( hash & ( BLOCK_SIZE - 1 ) ) ;
-      bit = bit_index % bits_per_char;
-   }
 
    void generate_unique_salt()
    {
@@ -655,7 +637,6 @@ protected:
    int numOfThreads ;
    pthread_mutex_t *locks ;
    std::size_t lockMask ;
-   
 
 public:
 	void SetNumOfThreads( int in ) 

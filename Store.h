@@ -69,7 +69,11 @@ public:
 	~Store() 
 	{
 	}
-
+	
+	double Occupancy()
+	{
+		return bf.occupancy() ;
+	}
 	double GetFP()
 	{
 		if ( method == 1 )
