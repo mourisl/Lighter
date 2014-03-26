@@ -1,0 +1,135 @@
+\begin{thebibliography}{10}
+
+\bibitem{bloom1970space}
+B.~H. Bloom.
+\newblock Space/time trade-offs in hash coding with allowable errors.
+\newblock {\em Communications of the ACM}, 13(7):422--426, 1970.
+
+\bibitem{bonomi2006improved}
+F.~Bonomi, M.~Mitzenmacher, R.~Panigrahy, S.~Singh, and G.~Varghese.
+\newblock An improved construction for counting bloom filters.
+\newblock In {\em Algorithms--ESA 2006}, pages 684--695. Springer, 2006.
+
+\bibitem{chaisson2004fragment}
+M.~Chaisson, P.~Pevzner, and H.~Tang.
+\newblock Fragment assembly with short reads.
+\newblock {\em Bioinformatics}, 20(13):2067--2074, 2004.
+
+\bibitem{cormode2005improved}
+G.~Cormode and S.~Muthukrishnan.
+\newblock An improved data stream summary: the count-min sketch and its
+  applications.
+\newblock {\em Journal of Algorithms}, 55(1):58--75, 2005.
+
+\bibitem{fan2000summary}
+L.~Fan, P.~Cao, J.~Almeida, and A.~Z. Broder.
+\newblock Summary cache: a scalable wide-area web cache sharing protocol.
+\newblock {\em IEEE/ACM Transactions on Networking (TON)}, 8(3):281--293, 2000.
+
+\bibitem{glenn2011field}
+T.~C. Glenn.
+\newblock Field guide to next-generation dna sequencers.
+\newblock {\em Molecular Ecology Resources}, 11(5):759--769, 2011.
+
+\bibitem{1kgenomeforreal}
+E.~C. Hayden.
+\newblock Is the \$1,000 genome for real?
+\newblock {\em Nature News}, 2014.
+
+\bibitem{heo2014bless}
+Y.~Heo, X.-L. Wu, D.~Chen, J.~Ma, and W.-M. Hwu.
+\newblock Bless: Bloom-filter-based error correction solution for
+  high-throughput sequencing reads.
+\newblock {\em Bioinformatics}, page btu030, 2014.
+
+\bibitem{ilie2011hitec}
+L.~Ilie, F.~Fazayeli, and S.~Ilie.
+\newblock Hitec: accurate error correction in high-throughput sequencing data.
+\newblock {\em Bioinformatics}, 27(3):295--302, 2011.
+
+\bibitem{jones2012compression}
+D.~C. Jones, W.~L. Ruzzo, X.~Peng, and M.~G. Katze.
+\newblock Compression of next-generation sequencing reads aided by highly
+  efficient de novo assembly.
+\newblock {\em Nucleic acids research}, 40(22):e171--e171, 2012.
+
+\bibitem{kao2011echo}
+W.-C. Kao, A.~H. Chan, and Y.~S. Song.
+\newblock Echo: a reference-free short-read error correction algorithm.
+\newblock {\em Genome research}, 21(7):1181--1192, 2011.
+
+\bibitem{kelley2010quake}
+D.~R. Kelley, M.~C. Schatz, S.~L. Salzberg, et~al.
+\newblock Quake: quality-aware detection and correction of sequencing errors.
+\newblock {\em Genome Biol}, 11(11):R116, 2010.
+
+\bibitem{liu2013musket}
+Y.~Liu, J.~Schr{\"o}der, and B.~Schmidt.
+\newblock Musket: a multistage k-mer spectrum-based error corrector for
+  illumina sequence data.
+\newblock {\em Bioinformatics}, 29(3):308--315, 2013.
+
+\bibitem{marccais2011fast}
+G.~Mar{\c{c}}ais and C.~Kingsford.
+\newblock A fast, lock-free approach for efficient parallel counting of
+  occurrences of k-mers.
+\newblock {\em Bioinformatics}, 27(6):764--770, 2011.
+
+\bibitem{medvedev2011error}
+P.~Medvedev, E.~Scott, B.~Kakaradov, and P.~Pevzner.
+\newblock Error correction of high-throughput sequencing datasets with
+  non-uniform coverage.
+\newblock {\em Bioinformatics}, 27(13):i137--i141, 2011.
+
+\bibitem{melsted2011efficient}
+P.~Melsted and J.~K. Pritchard.
+\newblock Efficient counting of k-mers in dna sequences using a bloom filter.
+\newblock {\em BMC bioinformatics}, 12(1):333, 2011.
+
+\bibitem{pell2012scaling}
+J.~Pell, A.~Hintze, R.~Canino-Koning, A.~Howe, J.~M. Tiedje, and C.~T. Brown.
+\newblock Scaling metagenome sequence assembly with probabilistic de bruijn
+  graphs.
+\newblock {\em Proceedings of the National Academy of Sciences},
+  109(33):13272--13277, 2012.
+
+\bibitem{pevzner2001eulerian}
+P.~A. Pevzner, H.~Tang, and M.~S. Waterman.
+\newblock An eulerian path approach to dna fragment assembly.
+\newblock {\em Proceedings of the National Academy of Sciences},
+  98(17):9748--9753, 2001.
+
+\bibitem{salmela2011correcting}
+L.~Salmela and J.~Schr{\"o}der.
+\newblock Correcting errors in short reads by multiple alignments.
+\newblock {\em Bioinformatics}, 27(11):1455--1461, 2011.
+
+\bibitem{schroder2009shrec}
+J.~Schr{\"o}der, H.~Schr{\"o}der, S.~J. Puglisi, R.~Sinha, and B.~Schmidt.
+\newblock Shrec: a short-read error correction method.
+\newblock {\em Bioinformatics}, 25(17):2157--2163, 2009.
+
+\bibitem{shi2010parallel}
+H.~Shi, B.~Schmidt, W.~Liu, and W.~M{\"u}ller-Wittig.
+\newblock A parallel algorithm for error correction in high-throughput
+  short-read data on cuda-enabled graphics hardware.
+\newblock {\em Journal of Computational Biology}, 17(4):603--615, 2010.
+
+\bibitem{tarkoma2012theory}
+S.~Tarkoma, C.~E. Rothenberg, and E.~Lagerspetz.
+\newblock Theory and practice of bloom filters for distributed systems.
+\newblock {\em Communications Surveys \& Tutorials, IEEE}, 14(1):131--155,
+  2012.
+
+\bibitem{yang2010reptile}
+X.~Yang, K.~S. Dorman, and S.~Aluru.
+\newblock Reptile: representative tiling for short read error correction.
+\newblock {\em Bioinformatics}, 26(20):2526--2533, 2010.
+
+\bibitem{zhang2013these}
+Q.~Zhang, J.~Pell, R.~Canino-Koning, A.~C. Howe, and C.~T. Brown.
+\newblock These are not the k-mers you are looking for: efficient online k-mer
+  counting using a probabilistic data structure.
+\newblock {\em arXiv preprint arXiv:1309.2975}, 2013.
+
+\end{thebibliography}

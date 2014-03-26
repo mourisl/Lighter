@@ -1,0 +1,45 @@
+This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
+The top-level auxiliary file: lighter_paper.aux
+The style file: abbrv.bst
+Database file #1: lighter_paper.bib
+You've used 24 entries,
+            2118 wiz_defined-function locations,
+            651 strings with 8034 characters,
+and the built_in function-call counts, 9008 in all, are:
+= -- 900
+> -- 459
+< -- 2
++ -- 185
+- -- 156
+* -- 731
+:= -- 1509
+add.period$ -- 73
+call.type$ -- 24
+change.case$ -- 149
+chr.to.int$ -- 0
+cite$ -- 24
+duplicate$ -- 288
+empty$ -- 653
+format.name$ -- 156
+if$ -- 1822
+int.to.chr$ -- 0
+int.to.str$ -- 24
+missing$ -- 24
+newline$ -- 123
+num.names$ -- 48
+pop$ -- 113
+preamble$ -- 1
+purify$ -- 125
+quote$ -- 0
+skip$ -- 200
+stack$ -- 0
+substring$ -- 694
+swap$ -- 46
+text.length$ -- 2
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 96
+warning$ -- 0
+while$ -- 90
+width$ -- 26
+write$ -- 265
