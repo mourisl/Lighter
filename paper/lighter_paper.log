@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.17)  26 MAR 2014 02:37
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.17)  26 MAR 2014 16:10
 entering extended mode
  %&-line parsing enabled.
 **lighter_paper
@@ -433,7 +433,7 @@ File: ErrorCorrection.png Graphic file (type png)
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [5]
-Overfull \hbox (0.40535pt too wide) in paragraph at lines 346--347
+Overfull \hbox (0.40535pt too wide) in paragraph at lines 336--337
 \OT1/cmr/m/n/10 score=2$\OMS/cmsy/m/n/10 ^^B$\OT1/cmr/m/n/10 recall$\OMS/cmsy/m
 /n/10 ^^B$\OT1/cmr/m/n/10 precision/(recall$+$precision) which is a kind of av-
 er-age of re-call and pre-ci-sion and Gain=(TP-
@@ -483,7 +483,7 @@ onts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cms
 y7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr
 /share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texm
 f-texlive/fonts/type1/public/amsfonts/cm/cmti9.pfb>
-Output written on lighter_paper.pdf (13 pages, 544278 bytes).
+Output written on lighter_paper.pdf (13 pages, 543588 bytes).
 PDF statistics:
  123 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
