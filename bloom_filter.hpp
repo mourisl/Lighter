@@ -354,7 +354,7 @@ public:
 		}
 	   }
 	   //printf( "%llu %llu\n", used, total ) ;
-	   return (double)sum/( table_size_ - BLOCK_SIZE ) ;
+	   return (double)sum/( table_size_ - BLOCK_SIZE + 1 ) ;
    }
 
    inline void insert(const unsigned char* key_begin, const std::size_t& length)
