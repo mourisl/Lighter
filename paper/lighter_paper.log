@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.17)  26 MAR 2014 16:10
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.17)  26 MAR 2014 21:32
 entering extended mode
  %&-line parsing enabled.
 **lighter_paper
@@ -425,7 +425,7 @@ LaTeX Font Info:    ... okay on input line 114.
 File: lighter_framework.png Graphic file (type png)
 
 <use lighter_framework.png> [2 <./lighter_framework.png (PNG copy)>] [3]
-[4] <ErrorCorrection.png, id=32, 796.47563pt x 453.19313pt>
+[4] <ErrorCorrection.png, id=33, 796.47563pt x 453.19313pt>
 File: ErrorCorrection.png Graphic file (type png)
 
 <use ErrorCorrection.png>
@@ -433,28 +433,28 @@ File: ErrorCorrection.png Graphic file (type png)
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [5]
-Overfull \hbox (0.40535pt too wide) in paragraph at lines 336--337
+Overfull \hbox (0.40535pt too wide) in paragraph at lines 338--339
 \OT1/cmr/m/n/10 score=2$\OMS/cmsy/m/n/10 ^^B$\OT1/cmr/m/n/10 recall$\OMS/cmsy/m
 /n/10 ^^B$\OT1/cmr/m/n/10 precision/(recall$+$precision) which is a kind of av-
 er-age of re-call and pre-ci-sion and Gain=(TP-
  []
 
 [6 <./ErrorCorrection.png (PNG copy)>] [7]
-<alpha.png, id=44, 642.4pt x 481.8pt>
+<alpha.png, id=45, 642.4pt x 481.8pt>
 File: alpha.png Graphic file (type png)
  <use alpha.png>
-<bloom_occupancy_alpha_all.png, id=45, 642.4pt x 481.8pt>
+<bloom_occupancy_alpha_all.png, id=46, 642.4pt x 481.8pt>
 File: bloom_occupancy_alpha_all.png Graphic file (type png)
 
 <use bloom_occupancy_alpha_all.png>
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[8 <./alpha.png (PNG copy)>] <per_base.png, id=49, 642.4pt x 481.8pt>
+[8 <./alpha.png (PNG copy)>] <per_base.png, id=50, 642.4pt x 481.8pt>
 File: per_base.png Graphic file (type png)
 
 <use per_base.png> [9 <./bloom_occupancy_alpha_all.png (PNG copy)> <./per_base.
-png (PNG copy)>] [10] <runtime.png, id=56, 642.4pt x 481.8pt>
+png (PNG copy)>] [10] <runtime.png, id=57, 642.4pt x 481.8pt>
 File: runtime.png Graphic file (type png)
 
 <use runtime.png> [11 <./runtime.png (PNG copy)>] (./lighter_paper.bbl [12])
@@ -470,22 +470,23 @@ Here is how much of TeX's memory you used:
 </usr/share/texmf-texlive/fonts/type1/public/amsfon
 ts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx1
 2.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/
-share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf
--texlive/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texmf-texlive/fon
-ts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texmf-texlive/fonts/type1/pub
-lic/amsfonts/cm/cmmi9.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts
-/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr12.pf
-b></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/shar
-e/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-texli
-ve/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-texlive/fonts/type
-1/public/amsfonts/cm/cmr9.pfb></usr/share/texmf-texlive/fonts/type1/public/amsf
-onts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cms
-y7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr
-/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texm
-f-texlive/fonts/type1/public/amsfonts/cm/cmti9.pfb>
-Output written on lighter_paper.pdf (13 pages, 543588 bytes).
+share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf
+-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fo
+nts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texmf-texlive/fonts/type1/pu
+blic/amsfonts/cm/cmmi7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfont
+s/cm/cmmi9.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.p
+fb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/sha
+re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-tex
+live/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-texlive/fonts/ty
+pe1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-texlive/fonts/type1/public/am
+sfonts/cm/cmr9.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cms
+y10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb></us
+r/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texm
+f-texlive/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/f
+onts/type1/public/amsfonts/cm/cmti9.pfb>
+Output written on lighter_paper.pdf (13 pages, 552671 bytes).
 PDF statistics:
- 123 PDF objects out of 1000 (max. 8388607)
+ 127 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  31 words of extra memory for PDF output out of 10000 (max. 10000000)
 
