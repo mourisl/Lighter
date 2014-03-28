@@ -1,6 +1,6 @@
-set terminal png truecolor enhanced linewidth 2
-
-set output "runtime.png"
+#set terminal png truecolor enhanced linewidth 2
+set terminal jpeg truecolor enhanced linewidth 2
+set output "runtime.jpg"
 
 set xlabel "# of threads"
 set ylabel "time(s)"

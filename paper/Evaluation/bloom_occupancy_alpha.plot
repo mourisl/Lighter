@@ -1,6 +1,6 @@
 set terminal png truecolor enhanced linewidth 2
-
-set output "bloom_occupancy_alpha.png"
+set terminal jpeg truecolor enhanced linewidth 2
+set output "bloom_occupancy_alpha.jpg"
 
 set key top left 
 
