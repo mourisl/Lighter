@@ -330,7 +330,7 @@ As shown in Figure \ref{fig:lighter_framework}, Lighter works in three stages: s
 
 \section*{Evaluation}
 \subsection*{Simulated data set}
-We compared the our result with other released programs, Quake[cite], Musket[cite] and Bless[cite]. We use Mason[cite] to generate a set of data sets with ecoli as the reference genome. The K12 strain of ecoli is fully sequenced and has the decent length for us to generated different scenarios easily. 
+We compared the our result with other released programs, Quake[cite], Musket[cite] and Bless[cite]. We use Mason[cite] to generate a set of data sets with ecoli as the reference genome. The K12 strain of ecoli is fully sequenced and has the decent length for us to generated different scenarios easily. The $k$-mer size is 17 for all the programs.
 
 In the simulated data set, we considered the coverage of $35$x, $75$x, $140$x, and the average error rate of $1\%$ and $3\%$. So there are totally 6 data sets. Because Mason can also specifiy the error rate of the first and the last base repsectively, suppose the average error rate is $e$, we set the error rate of the first base to $e/2$ and the error rate of the last base is $3e$. This setting is more realistic than a uniform error rate model. 
 %TODO: define recall,...
@@ -408,6 +408,18 @@ This explanation can also be verified by looking at the occupancy rate of table 
 \end{center}
 \end{figure}
 
+One important parameters for $k$-mer based error correction methods is the value of $k$. When $k$ is too small, the $k$-mer containing sequencing error comes will likely be a $k$-mer from another location of the genome. When $k$ is too large, there may not be enough error-free $k$-mers for us to do error correction, especially when the coverage is not high. From the perspective of efficiency, when $k$ is large, we need more time to process a $k$-mer. And for the programs which requires storing the $k$-mer information, like using a hash table to store the counts, larger $k$ causes more memory consumption. Since Lighter does not store the $k$-mers' information explicitly, larger $k$ will only make Lighter slower but does not affect the memory usage.  In \cite{kelley2010quake}, the authors suggested that we can select $4^k$ around two hundred times the genome size. 
+
+We measured the affect of $k$ using the simulated data set with $75\times$ coverage and $1\%$ error rate, the result is shown in Figure \ref{fig:kmerLength}. 
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\textwidth]{kmerLength.jpg}
+\caption{The effect of $\alpha$ on occupancy rate\label{fig:kmerLength}}
+\end{center}
+\end{figure}
+
+
 \subsection*{Real data set}
 \subsubsection*{E.Coli data set}
 We use ERR022075 data set which is a very deep coverage sequencing data set of ecoli K-12 strain genome. We still used Quake, Musket, Bless and Lighter to run this data set. Since usually we do not need that much of coverage, we uniformly sampled some reads from this data set and got a data set with roughly 75x coverage. The reads in this data set is paired-end and the read length is 100 and 102. Because Bless can not handle paired-end reads with different length, we truncate the last 2 base to form a 100-length paired-end data set.
@@ -415,7 +427,7 @@ We use ERR022075 data set which is a very deep coverage sequencing data set of e
 Since the genome of E.Coli K-12 strain is fully sequenced, we measured that 4,519,570 out of 4,553,699 kmers from the genome is stored in table $B$, which is more than $99\%$. This number can be slightly improved using larger $\alpha$. 
  
 % Result of bowtie2
-We can also measure the error corrections' affect on the alignment. We use Bowtie2[cite] to align the reads to the reference genome and count the total number of the matched position.
+We can also measure the error corrections' effect on the alignment. We use Bowtie2[cite] to align the reads to the reference genome and count the total number of the matched position.
 
 \begin{tabular}{|c|c|c|c|c|}\hline
   & Total Matched Pos & Improvement(\%) & Total pairs & Mapped \\ \hline
@@ -453,7 +465,7 @@ Lighter		&		118320	&99995	&65920	&58781	&47746 \\ \hline
 \end{table}
 
 \subsubsection*{Human Chr14}
-So far, we only tested the data on the genome of E.Coli, which is a pretty small. In this section, we use a data set from Gage[cite] on human chromosome 14. This data set is about 35x coverage and 101bp pair-end reads.
+So far, we only tested the data on the genome of E.Coli, which is a pretty small. In this section, we use a data set from Gage[cite] on human chromosome 14. This data set is about 35x coverage and 101bp pair-end reads. And the $k$-mer size is 19 for all the programs in this data set.
 
 Like for the E.Coli data set, we evaluate the result using both Bowtie2 and SOAPdenovo2.
 
@@ -472,7 +484,7 @@ Lighter	& 3,631,101,467	& 1.40	& 18,252,400	& 99.37\% \\ \hline
 \end{table}
 
 % Result of SOAPDenovo2
-We also tested the affect to the contigs size for SOAPDeovo2 shown in Table \ref{table:chr14_sd2}. In this data set, the improvement due to error corrections is obviously. 
+We also tested the effect to the contigs size for SOAPDeovo2 shown in Table \ref{table:chr14_sd2}. In this data set, the improvement due to error corrections is obviously. 
 
 \begin{table}
 \begin{tabular}{|c|c|c|c|c|c|} \hline
@@ -540,7 +552,7 @@ We expect Ideas from \emph{Lighter} could be useful in reducing the memory footp
 
 %Since our method is probabilitic, we may miss few important information. Nevertheless, our method is extremely useful for programs like Quip[cite], where the accurate error correction is not critical. Even more, programs like Quip may directly use the solid kmers get by our method to do the assembly.
 
-In this paper, we did not analyze the affect of $\alpha$ analytically and it is a difficult problem. So far, the size of table $A$ and $B$ are setting by considering unpractical pessimestic scenarios. If we know the effect in some compact form, we can optimize the performance of obtaining solid kmers by setting the best $\alpha$ and also use less space.
+In this paper, we did not analyze the effect of $\alpha$ analytically and it is a difficult problem. So far, the size of table $A$ and $B$ are setting by considering unpractical pessimestic scenarios. If we know the effect in some compact form, we can optimize the performance of obtaining solid kmers by setting the best $\alpha$ and also use less space.
 
 \emph{Lighter} is free open source software released under the XXX license.  The software and its source are available from \url{https://github.com/mourisl/Lighter/}.
 

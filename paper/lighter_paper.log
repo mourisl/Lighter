@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.17)  27 MAR 2014 21:26
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.17)  27 MAR 2014 22:26
 entering extended mode
  %&-line parsing enabled.
 **lighter_paper
@@ -449,42 +449,52 @@ File: bloom_occupancy_alpha_all.jpg Graphic file (type jpg)
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[8 <./alpha.jpg>] <per_base.jpg, id=50, 642.4pt x 481.8pt>
+<kmerLength.jpg, id=47, 642.4pt x 481.8pt>
+File: kmerLength.jpg Graphic file (type jpg)
+ <use kmerLength.jpg>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[8 <./alpha.jpg>] [9 <./bloom_occupancy_alpha_all.jpg> <./kmerLength.jpg>]
+<per_base.jpg, id=54, 642.4pt x 481.8pt>
 File: per_base.jpg Graphic file (type jpg)
- <use per_base.jpg>
-[9 <./bloom_occupancy_alpha_all.jpg> <./per_base.jpg>] [10]
-<runtime.jpg, id=57, 642.4pt x 481.8pt>
+ <use per_base.jpg> [10 <./per_base.jpg>] <runtime.jpg, id=58, 642.4pt x 481.8p
+t>
 File: runtime.jpg Graphic file (type jpg)
- <use runtime.jpg> [11 <./runtime.jpg>]
-(./lighter_paper.bbl [12]) [13] (./lighter_paper.aux) ) 
+ <use runtime.jpg>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[11] (./lighter_paper.bbl [12 <./runtime.jpg>] [13]) [14] (./lighter_paper.aux)
+ ) 
 Here is how much of TeX's memory you used:
- 2136 strings out of 495061
- 25730 string characters out of 1182620
- 100561 words of memory out of 3000000
- 5294 multiletter control sequences out of 15000+50000
+ 2142 strings out of 495061
+ 25835 string characters out of 1182620
+ 100570 words of memory out of 3000000
+ 5299 multiletter control sequences out of 15000+50000
  11159 words of font info for 40 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  27i,8n,20p,1701b,259s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/texmf-texliv
-e/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/typ
-e1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/a
-msfonts/cm/cmbx9.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/c
-mex10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb><
-/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/t
-exmf-texlive/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texmf-texlive
-/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texmf-texlive/fonts/type1
-/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsf
-onts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr1
-7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/s
-hare/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-te
-xlive/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texmf-texlive/fonts/t
-ype1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public
-/amsfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm
-/cmsy8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti9.pfb>
-Output written on lighter_paper.pdf (13 pages, 718510 bytes).
+</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/sha
+re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-te
+xlive/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texmf-texlive/fonts/
+type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-texlive/fonts/type1/publi
+c/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/
+cm/cmmi5.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi7.pfb
+></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share
+/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texli
+ve/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/typ
+e1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fonts/type1/public/am
+sfonts/cm/cmr7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr
+8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/s
+hare/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-
+texlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/font
+s/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-texlive/fonts/type1/publ
+ic/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts
+/cm/cmti9.pfb>
+Output written on lighter_paper.pdf (14 pages, 755817 bytes).
 PDF statistics:
- 127 PDF objects out of 1000 (max. 8388607)
+ 131 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 31 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 36 words of extra memory for PDF output out of 10000 (max. 10000000)
 
