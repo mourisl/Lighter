@@ -432,10 +432,10 @@ We can also measure the error corrections' effect on the alignment. We use Bowti
 \begin{tabular}{|c|c|c|c|c|}\hline
   & Total Matched Pos & Improvement(\%) & Total pairs & Mapped \\ \hline
 Original	& 343,081,567	& - & 1,748,808	& 99.04\% \\ \hline
-Quake	& 327,813,255	& -4.45	& 1,684,792	& 99.98\% \\ \hline
-Musket	& 345,403,149	& 0.68	& 1,748,808	& 99.15\% \\ \hline
-Bless	& 345,947,230	& 0.84	& 1,748,808	& 99.30\% \\ \hline
-Lighter	&  346,283,250 & 0.93	& 1,748,808	& 99.39\% \\ \hline
+Quake	& 327,813,255	& -4.45\%	& 1,684,792	& 99.98\% \\ \hline
+Musket	& 345,403,149	& 0.68\%	& 1,748,808	& 99.15\% \\ \hline
+Bless	& 345,947,230	& 0.84\%	& 1,748,808	& 99.30\% \\ \hline
+Lighter	&  346,283,250 & 0.93\%	& 1,748,808	& 99.39\% \\ \hline
 \end{tabular}
 
 For Quake, the number is very low mainly due to unreported reads and trimmed 3' end. It turns out Lighter gives the most improvement. We use samtools to do the SNP calling. 
