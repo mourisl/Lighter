@@ -275,9 +275,9 @@ In our method, the objects to be stored in the Bloom filters are k-mers.  Becaus
 
 % What do we do with k-mers with ambiguous nucleotides?
 
-\subsection*{First pass: downsampling}
+\subsection*{First pass}
 
-Consider a k-mer drawn from a read.  We say the k-mer is \emph{incorrect} if its sequence has been altered by one or more sequencing errors.  Otherwise it is \emph{correct}.  Others have noted that, given a dataset with deep and uniform coverage, incorrect k-mers occur rarely while correct k-mers occur many times, proportionally to coverage \cite{pevzner2001eulerian, chaisson2004fragment}.
+\paragraph{Sampling.}  Consider a k-mer drawn from a read.  We say the k-mer is \emph{incorrect} if its sequence has been altered by one or more sequencing errors.  Otherwise it is \emph{correct}.  Others have noted that, given a dataset with deep and uniform coverage, incorrect k-mers occur rarely while correct k-mers occur many times, proportionally to coverage \cite{pevzner2001eulerian, chaisson2004fragment}.
 
 In the first pass over the input reads, Lighter examines each k-mer of each read, canonicalizing and storing it in Bloom filter $A$ with probability $\alpha$, where $\alpha$ is an adjustable parameter.  Say a particular k-mer sequence occurs a total of $N_k$ times in the dataset.  If the $\alpha$ filter discards all $N_k$ occurrences, the k-mer is never added to $A$ and $A$'s cardinality is reduced by one.  Thus, reducing $\alpha$ in turn reduces $A$'s cardinality.  Because correct k-mers are more numerous, incorrect k-mers tend to be discarded from $A$ before correct k-mers as $\alpha$ decreases.
 
@@ -287,9 +287,9 @@ In the first pass over the input reads, Lighter examines each k-mer of each read
 
 %In other words, the size of $A$ depends almost only on the genome size. For $75\times$ coverage sequence data, we can let $\alpha$ be $0.05$.
 
-\subsection*{Second pass: finding trusted positions and obtaining solid k-mers}
+\subsection*{Second pass}
 
-Let $m(r)$ denote $k$-mer $r$'s multiplicity.  Let $P(\alpha, m(r))$ be the probability that $r$ is added to Bloom filter A given sampling rate $\alpha$:
+\paragraph{Finding trusted read positions.} Let $m(r)$ denote $k$-mer $r$'s multiplicity.  Let $P(\alpha, m(r))$ be the probability that $r$ is added to Bloom filter A given sampling rate $\alpha$:
 $$P(\alpha, m(r)) = 1-(1-\alpha)^{m(r)}$$
 
 When we query Bloom filter $A$, whether we get a positive response depends both on $P(\alpha, m(r))$ and on the filter's false positive rate, which we call $\beta$.  The probability $P^*(\alpha, m(r))$ of getting a positive response when querying for $r$ in $A$ is:
@@ -316,11 +316,11 @@ Framing the problem as a hypothesis test is convenient since it naturally handle
 
 %A one-tail hypothesis testing. The null hypothesis is that this position is wrong and the p-value can be get from test again $(x,P^*(\alpha, \gamma'))$ using the actual number of kmers in $A$ containing that position. We use $y$ to denote this actual number of kmers. In our method, suppose $y'$ is the first number whose p-value is smaller than 0.005, if $y>y'$, we reject the null hypothes and the position is trusted. The benefit of using hypothesis testing instead of using a fixed threshold is that we can handle the case where $x<k$ in a consistent way and it can tolerate the ill-chosen $\alpha$. Notice that, the position near the left and right boundary or near an error may never be trusted.
 
-Once all positions in a read have been marked \emph{trusted} or \emph{untrusted}, we scan the read and find all places where $k$ trusted positions are in a row.  The $k$-mer made up by those positions is likely solid, and so we add it to Bloom filter B.  
+\paragraph{Finding solid $k$-mers.}  Once all positions in a read have been marked \emph{trusted} or \emph{untrusted}, we scan the read and find all places where $k$ trusted positions are in a row.  The $k$-mer made up by those positions is likely solid, and so we add it to Bloom filter B.  
 
 %After marking each positions, if there are consecutive k trusted positions, we store the corresponding kmer, which is likely a solid $k$-mer, in another bloom filter $B$. Because these kmers are likely from the real genome, the size of $B$ also only depends on the genome size. 
 
-We now show that we can keep the space consumption almost constant by adjust $\alpha$ according to the coverage. Considering in one scenario 1, we have the coverage $C$. And in the next scenario 2, we incease the coverage to $zC$, where $z>1$. As the coverage increase, the occurence time of error-free kmers should be increase proportionally and so is the counting of the kmers showing up only one or two times. In scenario 1, we sample the kmers with probability $\alpha_1$, and $\alpha_2$ in scenario 2. In scenario 1, A kmer is solid if it showed up $\gamma$ times; a kmer is weak if it showed up less than $\gamma/G$ times. So in case 2, a solid kmer showed up at least about $z\gamma$ times while a weak kmer showed up at most about $z\gamma/G$ times. We can set $\alpha_2=\alpha_1/z$, and we will show that it almost keeps the performance of the hypothesis testing in the next. We will rely on the fact that in practice $\alpha$ is small and $(1-\alpha/z)^z\approx 1-\alpha$.
+\paragraph{Scaling with coverage.}  We now show that we can keep the space consumption almost constant by adjust $\alpha$ according to the coverage. Considering in one scenario 1, we have the coverage $C$. And in the next scenario 2, we incease the coverage to $zC$, where $z>1$. As the coverage increase, the occurence time of error-free kmers should be increase proportionally and so is the counting of the kmers showing up only one or two times. In scenario 1, we sample the kmers with probability $\alpha_1$, and $\alpha_2$ in scenario 2. In scenario 1, A kmer is solid if it showed up $\gamma$ times; a kmer is weak if it showed up less than $\gamma/G$ times. So in case 2, a solid kmer showed up at least about $z\gamma$ times while a weak kmer showed up at most about $z\gamma/G$ times. We can set $\alpha_2=\alpha_1/z$, and we will show that it almost keeps the performance of the hypothesis testing in the next. We will rely on the fact that in practice $\alpha$ is small and $(1-\alpha/z)^z\approx 1-\alpha$.
 
 Firstly, we can show that FPR of Bloom filter $A$ stays almost constant. When $\alpha_2=\alpha_1/z$, for the solid kmers, in scenario 2, the expected probability of get sampled is $P(\alpha_2,z\gamma)=1-(1-\alpha_2)^{z\gamma}\approx 1-(1-\alpha_1)^\gamma = P(\alpha_1,\gamma)$, which means the portion of solid kmers get sampled almost remains the same. Since the total number solid kmers is almost constant depending on the genome size, the number of the solid kmers get sampled is almost the same. For the weak kmers, most of them have multiplicity 1 in practice. Though the number of unique kmers may increase by $z$ times as the coverage increases, the number of them get sampled stays the same due to the smaller sampling rate. In other words, the total number of weak kmers get sampled is also almost constant. Thus, the total number of sampled $k$-mers almost does not change, and the FPR of Bloom filter $A$ stays the same.
 
