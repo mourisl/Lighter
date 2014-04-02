@@ -450,13 +450,15 @@ Since the genome of E.Coli K-12 strain is fully sequenced, we measured that 4,51
 % Result of bowtie2
 We can also measure the error corrections' effect on the alignment. We use Bowtie2[cite] to align the reads to the reference genome and count the total number of the matched position.
 
-\begin{tabular}{|c|c|c|c|c|}\hline
-  & Total Matched Pos & Improvement(\%) & Total pairs & Mapped \\ \hline
-Original	& 343,081,567	& - & 1,748,808	& 99.04\% \\ \hline
-Quake	& 327,813,255	& -4.45	& 1,684,792	& 99.98\% \\ \hline
-Musket	& 345,403,149	& 0.68	& 1,748,808	& 99.15\% \\ \hline
-Bless	& 345,947,230	& 0.84	& 1,748,808	& 99.30\% \\ \hline
-Lighter	&  346,283,250 & 0.93	& 1,748,808	& 99.39\% \\ \hline
+\begin{tabular}{|c|c|c|c||c|c|} \hline
+	 & \multicolumn{3}{|c||}{Read Level} & \multicolumn{2}{|c|}{Base Level} \\ \hline
+     & Total Reads 	& Mapped & Gain(\%) & Matched Pos & Gain(\%) \\ \hline
+Original & 3,497,616 & 	99.04\%	 & - & 343,081,567	& - \\ \hline
+Quake	& 3,369,584	& 99.98\%	& -2.75	& 327,813,255	& -4.45  \\ \hline
+Musket	& 3,497,616	& 99.15\%	& 0.11	& 345,403,149	& 0.68  \\ \hline
+Bless	& 3,497,616	& 99.30\%	& 0.26	& 345,947,230	& 0.84  \\ \hline
+Lighter	 & 3,497,616	&  99.39\%	& 0.35	& 346,283,250	&  0.93  \\ \hline
+
 \end{tabular}
 
 For Quake, the number is very low mainly due to unreported reads and trimmed 3' end. It turns out Lighter gives the most improvement. We use samtools to do the SNP calling. 
@@ -471,16 +473,16 @@ For those reads not got trimmed and alinged to the genome without indels (cigar 
 \end{figure}
 
 % Result of SOAPDenovo2
-Another common measurement for error correction is to run the de novo assembly and see the impact to the contigs. We use SOAPDenovo2[cite] to assemble the reads. SOAPDenovo2 is a de novo assembly software based on De Brujin graph. The parameter for SOAPDenovo2 especially the kmer size for the De Brujin graph is very important to the performance. We ran the SOAPdenovo2 on different parameters and choose the one with best N50 contig size for each program. 
+Another common measurement for error correction is to run the de novo assembly and see the impact to the contigs. We use SOAPDenovo2[cite] to assemble the reads. SOAPDenovo2 is a de novo assembly software based on De Brujin graph. The parameter for SOAPDenovo2 especially the kmer size for the De Brujin graph is very important to the performance. We ran the SOAPdenovo2 on different parameters and choose the one with best N50 contig size for each program. Then for each chosen contig file, we evaluated the assembly quality using Quast[cite].
 
 \begin{table}
-\begin{tabular}{|c|c|c|c|c|c|c|} \hline
- 		& N10 & N20 & N30 & N40 & N50 & genome coverage(\%)\\ \hline
-Original	&			123955	&99991	&73682	&60334	&53584 &98.62	 \\ \hline
-Quake		&		127511	&99981	&67326	&60764	&54854 &98.51	\\ \hline
-Musket		&		105584	&85240	&63114	&57675	&47826 &98.61	\\ \hline
-Bless		&		105584	&87436	&65920	&57669	&50573 &98.60	 \\ \hline
-Lighter		&		118320	&99995	&65920	&58781	&47746 &98.64 \\ \hline
+\begin{tabular}{|c|c|c|c|c|c|} \hline
+	 	& N50 &	L50	 & Mismatch / 100kbps&	Misassembly	& Coverage(\%) \\ \hline
+Original	& 53584 & 28	& 0.31 &	0 &	98.289 \\ \hline 
+Quake	& 54854	& 28	& 0.2	& 0	 & 98.248 \\ \hline
+Musket	& 47826	& 31	& 3.53 &	0	& 98.244 \\ \hline
+Bless	& 50573 & 	30	& 0.29	 & 0	& 98.276 \\ \hline
+Lighter	&	47746	& 30	& 1.18 &0	& 98.261 \\ \hline
 \end{tabular}
 \caption{De novo assembly of E.Coli data set\label{table:ecoli_sd2}}
 \end{table}
@@ -493,28 +495,29 @@ Like for the E.Coli data set, we evaluate the result using both Bowtie2 and SOAP
 The result of Bowtie2 is shown in Table \ref{table:chr14_bowtie2}.
 
 \begin{table}
-\begin{tabular}{|c|c|c|c|c|}\hline
-  & Total Matched Pos & Improvement(\%) & Total pairs & Mapped \\ \hline
-Original &	3,581,034,345	&	& 18,252,400 & 98.60\% \\ \hline
-Quake	& 3,040,192,216	& -15.10 &	16,280,259 &	99.96\% \\ \hline
-Musket	& 3,631,477,901	& 1.41	& 18,252,400	& 99.38\% \\ \hline
-Bless	& 3,636,682,539	& 1.55	& 18,252,400	& 99.43\% \\ \hline
-Lighter	& 3,631,101,467	& 1.40	& 18,252,400	& 99.37\% \\ \hline
+\begin{tabular}{|c|c|c|c||c|c|}\hline
+  & \multicolumn{3}{|c||}{Read Level} & \multicolumn{2}{|c|}{Base Level} \\ \hline
+  & Total Reads  & Mapped  &Gain(\%) &	Matched Pos	& Gain(\%) \\ \hline
+Original &	36,504,800	& 98.60\%	&- &	3,581,034,345	& - \\ \hline
+Quake &	32,560,518	& 99.96\%	& -9.57 &	3,040,192,216 &	-15.10 \\ \hline
+Musket &	36,504,800 &	99.38\%	& 0.79	&3,631,477,901	& 1.41 \\ \hline
+Bless &	36,504,800	&99.43\%	& 0.84	& 3,636,682,539 &	1.55 \\ \hline
+Lighter	& 36,504,800	&99.37\% & 0.78	& 3,631,101,467	& 1.40 \\ \hline
 \end{tabular}
 \caption{Alignment of chr14 data set\label{table:chr14_bowtie2}}
 \end{table}
 
 % Result of SOAPDenovo2
-We also tested the effect to the contigs size for SOAPDeovo2 shown in Table \ref{table:chr14_sd2}. In this data set, the improvement due to error corrections is obviously. 
+We also tested the effect to de novo assembly using SOAPDeovo2 and Quast which is shown in Table \ref{table:chr14_sd2}. In this data set, the improvement due to error corrections is obviously. 
 
 \begin{table}
-\begin{tabular}{|c|c|c|c|c|c|c|} \hline
- 		& N10 & N20 & N30 & N40 & N50 & genome coverage(\%)\\ \hline
-Original	&			10362	& 7374	& 5626	& 4338	& 3372 & 83.97	 \\ \hline
-Quake		&		9940	& 7026	& 5353	& 4114	&3203 & 83.48	 \\ \hline
-Musket		&		11409	& 8231	& 6226	& 4848	&3760 & 84.62	\\ \hline
-Bless		&		11505	& 8232	& 6288	& 4864	&3763 & 84.44	\\ \hline
-Lighter		&		11340	& 8240	& 6292	& 4871	&3766 & 84.76 \\ \hline
+\begin{tabular}{|c|c|c|c|c|c|} \hline
+	   & N50 &	L50	& Mismatch / 100kbps &	Misassembly	& Coverage(\%) \\ \hline
+Original &	3372 &	482	& 88.67	& 10 &	80.163 \\ \hline
+Quake	& 3203	& 452 &	85.95 & 9 &	79.993 \\ \hline
+Musket	& 3760	& 617 &	91.85 &	9 &	80.445 \\ \hline
+Bless	& 3763	& 623 &	88.69 &	19 &	80.456 \\ \hline
+Lighter	& 3766	& 618 &	90.22 &	12 &	80.498 \\ \hline
 \end{tabular}
 \caption{De novo assembly of chr14 data set\label{table:chr14_sd2}}
 \end{table}
