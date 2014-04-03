@@ -1,11 +1,9 @@
-%!PS-Adobe-2.0
+%!PS-Adobe-2.0 EPSF-2.0
 %%Title: runtime.eps
 %%Creator: gnuplot 4.2 patchlevel 6 
-%%CreationDate: Wed Mar  5 21:30:13 2014
+%%CreationDate: Thu Mar 27 20:07:57 2014
 %%DocumentFonts: (atend)
-%%BoundingBox: 50 50 554 770
-%%Orientation: Landscape
-%%Pages: (atend)
+%%BoundingBox: 50 50 410 302
 %%EndComments
 %%BeginProlog
 /gnudict 256 dict def
@@ -18,11 +16,11 @@ gnudict begin
 /Blacktext false def
 /Solid false def
 /Dashlength 1 def
-/Landscape true def
+/Landscape false def
 /Level1 false def
 /Rounded false def
 /TransparentPatterns false def
-/gnulinewidth 15.000 def
+/gnulinewidth 10.000 def
 /userlinewidth gnulinewidth def
 %
 /vshift -46 def
@@ -50,7 +48,7 @@ SDict begin [
   /Author (Li Song,,,)
 %  /Producer (gnuplot)
 %  /Keywords ()
-  /CreationDate (Wed Mar  5 21:30:13 2014)
+  /CreationDate (Thu Mar 27 20:07:57 2014)
   /DOCINFO pdfmark
 end
 } ifelse
@@ -422,15 +420,39 @@ Level1 {Level1PatternFill} {Level2PatternFill} ifelse
 /Symbol-Oblique /Symbol findfont [1 0 .167 1 0 0] makefont
 dup length dict begin {1 index /FID eq {pop pop} {def} ifelse} forall
 currentdict end definefont pop
+/MFshow {
+   { dup 5 get 3 ge
+     { 5 get 3 eq {gsave} {grestore} ifelse }
+     {dup dup 0 get findfont exch 1 get scalefont setfont
+     [ currentpoint ] exch dup 2 get 0 exch R dup 5 get 2 ne {dup dup 6
+     get exch 4 get {show} {stringwidth pop 0 R} ifelse }if dup 5 get 0 eq
+     {dup 3 get {2 get neg 0 exch R pop} {pop aload pop M} ifelse} {dup 5
+     get 1 eq {dup 2 get exch dup 3 get exch 6 get stringwidth pop -2 div
+     dup 0 R} {dup 6 get stringwidth pop -2 div 0 R 6 get
+     show 2 index {aload pop M neg 3 -1 roll neg R pop pop} {pop pop pop
+     pop aload pop M} ifelse }ifelse }ifelse }
+     ifelse }
+   forall} bind def
+/MFwidth {0 exch { dup 5 get 3 ge { 5 get 3 eq { 0 } { pop } ifelse }
+ {dup 3 get{dup dup 0 get findfont exch 1 get scalefont setfont
+     6 get stringwidth pop add} {pop} ifelse} ifelse} forall} bind def
+/MLshow { currentpoint stroke M
+  0 exch R
+  Blacktext {gsave 0 setgray MFshow grestore} {MFshow} ifelse } bind def
+/MRshow { currentpoint stroke M
+  exch dup MFwidth neg 3 -1 roll R
+  Blacktext {gsave 0 setgray MFshow grestore} {MFshow} ifelse } bind def
+/MCshow { currentpoint stroke M
+  exch dup MFwidth -2 div 3 -1 roll R
+  Blacktext {gsave 0 setgray MFshow grestore} {MFshow} ifelse } bind def
+/XYsave    { [( ) 1 2 true false 3 ()] } bind def
+/XYrestore { [( ) 1 2 true false 4 ()] } bind def
 end
 %%EndProlog
-%%Page: 1 1
 gnudict begin
 gsave
 50 50 translate
-0.100 0.100 scale
-90 rotate
-0 -5040 translate
+0.050 0.050 scale
 0 setgray
 newpath
 (Helvetica) findfont 140 scalefont setfont
@@ -440,136 +462,170 @@ LTb
 63 0 V
 5989 0 R
 -63 0 V
+stroke
 854 448 M
-( 0) Rshow
+[ [(Helvetica) 140.0 0.0 true true 0 ( 0)]
+] -46.7 MRshow
 1.000 UL
 LTb
 938 1080 M
 63 0 V
 5989 0 R
 -63 0 V
--6073 0 R
-( 200) Rshow
+stroke
+854 1080 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 200)]
+] -46.7 MRshow
 1.000 UL
 LTb
 938 1712 M
 63 0 V
 5989 0 R
 -63 0 V
--6073 0 R
-( 400) Rshow
+stroke
+854 1712 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 400)]
+] -46.7 MRshow
 1.000 UL
 LTb
 938 2344 M
 63 0 V
 5989 0 R
 -63 0 V
--6073 0 R
-( 600) Rshow
+stroke
+854 2344 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 600)]
+] -46.7 MRshow
 1.000 UL
 LTb
 938 2976 M
 63 0 V
 5989 0 R
 -63 0 V
--6073 0 R
-( 800) Rshow
+stroke
+854 2976 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 800)]
+] -46.7 MRshow
 1.000 UL
 LTb
 938 3608 M
 63 0 V
 5989 0 R
 -63 0 V
--6073 0 R
-( 1000) Rshow
+stroke
+854 3608 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 1000)]
+] -46.7 MRshow
 1.000 UL
 LTb
 938 4240 M
 63 0 V
 5989 0 R
 -63 0 V
--6073 0 R
-( 1200) Rshow
+stroke
+854 4240 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 1200)]
+] -46.7 MRshow
 1.000 UL
 LTb
 938 4872 M
 63 0 V
 5989 0 R
 -63 0 V
--6073 0 R
-( 1400) Rshow
+stroke
+854 4872 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 1400)]
+] -46.7 MRshow
 1.000 UL
 LTb
 938 448 M
 0 63 V
 0 4361 R
 0 -63 V
+stroke
 938 308 M
-( 0) Cshow
+[ [(Helvetica) 140.0 0.0 true true 0 ( 0)]
+] -46.7 MCshow
 1.000 UL
 LTb
 1695 448 M
 0 63 V
 0 4361 R
 0 -63 V
-0 -4501 R
-( 2) Cshow
+stroke
+1695 308 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 2)]
+] -46.7 MCshow
 1.000 UL
 LTb
 2451 448 M
 0 63 V
 0 4361 R
 0 -63 V
-0 -4501 R
-( 4) Cshow
+stroke
+2451 308 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 4)]
+] -46.7 MCshow
 1.000 UL
 LTb
 3208 448 M
 0 63 V
 0 4361 R
 0 -63 V
-0 -4501 R
-( 6) Cshow
+stroke
+3208 308 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 6)]
+] -46.7 MCshow
 1.000 UL
 LTb
 3964 448 M
 0 63 V
 0 4361 R
 0 -63 V
-0 -4501 R
-( 8) Cshow
+stroke
+3964 308 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 8)]
+] -46.7 MCshow
 1.000 UL
 LTb
 4721 448 M
 0 63 V
 0 4361 R
 0 -63 V
-0 -4501 R
-( 10) Cshow
+stroke
+4721 308 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 10)]
+] -46.7 MCshow
 1.000 UL
 LTb
 5477 448 M
 0 63 V
 0 4361 R
 0 -63 V
-0 -4501 R
-( 12) Cshow
+stroke
+5477 308 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 12)]
+] -46.7 MCshow
 1.000 UL
 LTb
 6234 448 M
 0 63 V
 0 4361 R
 0 -63 V
-0 -4501 R
-( 14) Cshow
+stroke
+6234 308 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 14)]
+] -46.7 MCshow
 1.000 UL
 LTb
 6990 448 M
 0 63 V
 0 4361 R
 0 -63 V
-0 -4501 R
-( 16) Cshow
+stroke
+6990 308 M
+[ [(Helvetica) 140.0 0.0 true true 0 ( 16)]
+] -46.7 MCshow
 1.000 UL
 LTb
 1.000 UL
@@ -582,13 +638,15 @@ LTb
 Z stroke
 LCb setrgbcolor
 280 2660 M
-currentpoint gsave translate 90 rotate 0 0 M
-(time\(s\)) Cshow
+currentpoint gsave translate 90 rotate 0 0 moveto
+[ [(Helvetica) 140.0 0.0 true true 0 (time\(s\))]
+] -46.7 MCshow
 grestore
 LTb
 LCb setrgbcolor
 3964 98 M
-(# of threads) Cshow
+[ [(Helvetica) 140.0 0.0 true true 0 (# of threads)]
+] -46.7 MCshow
 LTb
 1.000 UP
 1.000 UL
@@ -598,7 +656,8 @@ LTb
 LT0
 LTb
 6339 4739 M
-(Quake) Rshow
+[ [(Helvetica) 140.0 0.0 true true 0 (Quake)]
+] -46.7 MRshow
 LT0
 6423 4739 M
 399 0 V
@@ -626,7 +685,8 @@ LT0
 LT1
 LTb
 6339 4599 M
-(Musket) Rshow
+[ [(Helvetica) 140.0 0.0 true true 0 (Musket)]
+] -46.7 MRshow
 LT1
 6423 4599 M
 399 0 V
@@ -652,28 +712,29 @@ LT1
 LT2
 LTb
 6339 4459 M
-(Lighter) Rshow
+[ [(Helvetica) 140.0 0.0 true true 0 (Lighter)]
+] -46.7 MRshow
 LT2
 6423 4459 M
 399 0 V
-1316 2799 M
-1695 1759 L
-756 -553 V
-757 -148 V
-756 -92 V
-757 -63 V
+1316 1459 M
+379 -332 V
+2451 881 L
+757 -85 V
+756 -32 V
+757 -13 V
 756 -19 V
-757 -63 V
-756 -3 V
-1316 2799 Star
-1695 1759 Star
-2451 1206 Star
-3208 1058 Star
-3964 966 Star
-4721 903 Star
-5477 884 Star
-6234 821 Star
-6990 818 Star
+757 -9 V
+756 -6 V
+1316 1459 Star
+1695 1127 Star
+2451 881 Star
+3208 796 Star
+3964 764 Star
+4721 751 Star
+5477 732 Star
+6234 723 Star
+6990 717 Star
 6622 4459 Star
 1.000 UL
 LTb
@@ -692,4 +753,3 @@ end
 showpage
 %%Trailer
 %%DocumentFonts: Helvetica
-%%Pages: 1

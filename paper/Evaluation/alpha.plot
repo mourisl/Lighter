@@ -1,6 +1,7 @@
 set terminal png truecolor enhanced linewidth 2
+set terminal jpeg truecolor enhanced linewidth 2
 
-set output "alpha.png"
+set output "alpha.jpg"
 
 set key bottom 
 
