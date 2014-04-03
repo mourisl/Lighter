@@ -370,11 +370,11 @@ public:
 
 	 // Add by Li
 	 if ( numOfThreads > 1 )
-	 	pthread_mutex_lock( &locks[ bit_index & lockMask ] ) ;
+	 	pthread_mutex_lock( &locks[ ( bit_index / bits_per_char )  & lockMask ] ) ;
 	 //printf( "%llu %llu\n", bit_index, lockMask ) ;
          bit_table_[bit_index / bits_per_char] |= bit_mask[bit];
 	 if ( numOfThreads > 1 )
-	 	pthread_mutex_unlock( &locks[ bit_index & lockMask ] ) ;
+	 	pthread_mutex_unlock( &locks[ ( bit_index / bits_per_char ) & lockMask ] ) ;
       }
       ++inserted_element_count_;
    }
