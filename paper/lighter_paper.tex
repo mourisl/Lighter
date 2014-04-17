@@ -290,7 +290,7 @@ In the first pass over the input reads, Lighter examines each k-mer of each read
 \subsection*{Second pass}
 
 \paragraph{Finding trusted read positions.} 
-A read position overlaps up to $x$ $k$-mers where $1\le x\le k$. If the position was altered by a sequencing error, the overlapping $k$-mers are incorrect and likely weak. These weak $k$-mers are not likely to be sampled by Lighter in the first pass, so we can set a threshold and for this position if the number of $k$-mers that are stored in Bloom filter $A$ is less than this threshold we say this position is untrusted, otherwise we say it is trusted.
+A read position overlaps up to $x$ $k$-mers where $1\le x\le k$. If the position was altered by a sequencing error, the overlapping $k$-mers are incorrect and likely weak. These weak $k$-mers are not likely to be sampled by Lighter in the first pass, so we can set a threshold and for this position if the number of $k$-mers that are stored in Bloom filter $A$ is less than this threshold we say this position is untrusted, otherwise we say it is trusted. We call the comparison against the threshold as a test case. For two test cases, if their $x$ $k$-mers are the same, their test results are the same and we should say they are the same the test case. 
 
 In Lighter, we set the threshold according to the binomial distribution $b_0\sim Binom(P^*(\alpha), x)$, where $P^*(\alpha)$ is some probability depending on the value of $\alpha$ and will be defined later. If $y$ is the minimum integer that $p(b_0>=y)<0.05$, then we set the threshold $y'=y+1$. To define $P^*(\alpha)$, firstly we define $P(\alpha)=1-(1-\alpha)^{f(\alpha)}$, where $f(\alpha)=max\{2,0.1/\alpha\}$. So 
 $$P^*(\alpha)=P(\alpha)+\beta-\beta P(\alpha)$$

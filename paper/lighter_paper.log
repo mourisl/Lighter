@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2012.5.18)  17 APR 2014 15:35
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2012.5.18)  17 APR 2014 16:00
 entering extended mode
  %&-line parsing enabled.
 **lighter_paper
@@ -446,8 +446,8 @@ File: per_base.jpg Graphic file (type jpg)
  <use per_base.jpg> [10 <./per_base.jpg>] [11] <runtime.jpg, id=63, 642.4pt x 4
 81.8pt>
 File: runtime.jpg Graphic file (type jpg)
- <use runtime.jpg>
-(./lighter_paper.bbl [12 <./runtime.jpg>] [13]) [14] (./lighter_paper.aux) ) 
+ <use runtime.jpg> [12 <./runtime.jpg>] (./lighter_paper.bbl [13]) [14] (./ligh
+ter_paper.aux) ) 
 Here is how much of TeX's memory you used:
  1793 strings out of 256216
  20742 string characters out of 1917072
@@ -456,22 +456,21 @@ Here is how much of TeX's memory you used:
  11159 words of font info for 40 fonts, out of 1200000 for 2000
  645 hyphenation exceptions out of 8191
  27i,8n,20p,1763b,255s stack positions out of 5000i,500n,6000p,200000b,15000s
-</u
-sr/share/texmf/fonts/type1/bluesky/cm/cmbx10.pfb></usr/share/texmf/fonts/type1/
-bluesky/cm/cmbx12.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmbx9.pfb></usr/
-share/texmf/fonts/type1/bluesky/cm/cmex10.pfb></usr/share/texmf/fonts/type1/blu
-esky/cm/cmmi10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmmi5.pfb></usr/sha
-re/texmf/fonts/type1/bluesky/cm/cmmi7.pfb></usr/share/texmf/fonts/type1/bluesky
-/cm/cmmi9.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr10.pfb></usr/share/te
-xmf/fonts/type1/bluesky/cm/cmr12.pfb></usr/share/texmf/fonts/type1/bluesky/cm/c
-mr17.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr5.pfb></usr/share/texmf/fo
-nts/type1/bluesky/cm/cmr7.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr8.pfb
-></usr/share/texmf/fonts/type1/bluesky/cm/cmr9.pfb></usr/share/texmf/fonts/type
-1/bluesky/cm/cmsy10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy5.pfb></us
-r/share/texmf/fonts/type1/bluesky/cm/cmsy7.pfb></usr/share/texmf/fonts/type1/bl
-uesky/cm/cmsy8.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmti10.pfb></usr/sh
-are/texmf/fonts/type1/bluesky/cm/cmti9.pfb>
-Output written on lighter_paper.pdf (14 pages, 657400 bytes).
+</usr/share/texmf/fonts/type1/bluesky/cm/cmbx10.pfb></usr/share
+/texmf/fonts/type1/bluesky/cm/cmbx12.pfb></usr/share/texmf/fonts/type1/bluesky/
+cm/cmbx9.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmex10.pfb></usr/share/te
+xmf/fonts/type1/bluesky/cm/cmmi10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/
+cmmi5.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmmi7.pfb></usr/share/texmf/
+fonts/type1/bluesky/cm/cmmi9.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr10
+.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr12.pfb></usr/share/texmf/fonts
+/type1/bluesky/cm/cmr17.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr5.pfb><
+/usr/share/texmf/fonts/type1/bluesky/cm/cmr7.pfb></usr/share/texmf/fonts/type1/
+bluesky/cm/cmr8.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr9.pfb></usr/sha
+re/texmf/fonts/type1/bluesky/cm/cmsy10.pfb></usr/share/texmf/fonts/type1/bluesk
+y/cm/cmsy5.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy7.pfb></usr/share/t
+exmf/fonts/type1/bluesky/cm/cmsy8.pfb></usr/share/texmf/fonts/type1/bluesky/cm/
+cmti10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmti9.pfb>
+Output written on lighter_paper.pdf (14 pages, 657628 bytes).
 PDF statistics:
  139 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 131072)
