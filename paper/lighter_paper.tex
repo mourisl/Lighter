@@ -432,7 +432,8 @@ To further test the performance of Lighter, we showed how many kmers from the re
 The 6 simulated data sets are for haploid case, there are many species with a pair of chromosome in a cell, like human. Here we consider the case of diploid. We still use the e.coli genome as the reference genome and then introduce $0.1\%$ SNPs to generate the second reference genome. Mason then will sample the same amount of reads from the two genomes, totally form an $70$x coverage data set. There are 159,117 kmers containing the SNP position from one strand, and table $B$ holds 158,987 of them. Though the performance is not as good as haploid case, it still hold almost all of them. 
 
 % test the performance of alpha
-The sampling rate $\alpha$ is the key in Lighter which ensures the near constant space complexity. We did an evaluation on the simulated data set with $35\times$ coverage and $1\%$ error rate. And in this evaluation, we fix $f=2$ instead of $f=max\{2,0.1/\alpha\}$. The result is shown in Figure \ref{fig:alpha}.
+\subsubsection*{Effect of $\alpha$}
+The sampling rate $\alpha$ is the key in Lighter which ensures the near constant space complexity. We did an evaluation on the simulated data set with $35\times$ coverage and $1\%$ error rate. And in this evaluation, we fix $f(\alpha)=2$ instead of $f(\alpha)=max\{2,0.1/\alpha\}$, otherwise the threshold $y'$ is not useful when $\alpha$ is too small. The result is shown in Figure \ref{fig:alpha}.
 
 \begin{figure}[h!]
 \begin{center}
@@ -445,18 +446,19 @@ If $\alpha$ is too small, too much solid kmers will be failed to get in table $A
 
 If $\alpha$ is larger, the hypothesis test is an adaptive threshold and handle this case nicely even if there are too many elements in $A$ and the false positive rate of $A$ is higher. However, when $\alpha$ is too large, the $k$-mer length $k$ will have a p-value larger than 0.005, and all the positions will be regarded as untrusted. We can observe this from the dramatic drop in Figure \ref{fig:alpha}.
 
-This explanation can also be verified by looking at the occupancy rate of table A and B from the simulated data sets with 3 different coverage and $1\%$ error rate when changing $\alpha$ shown in Figure \ref{fig:bloom_occupancy_alpha_all}. Also, we can see the occupancy rate of table A is almost the same given the same $\alpha\times\mbox{coverage}$ across the 3 data sets. And the occupancy rate of table B is very steady because the solid kmers from the genome are the same for the 3 data sets. When $\alpha$ is way too large than the optimal value, like in the $140\times$ data set, too much weak kmers get sampled and more likely to pass the binomial test which cause the failure of filtering non-solid kmers.
+This explanation can also be verified by looking at the occupancy rate of table A and B from the simulated data sets with 3 different coverage and $1\%$ error rate when changing $\alpha$ shown in Figure \ref{fig:bloom_occupancy_alpha}. Also, we can see the occupancy rate of table A is almost the same given the same $\alpha\times\mbox{coverage}$ across the 3 data sets. And the occupancy rate of table B is very steady because the solid kmers from the genome are the same for the 3 data sets. When $\alpha$ is way too large than the optimal value, like in the $140\times$ data set, too much weak kmers get sampled and more likely to pass the binomial test which cause the failure of filtering non-solid kmers. And here we fix $f(\alpha)$ to $2,2,4$ respectively.
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=0.5\textwidth]{bloom_occupancy_alpha_all.jpg}
-\caption{The effect of $\alpha$ on occupancy rate\label{fig:bloom_occupancy_alpha_all}}
+\includegraphics[width=0.5\textwidth]{bloom_occupancy_alpha.jpg}
+\caption{The effect of $\alpha$ on occupancy rate\label{fig:bloom_occupancy_alpha}}
 \end{center}
 \end{figure}
 
+\subsubsection*{Effect of kmer length}
 One important parameters for $k$-mer based error correction methods is the value of $k$. When $k$ is too small, the $k$-mer containing sequencing error comes will likely be a $k$-mer from another location of the genome. When $k$ is too large, there may not be enough error-free $k$-mers for us to do error correction, especially when the coverage is not high. From the perspective of efficiency, when $k$ is large, we need more time to process a $k$-mer. And for the programs which requires storing the $k$-mer information, like using a hash table to store the counts, larger $k$ causes more memory consumption. Since Lighter does not store the $k$-mers' information explicitly, larger $k$ will only make Lighter slower but does not affect the memory usage.  In \cite{kelley2010quake}, the authors suggested that we can select $4^k$ around two hundred times the genome size. 
 
-We measured the affect of $k$ using the simulated data set with $75\times$ coverage and $1\%$ error rate, the result is shown in Figure \ref{fig:kmerLength}. 
+We measured the affect of $k$ using the simulated data set with $35\times$ coverage and $1\%$ error rate, the result is shown in Figure \ref{fig:kmerLength}. 
 
 \begin{figure}[h!]
 \begin{center}
@@ -468,27 +470,32 @@ We measured the affect of $k$ using the simulated data set with $75\times$ cover
 
 \subsection*{Real data set}
 \subsubsection*{E.Coli data set}
-We use ERR022075 data set which is a very deep coverage sequencing data set of ecoli K-12 strain genome. We still used Quake, Musket, Bless and Lighter to run this data set. Since usually we do not need that much of coverage, we uniformly sampled some reads from this data set and got a data set with roughly 75x coverage. The reads in this data set is paired-end and the read length is 100 and 102. Because Bless can not handle paired-end reads with different length, we truncate the last 2 base to form a 100-length paired-end data set.
+We use ERR022075 data set which is a very deep coverage sequencing data set of ecoli K-12 strain genome. We still used Quake, Musket, Bless and Lighter to run this data set. Since usually we do not need that much of coverage, we uniformly sampled some reads from this data set and got a data set with roughly 75x coverage(total 3,497,616 reads). The reads in this data set is paired-end and the read length is 100 and 102. Because Bless can not handle paired-end reads with different length, we truncate the last 2 base to form a 100-length paired-end data set.
 
 Since the genome of E.Coli K-12 strain is fully sequenced, we measured that 4,519,538 out of 4,553,699 kmers from the genome is stored in table $B$, which is more than $99\%$. This number can be slightly improved using larger $\alpha$. 
  
 % Result of bowtie2
 We can also measure the error corrections' effect on the alignment. We use Bowtie2[cite] to align the reads to the reference genome and count the total number of the matched position.
 
+\begin{table}
 \begin{tabular}{|c|c|c|c||c|c|} \hline
 	 & \multicolumn{3}{|c||}{Read Level} & \multicolumn{2}{|c|}{Base Level} \\ \hline
-     & Total Reads 	& Mapped Reads & Gain(\%) & Matched Pos & Gain(\%) \\ \hline
-Original & 3,497,616 & 	99.04\%	 & - & 343,081,567	& - \\ \hline
-Quake	& 3,369,584	& 99.98\%	& -2.75	& 327,813,255	& -4.45  \\ \hline
-Musket	& 3,497,616	& 99.15\%	& 0.11	& 345,403,149	& 0.68  \\ \hline
-Bless	& 3,497,616	& 99.30\%	& 0.26	& 345,947,230	& 0.84  \\ \hline
-Lighter	 & 3,497,616	&  99.39\%	& 0.35	& 346,283,250	&  0.93  \\ \hline
+     & Total Reads 	& Mapped Reads & Gain(\%) & Match/Read & Gain(\%) \\ \hline
+Original & 3,497,616 & 	3,464,140	 & - & 99.038	& - \\ \hline
+Quake	& 3,369,584	& 3,368,911	& -2.75	& 97.305	& -1.75  \\ \hline
+Musket	& 3,497,616	& 3,467,878	& 0.11	& 99.601	& 0.57  \\ \hline
+Bless	& 3,497,616	& 3,472,979	& 0.26	& 99.611	& 0.58  \\ \hline
+Lighter	 & 3,497,616	&  3,476,425	& 0.35	& 99.611	& 0.58  \\ \hline
 
 \end{tabular}
+\caption{Alignment of E.Coli data set\label{table:ecoli_alignment}}
+\end{table}
 
-For Quake, the number is very low mainly due to unreported reads and trimmed 3' end. It turns out Lighter gives the most improvement. We use samtools to do the SNP calling. 
+In this table, "Gain" means how much improvement for its previous column comparing with the original data set. Match/Read represents the average matched position against the reference genome for the mapped reads.
 
-For those reads not got trimmed and alinged to the genome without indels (cigar field like 100M in the SAM file), we measure the matched ratio for each position shown in Figure \ref{fig:ecoli_perbase}. Since many of the reads in this data set start with N, the first base's matching ratio of the original data set is very low.
+For Quake, the gain is negative mainly due to unreported reads and trimmed 3' end. It turns out Lighter gives the most improvement for both read level and base level.
+
+For those reads not got trimmed and alinged to the genome without indels (cigar field like 100M in the SAM file), we measure the matched ratio for each position shown in Figure \ref{fig:ecoli_perbase}. Since many of the reads in this data set start with N, the first base's matching ratio of the original data set is very low. 
 
 \begin{figure}[h!]
 \begin{center}
@@ -497,54 +504,56 @@ For those reads not got trimmed and alinged to the genome without indels (cigar 
 \end{center}
 \end{figure}
 
-% Result of SOAPDenovo2
-Another common measurement for error correction is to run the de novo assembly and see the impact to the contigs. We use SOAPDenovo2[cite] to assemble the reads. SOAPDenovo2 is a de novo assembly software based on De Brujin graph. The parameter for SOAPDenovo2 especially the kmer size for the De Brujin graph is very important to the performance. We ran the SOAPdenovo2 on different parameters and choose the one with best N50 contig size for each program. Then for each chosen contig file, we evaluated the assembly quality using Quast[cite].
+% Result of Velvet
+Another common measurement for error correction is to run the de novo assembly and see the impact to the contigs. We use Velvet[cite] to assemble the reads. Velvet is a de novo assembly software based on De Brujin graph. The parameter for Velvet especially the kmer size for the De Brujin graph is very important to the performance. We ran the Velvet on different parameters and choose the one with best N50 contig size for each program. Then for each chosen contig file, we evaluated the assembly quality using Quast[cite]. Since assemblers usually generates many very short contigs, we only choose the contigs whose length are no less than 100bp.
 
 \begin{table}
 \begin{tabular}{|c|c|c|c|c|c|} \hline
-	 	& N50 &	L50	 & Mismatch / 100kbps&	Misassembly	& Coverage(\%) \\ \hline
-Original	& 53584 & 28	& 0.31 &	0 &	98.289 \\ \hline 
-Quake	& 54854	& 28	& 0.2	& 0	 & 98.248 \\ \hline
-Musket	& 47826	& 31	& 3.53 &	0	& 98.244 \\ \hline
-Bless	& 50573 & 	30	& 0.29	 & 0	& 98.276 \\ \hline
-Lighter	&	47746	& 30	& 1.18 &0	& 98.261 \\ \hline
+	 	& N50 &	NG50	 & Edits / 100kbps&	Misassemblies	& Coverage(\%) \\ \hline
+Original	& 100,039	& 100,039	& 4.18	& 0	& 97.412 \\ \hline
+Quake	& 125,252	& 125,252	& 4.23	& 8	& 97.450 \\ \hline
+Musket	& 99,995	& 95,384	& 6.96	& 3	& 97.579 \\ \hline
+Bless	& 104,682	& 99,991	& 4.45	& 3	& 97.352 \\ \hline
+Lighter &	105,574	& 104,682	& 5.02	& 5	& 97.548 \\ \hline
 \end{tabular}
-\caption{De novo assembly of E.Coli data set\label{table:ecoli_sd2}}
+\caption{De novo assembly of E.Coli data set\label{table:ecoli_assembly}}
 \end{table}
+
+N50 is the length such that the total length of the contigs longer or equal to than this length covers half of the assembled genome. And NG50 is the length of the contig with respect to the reference genome. Edits per 100kbps is the number of mismatches or indels per 100kbps when aligning the contigs to the reference genome. Misassembly is a position of a contig that its left sequence and right sequence are mapped far away on the genome or overlap too much. The coverage are the portion of the reference genome that are covered by contigs.
 
 \subsubsection*{Human Chr14}
 So far, we only tested the data on the genome of E.Coli, which is a pretty small. In this section, we use a data set from Gage[cite] on human chromosome 14. This data set is about 35x coverage and 101bp pair-end reads. And the $k$-mer size is 19 for all the programs in this data set.
 
 Like for the E.Coli data set, we evaluate the result using both Bowtie2 and SOAPdenovo2.
 
-The result of Bowtie2 is shown in Table \ref{table:chr14_bowtie2}.
+The result of Bowtie2 is shown in Table \ref{table:chr14_alignment}.
 
 \begin{table}
 \begin{tabular}{|c|c|c|c||c|c|}\hline
   & \multicolumn{3}{|c||}{Read Level} & \multicolumn{2}{|c|}{Base Level} \\ \hline
-  & Total Reads  & Mapped  &Gain(\%) &	Matched Pos	& Gain(\%) \\ \hline
-Original &	36,504,800	& 98.60\%	&- &	3,581,034,345	& - \\ \hline
-Quake &	32,560,518	& 99.96\%	& -9.57 &	3,040,192,216 &	-15.10 \\ \hline
-Musket &	36,504,800 &	99.38\%	& 0.79	&3,631,477,901	& 1.41 \\ \hline
-Bless &	36,504,800	&99.43\%	& 0.84	& 3,636,682,539 &	1.55 \\ \hline
-Lighter	& 36,504,800	&99.37\% & 0.78	& 3,631,101,467	& 1.40 \\ \hline
+  & Total Reads  & Mapped  &Gain(\%) &	Match/Read	& Gain(\%) \\ \hline
+Original &	36,504,800	& 35,993,149	&- 		&	99.492	& - \\ \hline
+Quake 	&	32,560,518	& 32,546,450	& -9.58 &	93.411	& -6.11 \\ \hline
+Musket 	&	36,504,800 	&	36,276,990	& 0.79	& 100.104	& 0.62 \\ \hline
+Bless 	&	36,504,800	&36,297,288	& 0.84	& 100.192	&	0.70 \\ \hline
+Lighter	&   36,504,800	&36,280,350	& 0.80	& 100.109	& 0.62 \\ \hline
 \end{tabular}
-\caption{Alignment of chr14 data set\label{table:chr14_bowtie2}}
+\caption{Alignment of chr14 data set\label{table:chr14_alignment}}
 \end{table}
 
-% Result of SOAPDenovo2
-We also tested the effect to de novo assembly using SOAPDeovo2 and Quast which is shown in Table \ref{table:chr14_sd2}. In this data set, the improvement due to error corrections is obviously. 
+% Result of Velvet
+We also tested the effect to de novo assembly using Velvet and Quast which is shown in Table \ref{table:chr14_assembly}. In this data set, the improvement due to error corrections is obviously. 
 
 \begin{table}
 \begin{tabular}{|c|c|c|c|c|c|} \hline
-	   & N50 &	L50	& Mismatch / 100kbps &	Misassembly	& Coverage(\%) \\ \hline
-Original &	3372 &	482	& 88.67	& 10 &	80.163 \\ \hline
-Quake	& 3203	& 452 &	85.95 & 9 &	79.993 \\ \hline
-Musket	& 3760	& 617 &	91.85 &	9 &	80.445 \\ \hline
-Bless	& 3763	& 623 &	88.69 &	19 &	80.456 \\ \hline
-Lighter	& 3766	& 618 &	90.22 &	12 &	80.498 \\ \hline
+	   & N50 &	NG50	& Edits / 100kbps &	Misassemblies	& Coverage(\%) \\ \hline
+Original &	8096 &5940	&134.53	&1097	&78.490 \\ \hline
+Quake	& 7935	&5809	&143.91	&2110	&77.303 \\ \hline
+Musket	& 6261	&4613	&128.97	&811	&78.984 \\ \hline
+Bless	& 8397	&6201	&131.87 &1425	&78.747 \\ \hline
+Lighter	& 8370	&6211	&133.22	&1416	&78.858 \\ \hline
 \end{tabular}
-\caption{De novo assembly of chr14 data set\label{table:chr14_sd2}}
+\caption{De novo assembly of chr14 data set\label{table:chr14_assembly}}
 \end{table}
 
 The results of the de novo assembly of the two real data set show that Lighter's result is comparable with other methods.
