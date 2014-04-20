@@ -1,0 +1,6 @@
+#/bin/sh
+for p in `ls *.plot`
+do
+	#echo $p
+	gnuplot $p
+done

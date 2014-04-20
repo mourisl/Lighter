@@ -357,7 +357,7 @@ To show that our method of getting and storing solid kmers is reliable, we desig
 
 The correction is done read by read. For a read of length $|r|$, we have $|r|-k+1$ kmers and $k_i$ denote the kmer starts at position $i$ where $1\le i\le|r|-k+1$. We start the correction by finding a longest consecutive kmers that are stored in $B$, and then do the correction by scanning towards left and right. Since the correction towards left and right are symmetric, we only demonstrate the correction for the right-hand scanning. Ideally, when we move from the solid kmers towards right, the first time we see an weak kmer, say $k_i$, there must be an error at position $i+k-1$. There are three candidates or four(if the position is N) to replace this position. For each candidate, we see how many consecutive kmers is solid starting from $k_i$ with this new character. We choose the candidate creating most solid kmers. Then we resume scanning towards right starting from the next unstored kmer. If none of the candidate makes $k_i$ solid or more than one candidate create most solid kmers, we say position $i+k-1$ is ambiguous and stop there. If $i+k-1$ is far from the end of the read, we do the error correction on the substring from $i+k-1$ to the end of a read.
 
-The scheme of this greedy error correction method is shown in Figure \ref{fig:error_correction}, where we choose found the error because there is no kmer CCGATTC. We choose A to replace C since it gives us most consecutive solid kmers up to the end of the read.
+The scheme of this greedy error correction method is shown in Figure \ref{fig:error_correction}, where we found the error because there is no kmer CCGATTC. We choose A to replace C since it gives us most consecutive solid kmers.
 
 \begin{figure}[h!]
 \begin{center}
@@ -366,7 +366,12 @@ The scheme of this greedy error correction method is shown in Figure \ref{fig:er
 \end{center}
 \end{figure}
 
-\subsection*{Parallization}
+If the error is located near the end of the read, for each candidate substitution, we will extend reads using the kmer reported in Bloom filter $A$ by one path that has the least lexicographical order. Thus we can solve some ties that are more likely to happend near the end of a read due to insufficient extension. 
+
+\subsection*{Quality score}
+Lighter can also uses the information of quality score. It firstly looks at the first up to 1 million reads of the file, and record the quality score for the last base. Then Lighter will choose the lowest quality score such that at least 5\% of the last base's quality scrore from the reads it just looked is no more than it. Then later, when Lighter decides whether a position is trusted or not, if its qulaity score is no more than the threshold quality score, then we set it to untrusted no matter what.
+
+\subsection*{Parallization} 
 As shown in Figure \ref{fig:lighter_framework}, Lighter works in three stages: sampling kmers, obtaining solid kmers and error correction. For the sampling kmers stage, because $\alpha$ is very small, most of the time is spent on scanning the reads namely reading the files. As a result, the overhead of parallilize this part will dominate the benefits, so we decide to remain this stage serial. In the second stage, each thread will handle different reads independently. Reading bloom filter in parallel is very efficient since there is no data race. When a thread find a solid kmer, it firstly tests whether this kmer is stored in table B or not. If this kmer is not in table B, then we write this kmer into the table. In this way, we can avoid many writing locks for table B because a solid kmer shows up many times. The thrid stage can parallized embarrsingly.
 
 \section*{Evaluation}
@@ -386,19 +391,19 @@ Error rate & & $1\%$ & $3\%$ & $1\%$ & $3\%$ & $1\%$ & $3\%$ \\ \hhline{|=|=|=|=
 	& quake	& 89.59	& 48.77	& 89.64	& 48.82	& 89.59	& 48.78 \\ \cline{2-8}
 Recall	& musket	& 92.61	& 92.04	& 92.60	& 92.05	& 92.60	& 92.03 \\ \cline{2-8}
 	& bless	& 98.68	& 97.29	& 98.69	& 97.48	& 98.65	& 97.47 \\ \cline{2-8}
-	& lighter	& \textbf{99.41}	& \textbf{98.02}	& \textbf{99.34}	& \textbf{98.92} & \textbf{99.38}	& \textbf{98.98} \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& lighter	& \textbf{99.42}	& \textbf{98.03}	& \textbf{99.36}	& \textbf{98.93} & \textbf{99.39}	& \textbf{98.99} \\ \hhline{|=|=|=|=|=|=|=|=|}
 	& quake	&\textbf{99.99}	& \textbf{99.99}	& \textbf{99.99}	& \textbf{99.99}	& \textbf{99.99}	& \textbf{99.99} \\ \cline{2-8}
 Precision	& musket	& 99.78	& 99.63	& 99.78	& 99.63	& 99.78	& 99.63 \\ \cline{2-8}
 	& bless	& 98.90	& 98.59	& 98.88	& 98.62	& 98.88	& 98.61 \\ \cline{2-8}
-	& lighter	& 99.11 & 99.14	& 99.08	& 99.18	& 99.06	& 99.18 \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& lighter	& 99.10 & 99.14	& 99.08	& 99.18	& 99.07	& 99.18 \\ \hhline{|=|=|=|=|=|=|=|=|}
 	& quake	& 94.51	& 65.56	& 94.54	& 65.61	& 94.51	& 65.57 \\ \cline{2-8}
 F-score	& musket	& 96.06	& 95.68	& 96.05	& 95.69	& 96.05	& 95.68 \\ \cline{2-8}
 	& bless	& 98.79	& 97.94	& 98.78	& 98.04	& 98.77	& 98.04 \\ \cline{2-8}
-	& lighter	& \textbf{99.26}	& \textbf{98.58}	& \textbf{99.21}	& \textbf{99.05}	& \textbf{99.22}	& \textbf{99.08} \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& lighter	& \textbf{99.26}	& \textbf{98.58}	& \textbf{99.22}	& \textbf{99.06}	& \textbf{99.23}	& \textbf{99.09} \\ \hhline{|=|=|=|=|=|=|=|=|}
 	& quake	& 89.58	& 48.76	& 89.64	& 48.82	& 89.59	& 48.78 \\ \cline{2-8}
 Gain	& musket	& 92.40	& 91.70	& 92.39	& 91.71	& 92.39	& 91.69 \\ \cline{2-8}
 	& bless	& 97.58	& 95.90	& 97.57	& 96.11	& 97.54	& 96.09 \\ \cline{2-8}
-	& lighter	& \textbf{98.52}	& \textbf{97.17}	& \textbf{98.41}	& \textbf{98.10}	& \textbf{98.43}	& \textbf{98.17} \\ \hhline{|=|=|=|=|=|=|=|=|}
+	& lighter	& \textbf{98.52}	& \textbf{97.17}	& \textbf{98.44}	& \textbf{98.12}	& \textbf{98.46}	& \textbf{98.18} \\ \hhline{|=|=|=|=|=|=|=|=|}
 
 \end{tabular}
 }
@@ -412,12 +417,12 @@ We can show Lighter can achieve near constant space usage if the portion of set 
 \begin{table}
 \begin{tabular}{|c|c|c|}\hline
 Coverage & Table A & Table B \\ \hline
-$10\times$	& 41.563  &	19.879 \\ \hline
-$20\times$	& 41.555  &	32.771 \\ \hline
-$35\times$ & 41.555	& 33.805 \\ \hline
-$70\times$ & 41.580	& 33.924 \\ \hline
-$140\times$ & 41.577 & 33.895  \\ \hline
-$280\times$ & 41.571 & 33.921 \\ \hline
+$10\times$	& 41.563  &	19.843 \\ \hline
+$20\times$	& 41.555  &	32.765 \\ \hline
+$35\times$ & 41.555	& 33.802 \\ \hline
+$70\times$ & 41.580	& 33.906 \\ \hline
+$140\times$ & 41.577 & 33.881  \\ \hline
+$280\times$ & 41.571 & 33.903 \\ \hline
 \end{tabular}
 \caption{Occupancy rate(\%) for each table for different coverages\label{table:bloom_occupancy_coverage}}
 \end{table}
@@ -465,14 +470,14 @@ We measured the affect of $k$ using the simulated data set with $75\times$ cover
 \subsubsection*{E.Coli data set}
 We use ERR022075 data set which is a very deep coverage sequencing data set of ecoli K-12 strain genome. We still used Quake, Musket, Bless and Lighter to run this data set. Since usually we do not need that much of coverage, we uniformly sampled some reads from this data set and got a data set with roughly 75x coverage. The reads in this data set is paired-end and the read length is 100 and 102. Because Bless can not handle paired-end reads with different length, we truncate the last 2 base to form a 100-length paired-end data set.
 
-Since the genome of E.Coli K-12 strain is fully sequenced, we measured that 4,519,570 out of 4,553,699 kmers from the genome is stored in table $B$, which is more than $99\%$. This number can be slightly improved using larger $\alpha$. 
+Since the genome of E.Coli K-12 strain is fully sequenced, we measured that 4,519,538 out of 4,553,699 kmers from the genome is stored in table $B$, which is more than $99\%$. This number can be slightly improved using larger $\alpha$. 
  
 % Result of bowtie2
 We can also measure the error corrections' effect on the alignment. We use Bowtie2[cite] to align the reads to the reference genome and count the total number of the matched position.
 
 \begin{tabular}{|c|c|c|c||c|c|} \hline
 	 & \multicolumn{3}{|c||}{Read Level} & \multicolumn{2}{|c|}{Base Level} \\ \hline
-     & Total Reads 	& Mapped & Gain(\%) & Matched Pos & Gain(\%) \\ \hline
+     & Total Reads 	& Mapped Reads & Gain(\%) & Matched Pos & Gain(\%) \\ \hline
 Original & 3,497,616 & 	99.04\%	 & - & 343,081,567	& - \\ \hline
 Quake	& 3,369,584	& 99.98\%	& -2.75	& 327,813,255	& -4.45  \\ \hline
 Musket	& 3,497,616	& 99.15\%	& 0.11	& 345,403,149	& 0.68  \\ \hline
