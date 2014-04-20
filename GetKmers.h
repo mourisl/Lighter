@@ -34,6 +34,7 @@ struct _StoreKmersThreadArg
 	Store *trustedKmers ;
 	Reads *reads ;
 	char goodQuality ;
+	char badQuality ;
 
 	pthread_mutex_t *lock ;
 } ;
@@ -42,6 +43,6 @@ void *SampleKmers_Thread( void *arg ) ;
 void SampleKmersInRead( char *read, char *qual, int kmerLength, double alpha, KmerCode &kmerCode, Store *kmers ) ;
 
 void *StoreKmers_Thread( void *arg ) ;
-void StoreTrustedKmers( char *read, char *qual, int kmerLength, char goodQuality, int *threshold,  
+void StoreTrustedKmers( char *read, char *qual, int kmerLength, char badQuality, int *threshold,  
 	KmerCode &kmerCode, Store *kmers, Store *trustedKmers ) ;
 #endif

@@ -102,6 +102,35 @@ char GetGoodQuality( Reads &reads )
 	return (char)i ;
 }
 
+char GetBadQuality( Reads &reads )
+{
+	int i ;
+	int qualHisto[300] ;
+	int totalCnt, cnt ;
+
+	//Reads reads( readFile ) ;
+	if ( !reads.HasQuality() )
+		return 0 ;
+
+	memset( qualHisto, 0, sizeof( qualHisto ) ) ;
+	for ( i = 0 ; i < 1000000 ; ++i )
+	{
+		if ( !reads.Next() )
+			break ;
+		++qualHisto[ (int)reads.qual[ strlen( reads.seq ) - 1 ] ] ;
+	}
+
+	totalCnt = i ;
+	cnt = 0 ;
+	for ( i = 0 ; i < 300 ; ++i )
+	{
+		cnt += qualHisto[i] ;
+		if ( cnt > totalCnt * 0.05 )
+			break ;
+	}
+	return (char)i ;
+}
+
 void PrintLog( const char *log )
 {
 	time_t rawtime ;
@@ -127,7 +156,7 @@ int main( int argc, char *argv[] )
 	double untrustF[100][100] ;
 	//double trustF[100][100] ;
 	int threshold[100] ;
-	char goodQuality ;
+	char goodQuality = '\0', badQuality = '\0' ;
 	int badPrefix, badSuffix ;
 	bool paraOutputAllReads ;
 	//double bloomFilterFP = 0.0005 ;
@@ -253,20 +282,14 @@ int main( int argc, char *argv[] )
 		trustedKmers.SetNumOfThreads( numOfThreads ) ;
 	}
 	
-	goodQuality = GetGoodQuality( reads ) ;
+	//goodQuality = GetGoodQuality( reads ) ;
+	//reads.Rewind() ;
+	badQuality = GetBadQuality( reads ) ;
 	reads.Rewind() ;
 
-	//printf( "%c\n", goodQuality ) ;
-	/*for ( i = 1 ; i <= kmerLength ; ++i )
-	{
-		for ( j = 0 ; j <= i ; ++j )
-		{
-			printf( "%.10lf\t", untrustF[i][j] ) ;
-		}
-		printf( "\n" ) ;
-	}
-	printf( "===============\n" ) ;
-	for ( i = 1 ; i <= kmerLength ; ++i )
+	//printf( "%c\n", badQuality ) ;
+	//exit( 1 ) ;
+		/*for ( i = 1 ; i <= kmerLength ; ++i )
 	{
 		for ( j = 0 ; j <= i ; ++j )
 		{
@@ -321,13 +344,31 @@ int main( int argc, char *argv[] )
 	for ( i = 1 ; i <= kmerLength ; ++i )
 	{
 		int d = (int)( 0.05 / alpha * 2 );
+		double p ;
 		if ( d < 2 )
 			d = 2 ;
-		double p = 1 - pow( ( 1 - alpha ), d ) ;
+		p = 1 - pow( ( 1 - alpha ), d ) ;
+		//else
+		//	p = 1 - pow( 1 - 0.05, 2 ) ;
+		//double p = 1 - pow( 1 - 0.05, 2 ) ;
+		//p = 0 ;
 		GetCumulativeBinomialDistribution( untrustF[i], i, p + tableAFP - p * tableAFP ) ;
+		//GetCumulativeBinomialDistribution( untrustF[i], i, tableAFP ) ;
 		//GetCumulativeBinomialDistribution( untrustF[i], i, alpha ) ;
 		//GetCumulativeBinomialDistribution( trustF[i], i, 1 - pow( ( 1 - alpha ), 20 ) ) ;
 	}
+
+	/*for ( i = 1 ; i <= kmerLength ; ++i )
+	{
+		for ( j = 0 ; j <= i ; ++j )
+		{
+			printf( "%.20lf\t", untrustF[i][j] ) ;
+		}
+		printf( "\n" ) ;
+	}
+	printf( "===============\n" ) ;
+	exit( 1 ) ;*/
+
 
 	for ( i = 1 ; i <= kmerLength ; ++i )
 	{
@@ -336,11 +377,17 @@ int main( int argc, char *argv[] )
 			if ( untrustF[i][j] >= 1 - 0.5 * 1e-2 )
 			{
 				threshold[i] = j ;
+				//if ( threshold[i] <= i / 2 )
+				//	threshold[i] = i / 2 ;
 				break ;
 			}
 		}
 	}
-
+	/*for ( i = 1 ; i <= kmerLength ; ++i )
+	{
+		printf( "%d %d\n", threshold[i] + 1, i ) ;
+	}
+	exit( 1 ) ;*/
 	PrintLog( "Finish sampling kmers" ) ;
 	// Step 2: Store the trusted kmers
 	//printf( "Begin step2.\n") ; fflush( stdout ) ;
@@ -349,7 +396,7 @@ int main( int argc, char *argv[] )
 	{
 		while ( reads.Next() )
 		{
-			StoreTrustedKmers( reads.seq, reads.qual, kmerLength, goodQuality, threshold,
+			StoreTrustedKmers( reads.seq, reads.qual, kmerLength, badQuality, threshold,
 					kmerCode, &kmers, &trustedKmers ) ;
 		}
 	}
@@ -364,6 +411,7 @@ int main( int argc, char *argv[] )
 		arg.trustedKmers = &trustedKmers ;
 		arg.reads = &reads ;
 		arg.goodQuality = goodQuality ;
+		arg.badQuality = badQuality ;
 		arg.lock = &mutexStoreKmers ;
 		
 		for ( i = 0 ; i < numOfThreads ; ++i )

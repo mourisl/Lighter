@@ -131,7 +131,7 @@ void *StoreKmers_Thread( void *arg )
 					qual[len - 1] = '\0' ;
 			}
 
-			StoreTrustedKmers( read, qual, myArg->kmerLength, myArg->goodQuality, myArg->threshold, 
+			StoreTrustedKmers( read, qual, myArg->kmerLength, myArg->badQuality, myArg->threshold, 
 				kmerCode, myArg->kmers, myArg->trustedKmers ) ;
 		}
 		else
@@ -140,7 +140,7 @@ void *StoreKmers_Thread( void *arg )
 	pthread_exit( NULL ) ;	
 }
 
-void StoreTrustedKmers( char *read, char *qual, int kmerLength, char goodQuality, int *threshold,
+void StoreTrustedKmers( char *read, char *qual, int kmerLength, char badQuality, int *threshold,
 	KmerCode &kmerCode, Store *kmers, Store *trustedKmers )
 {
 	bool occur[MAX_READ_LENGTH] ;
@@ -209,11 +209,18 @@ void StoreTrustedKmers( char *read, char *qual, int kmerLength, char goodQuality
 		{
 			adjust += 1 ;
 		}*/
-
+	
 		//TODO: play with the parameters here
 		//if ( oneCnt > alpha * sum && 
 		//	( oneCnt - alpha * sum ) * ( oneCnt - alpha * sum ) > 
 		//		8 * alpha * (1 - alpha ) * sum + 1 )  
+
+		if ( qual[0] != '\0' && qual[i] <= badQuality )
+		{
+			trustedPosition[i] = false ;
+			continue ;
+		}
+
 		if ( oneCnt > threshold[sum] + adjust )
 		{
 			//if ( !strcmp( read, "CCAGTACCTGAAATGCTTACGTTGCCGTTGCTGGCTCATCCTGCCCAGAG" ) )
