@@ -345,16 +345,17 @@ Once all positions in a read have been marked \emph{trusted} or \emph{untrusted}
 %After marking each positions, if there are consecutive k trusted positions, we store the corresponding kmer, which is likely a solid \kmer, in another bloom filter $B$. Because these kmers are likely from the real genome, the size of $B$ also only depends on the genome size. 
 
 \paragraph{Third pass.} 
-In the third pass, a simple, greedy error correction procedure is applied to each read.
-For a read $r$ of length $|r|$, we have $|r|-k+1$ \kmers and $k_i$ denotes the \kmer starting at read position $i$ where $1\le i\le|r|-k+1$.
-We first identify the longest consecutive stretch of \kmers from the read that appear in Bloom filter $B$.
-If the stretch covers the entire read, we conclude there are no errors and make no corrections.
-Otherwise, let $k_b$ and $k_e$ be the \kmers at the extreme left and right edges of the stretch.
-If $k_e$ is not the rightmost \kmer in the read, we examine successive \kmers to the right, $k_e+1$ through $k_{|r|+k+1}$.
-For each \kmer $k_i$ that does not appear in $B$, we assume the nucleotide at offset $i+k-1$ is incorrect.
-We consider all possible ways of substituting for the incorrect nucleotide; for each, we count how many consecutive \kmers beginning with $k_i$ and stretching to the right now appear in Bloom filter $B$.
-We choose the nucleotide that creates the longest stretch of consecutive \kmers in $B$.
-If more than one candidate substitution is equally good, we declare position $i+k-1$ to be ambiguous and we resume the scanning process starting with \kmer $k_i+k$.  The procedure is illustrated in Figure \ref{fig:error_correction}.
+In the third pass, \tool applies a simple, greedy error correction procedure similar to that used in BLESS \cite{heo2014bless}.
+A read $r$ of length $|r|$, contains $|r|-k+1$ \kmers.
+$k_i$ denotes the \kmer starting at read position $i$, $1\le i\le|r|-k+1$.
+We first identify the longest stretch of consecutive \kmers in the read that appear in Bloom filter $B$.
+Let $k_b$ and $k_e$ be the \kmers at the left and right extremes of the stretch.
+If $e < |r|-k+1$, we examine successive \kmers to the right starting at $k_e+1$.
+For a \kmer $k_i$ that does not appear in $B$, we assume the nucleotide at offset $i+k-1$ is incorrect.
+We consider all possible ways of substituting for the incorrect nucleotide.
+We try each possible substitution, then count how many consecutive \kmers starting with $k_i$ appear in Bloom filter $B$.
+We choose the substitution that creates the longest stretch of consecutive \kmers in $B$.
+If more than one candidate substitution is equally good, we declare position $i+k-1$ to be ambiguous and resume the scanning process starting with \kmer $k_i+k$.  The procedure is illustrated in Figure \ref{fig:error_correction}.
 
 If $k_b$ is not the leftmost \kmer in the read, we apply a similar procedure moving to the left.
 
@@ -365,6 +366,7 @@ If $k_b$ is not the leftmost \kmer in the read, we apply a similar procedure mov
 \end{center}
 \end{figure}
 
+% BTL: I don't understand the following
 If the error is located near the end of the read, for each candidate substitution, we will extend reads using the kmer reported in Bloom filter $A$ by one path that has the least lexicographical order. Thus we can solve some ties that are more likely to happend near the end of a read due to insufficient extension. 
 
 \subsection*{Scaling with coverage}
