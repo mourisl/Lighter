@@ -57,6 +57,7 @@
 \usepackage{graphicx}
 \usepackage{verbatim}
 \usepackage{amsmath}
+\usepackage{xspace}
 %\usepackage[applemac]{inputenc} %applemac support if unicode package fails
 %\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
 \urlstyle{rm}
@@ -113,6 +114,12 @@
 % Begin ...
 \begin{document}
 
+\newcommand{\forexample}{e.g.\@\xspace}
+\newcommand{\thatis}{i.e.\@\xspace}
+\newcommand{\andothers}{et al.\@\xspace}
+\newcommand{\kmer}{\ensuremath{k}-mer\xspace}
+\newcommand{\kmers}{\ensuremath{k}-mers\xspace}
+\newcommand{\tool}{Lighter\xspace}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                          %%
@@ -165,11 +172,11 @@
 \begin{abstract}
         % Do not use inserted blank lines (ie \\) until main body of text.
 \emph{Lighter} is a fast and memory-efficient tool for correcting sequencing errors in high-throughput sequencing datasets.
-\emph{Lighter} avoids counting $k$-mers in the sequencing reads.
-Instead, it uses a pair of Bloom filters, one populated with a sample of the input $k$-mers and the other populated with $k$-mers likely to be correct based on a statistical test.
+\tool avoids counting \kmers in the sequencing reads.
+Instead, it uses a pair of Bloom filters, one populated with a sample of the input \kmers and the other populated with \kmers likely to be correct based on a statistical test.
 As long as the sampling fraction is adjusted in inverse proportion to the dataset's average coverage, the Bloom filter size can be held constant while maintaining near-constant accuracy.
-\emph{Lighter} is easily applied to very large sequencing datasets.  It uses no secondary storage, and is both faster and more memory-efficient than competing approaches while achieving comparable accuracy.
-\emph{Lighter} is free open source software available from \url{https://github.com/mourisl/Lighter/}.
+\tool is easily applied to very large sequencing datasets.  It is parallelized, uses no secondary storage, and is both faster and more memory-efficient than competing approaches while achieving comparable accuracy.
+\tool is free open source software available from \url{https://github.com/mourisl/Lighter/}.
 \end{abstract}
 
 
@@ -201,13 +208,13 @@ The cost and throughput of DNA sequencing have improved rapidly in the past seve
 With these advances has come an explosion of new software for analyzing large sequencing datasets.
 Sequencing error correction is a basic need for many of these tools.
 Removing errors at the outset of an analysis can improve accuracy of downstream tools such as variant callers \cite{kelley2010quake}.
-Removing errors can also improve the speed and memory-efficiency of downstream tools, particularly for analyses involving de novo assembly with De Bruijn graphs since the graph's size increases with the number of distinct $k$-mers in the dataset \cite{pevzner2001eulerian, chaisson2004fragment}.
+Removing errors can also improve the speed and memory-efficiency of downstream tools, particularly for analyses involving de novo assembly with De Bruijn graphs since the graph's size increases with the number of distinct \kmers in the dataset \cite{pevzner2001eulerian, chaisson2004fragment}.
 
 To be useful in practice, error correction software must make economical use of time and memory even when input datasets are extremely large (billions of reads) and when the genome under study is also large (billions of nucleotides).
 Several methods have been proposed, covering a wide tradeoff space between accuracy, speed and memory- and storage-efficiency.
 SHREC \cite{schroder2009shrec} and HiTEC \cite{ilie2011hitec} build a suffix index of the input reads and locate errors by finding instances where a substring is followed by a character less often than expected.
 Coral \cite{salmela2011correcting} and ECHO \cite{kao2011echo} find overlaps among reads and use the resulting multiple alignments to detect and correct errors.
-Reptile \cite{yang2010reptile} and Hammer \cite{medvedev2011error} detect and correct errors by examining each $k$-mer's neighborhood in the dataset's $k$-mer Hamming graph.
+Reptile \cite{yang2010reptile} and Hammer \cite{medvedev2011error} detect and correct errors by examining each \kmer's neighborhood in the dataset's \kmer Hamming graph.
 
 % Citations
 % Quake: 149, used in GAGE, assemblathon, 
@@ -224,29 +231,29 @@ Reptile \cite{yang2010reptile} and Hammer \cite{medvedev2011error} detect and co
 % Turtle: 1
 
 The most practical and widely used error correction methods descend from the spectral alignment approach introduced in the earliest De Bruijn graph based assemblers \cite{pevzner2001eulerian, chaisson2004fragment}.
-These methods count the number of times each $k$-mer occurs (its \emph{multiplicity}) in the input reads, then apply a threshold such that reads with multiplicity exceeding the threshold are considered \emph{solid}.
-Solid $k$-mers are unlikely to have been altered by sequencing errors.
-$k$-mers with low multiplicity (\emph{weak} $k$-mers) are systematically edited into solid $k$-mers using a dynamic-programming solution to the spectral alignment problem \cite{pevzner2001eulerian, chaisson2004fragment} or, more often, a fast heuristic approximation.
-Quake \cite{kelley2010quake}, the most widely used error correction tool, uses a hash-based $k$-mer counter called Jellyfish \cite{marccais2011fast} to determine which $k$-mers are solid.
-CUDA-EC \cite{shi2010parallel} was the first to use a Bloom filter as a space-efficient alternative to hash tables for counting $k$-mers and for representing the set of solid $k$-mers.
-More recent tools such as Musket \cite{liu2013musket} and BLESS \cite{heo2014bless} use a combination of Bloom filters and hash tables to count $k$-mers or to represent the set of solid $k$-mers.
+These methods count the number of times each \kmer occurs (its \emph{multiplicity}) in the input reads, then apply a threshold such that reads with multiplicity exceeding the threshold are considered \emph{solid}.
+Solid \kmers are unlikely to have been altered by sequencing errors.
+\kmers with low multiplicity (\emph{weak} \kmers) are systematically edited into solid \kmers using a dynamic-programming solution to the spectral alignment problem \cite{pevzner2001eulerian, chaisson2004fragment} or, more often, a fast heuristic approximation.
+Quake \cite{kelley2010quake}, the most widely used error correction tool, uses a hash-based \kmer counter called Jellyfish \cite{marccais2011fast} to determine which \kmers are solid.
+CUDA-EC \cite{shi2010parallel} was the first to use a Bloom filter as a space-efficient alternative to hash tables for counting \kmers and for representing the set of solid \kmers.
+More recent tools such as Musket \cite{liu2013musket} and BLESS \cite{heo2014bless} use a combination of Bloom filters and hash tables to count \kmers or to represent the set of solid \kmers.
 
-\emph{Lighter} (LIGHTweight ERror corrector) is also in the family of spectral alignment methods, but differs from previous approaches in that it avoids counting $k$-mers.
-Rather than count $k$-mers, \emph{Lighter} samples $k$-mers randomly, storing the sample in a Bloom filter.
-\emph{Lighter} then uses a statistical test applied to each position of each read to compile a set of solid $k$-mers, stored in a second Bloom filter.
-These two Bloom filters are the only sizable data structures used by \emph{Lighter}.
+\emph{Lighter} (LIGHTweight ERror corrector) is also in the family of spectral alignment methods, but differs from previous approaches in that it avoids counting \kmers.
+Rather than count \kmers, \tool samples \kmers randomly, storing the sample in a Bloom filter.
+\tool then uses a statistical test applied to each position of each read to compile a set of solid \kmers, stored in a second Bloom filter.
+These two Bloom filters are the only sizable data structures used by \tool.
 
-\emph{Lighter}'s crucial advantage is that its parameters can be set such that the memory footprint and the accuracy of the approach are near-constant with respect to coverage.
-That is, no matter how deep the coverage, \emph{Lighter} can allocate the same sized Bloom filters and achieve nearly the same (a) Bloom filter occupancy, (b) Bloom filter false positive rate, and (c) error correction accuracy.
-\emph{Lighter} does this without using any disk space or other secondary memory.
-This is in contrast to BLESS and Quake/Jellyfish, which use secondary memory to store some or all of the $k$-mer counts.
-\emph{Lighter}'s accuracy is comparable to competing tools, as we show both in simulation experiments where false positives and false negatives can be measured, and in real-world experiments where read alignment scores and assembly statistics can be measured.  
-\emph{Lighter} is also very simple and fast, faster than all other tools tried in our experiments.
-These advantages make \emph{Lighter} quite practical compared to previous counting-based approaches, all of which require an amount of memory or secondary storage that increases with depth of coverage.
+\tool's crucial advantage is that its parameters can be set such that the memory footprint and the accuracy of the approach are near-constant with respect to coverage.
+That is, no matter how deep the coverage, \tool can allocate the same sized Bloom filters and achieve nearly the same (a) Bloom filter occupancy, (b) Bloom filter false positive rate, and (c) error correction accuracy.
+\tool does this without using any disk space or other secondary memory.
+This is in contrast to BLESS and Quake/Jellyfish, which use secondary memory to store some or all of the \kmer counts.
+\tool's accuracy is comparable to competing tools, as we show both in simulation experiments where false positives and false negatives can be measured, and in real-world experiments where read alignment scores and assembly statistics can be measured.  
+\tool is also very simple and fast, faster than all other tools tried in our experiments.
+These advantages make \tool quite practical compared to previous counting-based approaches, all of which require an amount of memory or secondary storage that increases with depth of coverage.
 
 
 
-%\emph{Lighter} makes a series of three passes over the input reads.  The first pass obtains a sample of the k-mers present in the input reads, storing the sample in a Bloom filter A.  The second pass uses Bloom filter A to identify ``solid'' k-mers and stores these in Bloom filter B.  The third pass uses Bloom filter B to detect and correct errors in the input reads.
+%\tool makes a series of three passes over the input reads.  The first pass obtains a sample of the k-mers present in the input reads, storing the sample in a Bloom filter A.  The second pass uses Bloom filter A to identify ``solid'' k-mers and stores these in Bloom filter B.  The third pass uses Bloom filter B to detect and correct errors in the input reads.
 
 %One important way to study a species is to sequence its genome and analyze its DNA. The need to understand the genome stimulates the rapid development of DNA sequencing technologies. The output of the DNA sequencing is usually an enormous volume of short fragments from the genome. With these small fragments, computational biologists are able to design complicated methods to reconstruct the original genome by assembling or to detect the mutations from the known reference genome by aligning.
 
@@ -255,7 +262,7 @@ These advantages make \emph{Lighter} quite practical compared to previous counti
 %One immediate applicaiton using the information of solid kmers is error correction. Error correction is very important for the De Brujin graph based genome assemblers to save the memory usage. There are mainly three categories methods for error correction[cite], and converting all the kmers to solid kmers is one of them and is particularly successful for Illumina reads where the read errors are mainly substitutions. There are currently many programs for error corrections, and some of them are highlighted for their low memory usage, like Musket[cite] and Bless[cite]. With the help of our method of obtainig solid kmers and the bloom filters which is a compact probabilitc data structure, we also propose the program Lighter(LIGHT-weight ERror correction) that can do error correction with very small memory footprint and no extra disk consumption.
 
 \section*{Method}
-Lighter's workflow is illustrated in Figure \ref{fig:lighter_framework}. Lighter makes three passes over the input reads.  The first pass obtains a sample of the k-mers present in the input reads, storing the sample in Bloom filter A.  The second pass uses Bloom filter A to identify solid k-mers, which it stores in Bloom filter B.  The third pass uses Bloom filter B and a greedy procedure to correct errors in the input reads.
+Lighter's workflow is illustrated in Figure \ref{fig:lighter_framework}. Lighter makes three passes over the input reads.  The first pass obtains a sample of the \kmers present in the input reads, storing the sample in Bloom filter A.  The second pass uses Bloom filter A to identify solid \kmers, which it stores in Bloom filter B.  The third pass uses Bloom filter B and a greedy procedure to correct errors in the input reads.
 
 \begin{figure}[h!]
 \begin{center}
@@ -271,47 +278,52 @@ By way of contrast, another way to represent a set is with a hash table.  Hash t
 
 As Figure \ref{fig:lighter_framework} shows, the efficiency of bloom filter affects the running time of Lighter a lot. For a standard Bloom filter, the $h$ hash functions may map $o$ to any places in the bit array. The bit array is usually very large, so all the $h$ accesses will likely to cause cache miss. In [cite], the authors proposed blocked Bloom filter which can decrease the number of cache misses. Given a block size $b$, it will use $H_0(o)$ to decide the start position on the bit array, and then map $H_0(o), H_1(o),...,H_{h-1}(o)$ onto the block starting from that position. It choose $b$ about the size of a cache line, then the $h$ accesses will not cause $h$ cache misses. The drawback of using blocked Bloom filter is that we have to use a bit larger $h$ and $m$ to have the same FPR when using the standard bloom filter. To estimate the FPR of blocked Bloom filter, we can consider each of the possible $m-b+1$ blocks. for the $i$-th block, the FPR within this block is $(b'_i/b)^h$, where $b'_i$ is the number of bits set to 1 in block $i$. So the overall FPR is $\displaystyle\frac{\sum_i (b'_i/b)^h}{m-b+1}$.
 
-In our method, the objects to be stored in the Bloom filters are k-mers.  Because we would like to treat genome strands equivalently for counting purposes, we will always \emph{canonicalize} a k-mer before adding it to, or using it to query a Bloom filter.  A canonicalized k-mer is either the k-mer itself or its reverse complement, whichever is less than or equal to the other.
+In our method, the objects to be stored in the Bloom filters are k-mers.  Because we would like to treat genome strands equivalently for counting purposes, we will always \emph{canonicalize} a \kmer before adding it to, or using it to query a Bloom filter.  A canonicalized \kmer is either the \kmer itself or its reverse complement, whichever is lexicographically prior.
 
 % What do we do with k-mers with ambiguous nucleotides?
 
-\subsection*{First pass}
+\subsection*{Sequencing model}
+We use a simple model for the sequencing process (including errors) and for \tool's subsampling.  The sequencing model resembles one suggested previously \cite{melsted2014kmerstream}.  Let $K$ be the total number of \kmers obtained by the sequencer.  We say a \kmer is \emph{incorrect} if its sequence has been altered by one or more sequencing errors.  Otherwise it is \emph{correct}.  Let $\epsilon$ be the fraction of \kmers that are incorrect.  We assume $\epsilon$ does not vary with the depth of sequencing.  The sequencer obtains correct \kmers by sampling independently and uniformly from \kmers in the genome.  Let the number of \kmers in the genome be $G$, and assume all are distinct.  If $\kappa_c$ is a random variable for the multiplicity of a correct \kmer in the input, $\kappa_c$ is binomial with success probability $1/G$ and number of trials $(1-\epsilon)K$: $\kappa_c \sim Binom((1-\epsilon)K, 1/G)$.  Since the number of trials is large and the success probability is small, the binomial is well approximated by a Poisson: $\kappa_c \sim Pois((1-\epsilon)K/G)$
 
-\paragraph{Sampling.}  Consider a k-mer drawn from a read.  We say the k-mer is \emph{incorrect} if its sequence has been altered by one or more sequencing errors.  Otherwise it is \emph{correct}.  Others have noted that, given a dataset with deep and uniform coverage, incorrect k-mers occur rarely while correct k-mers occur many times, proportionally to coverage \cite{pevzner2001eulerian, chaisson2004fragment}.
+A sequenced \kmer survives subsampling with probability $\alpha$.  If $\kappa'_c$ is a random variable for the number of times a correct \kmer appears in the subsample, $\kappa'_c \sim Binom((1-\epsilon)K, \alpha/G)$, which is approximately $Pois(\alpha(1-\epsilon)K/G)$.
 
-In the first pass over the input reads, Lighter examines each k-mer of each read, canonicalizing and storing it in Bloom filter $A$ with probability $\alpha$, where $\alpha$ is an adjustable parameter.  Say a particular k-mer sequence occurs a total of $N_k$ times in the dataset.  If the $\alpha$ filter discards all $N_k$ occurrences, the k-mer is never added to $A$ and $A$'s cardinality is reduced by one.  Thus, reducing $\alpha$ in turn reduces $A$'s cardinality.  Because correct k-mers are more numerous, incorrect k-mers tend to be discarded from $A$ before correct k-mers as $\alpha$ decreases.
+The model for incorrect \kmers is similar.  The sequencer obtains incorrect \kmers by sampling independently and uniformly from \kmers ``close to'' a \kmer in the genome.  We might define these as the set of all \kmers with low Hamming distance from some genomic \kmer.  If $\kappa_e$ is a random variable for the multiplicity of an incorrect \kmer, $\kappa_e$ is binomial with success probability $1/H$ and number of trials $\epsilon K$: $\kappa_e \sim Binom(\epsilon K, 1/H)$, which is approximately $Pois(\epsilon K / H)$.  It is safe to assume $H \gg G$, but we need not specify $H$ precisely here.  $\kappa'_e \sim Pois(\alpha\epsilon K / H)$ is a random variable for the number of times an incorrect \kmer appears in the subsample.
 
-%In the rest of the method, it is beneficial for $A$ to include as many correct and as few incorrect k-mers as possible, though the method is still robust when $A$ contains some incorrect and lacks some correct k-mers.
+Others have noted that, given a dataset with deep and uniform coverage, incorrect \kmers occur rarely while correct \kmers occur many times, proportionally to coverage \cite{pevzner2001eulerian, chaisson2004fragment}.
 
-%Assume that, regardless of average coverage, there is always a value of $\alpha$ for which $n \approx G$, where $G$ is the length of the sequenced genome, and the k-mers stored in $A$ are almost all correct.  If this is the case, we can fix $m$ and $h$ and adjust $\alpha$ to achieve a desired false positive rate.  This is in contrast to fixing $n$ and adjusting $m$ and $h$.  We do not argue here that the assumption is true, but we do show later that in practice $\alpha$ can be set to achieve desirable $m$, $k$ and false positive rate for a range of coverage levels.
+\subsection*{Stages of the method}
+\paragraph{First pass.}    In the first pass, Lighter examines each \kmer of each read.  With probability $1 - \alpha$, the \kmer is ignored.  Otherwise, it is canonicalized and added to Bloom filter $A$.  The subsampling fraction $\alpha$ is set by the user.
 
-%In other words, the size of $A$ depends almost only on the genome size. For $75\times$ coverage sequence data, we can let $\alpha$ be $0.05$.
+Say a distinct \kmer $K$ occurs a total of $N_K$ times in the dataset.  If subsampling discards all $N_K$ occurrences, the \kmer is never added to $A$ and $A$'s cardinality is reduced by one.  Thus, reducing $\alpha$ can in turn reduce $A$'s cardinality.  Because correct \kmers are more numerous, incorrect \kmers tend to be discarded from $A$ before correct \kmers as $\alpha$ decreases.  Later we show that if $K$ increases but $\alpha K$ is held constant, the cardinality of $A$ and the fraction of correct \kmers in $A$ both remain nearly constant.
 
-\subsection*{Second pass}
+\paragraph{Second pass.} 
+A read position is overlapped by up to $x$ \kmers, $1\le x\le k$, where $x$ depends on how close the position is to either end of the read.
+For a position altered by sequencing error, the overlapping \kmers are all incorrect and are unlikely to appear in $A$.
+We apply a threshold such that if the number of \kmers overlapping the position and appearing in Bloom filter $A$ is less than the threshold, we say the position is \emph{untrusted}.
+Otherwise we say it is \emph{trusted}.
+Each instance where the threshold is applied is called a \emph{test case}.
+When one or more of the $x$ \kmers involved in two test cases differ, we say the test cases are distinct.
 
-\paragraph{Finding trusted read positions.} 
-A read position overlaps up to $x$ $k$-mers where $1\le x\le k$. If the position was altered by a sequencing error, the overlapping $k$-mers are incorrect and likely weak. These weak $k$-mers are not likely to be sampled by Lighter in the first pass, so we can set a threshold and for this position if the number of $k$-mers that are stored in Bloom filter $A$ is less than this threshold we say this position is untrusted, otherwise we say it is trusted. We call the comparison against the threshold as a test case. For two test cases, if their $x$ $k$-mers are the same, their test results are the same and we should say they are the same the test case. 
+Let $P^*(\alpha)$ be the probability an incorrect \kmer appears in $A$, including false positives.  If random variable $B_{0,x}$ represents the number of \kmers appearing in $A$ for an untrusted position overlapped by $x$ \kmers, $B_{0,x} \sim Binom(x,P^*(\alpha))$.  We define thresholds $y_x$, for each possible value of $x$ in $[1, k]$.  Each $y_x$ is the minimum integer such that $p(B_{0,x}\le y_x - 1)\ge 0.995$.
 
-In Lighter, we set the threshold according to the binomial distribution $B_0\sim Binom(x,P^*(\alpha))$, where $P^*(\alpha)$ is some probability depending on the value of $\alpha$ and will be defined later. If $y$ is the minimum integer such that $p(B_0\le y)\ge 0.995$, then we set the threshold $y'=y+1$. To define $P^*(\alpha)$, firstly we define $P(\alpha)=1-(1-\alpha)^{f(\alpha)}$, where $f(\alpha)=max\{2,0.1/\alpha\}$. So 
-$$P^*(\alpha)=P(\alpha)+\beta-\beta P(\alpha)$$
-where $\beta$ is the false positive rate of Bloom filter $A$.
+Initially we ignore false positives and model the probability of a sequenced a \kmer having been added to $A$ as $P(\alpha)=1-(1-\alpha)^{f(\alpha)}$.  We define $f(\alpha)=max\{2,0.1/\alpha\}$.  That is, we assume the multiplicity of a weak \kmer is at most $f(\alpha)$, which will often be a conservative assumption, especially for small $\alpha$.  It is also possible to define $P(\alpha)$ in terms of random variables $\kappa_e$ and $\kappa'_e$, but we avoid this for simplicity.
 
-The intuition behind this threshold is that we assume the multiplicity of a weak kmer is at most $f(\alpha)$. If a position is wrong, the $x$ $k$-mers' multiplicity is likely to be no more than $f(\alpha)$, and the number of them showing up in Bloom filter $A$ is bounded by $B_0$. We do not want such position to be regarded as trusted, so we set a high-enough threshold such that we can say this position is untrusted.
+A property of this threshold is that when $\alpha$ is small, $P(\alpha/z)=1-(1-\alpha/z)^{0.1z/\alpha}\approx 1-(1-\alpha)^{0.1/\alpha}=P(\alpha)$, where $z$ is a constant greater than 1 and we use the fact that $(1-\alpha/z)^z\approx 1-\alpha$.
 
-One property of this threshold is that when $\alpha$ is small, $P(\alpha/z)=1-(1-\alpha/z)^{0.1z/\alpha}\approx 1-(1-\alpha)^{0.1/\alpha}=P(\alpha)$, where $z$ is some constant larger than 1 and we applied the approximation that $(1-\alpha/z)^z\approx 1-\alpha$.
+For $P^*(\alpha)$, we additionally take $A$'s false positive rate into account.  If the false positive rate is $\beta$, then $P^*(\alpha)=P(\alpha)+\beta-\beta P(\alpha)$.
 
-%Let $m(r)$ denote $k$-mer $r$'s multiplicity.  Let $P(\alpha, m(r))$ be the probability that $r$ is added to Bloom filter A given sampling rate $\alpha$:
+%Let $m(r)$ denote \kmer $r$'s multiplicity.  Let $P(\alpha, m(r))$ be the probability that $r$ is added to Bloom filter A given sampling rate $\alpha$:
 %$$P(\alpha, m(r)) = 1-(1-\alpha)^{m(r)}$$
 
 %When we query Bloom filter $A$, whether we get a positive response depends both on $P(\alpha, m(r))$ and on the filter's false positive rate, which we call $\beta$.  The probability $P^*(\alpha, m(r))$ of getting a positive response when querying for $r$ in $A$ is:
 
 %$$P^*(\alpha, m(r))=P(\alpha, m(r))+\beta-P(\alpha, m(r))\beta$$
 
-%Say $\gamma$ is the expected multiplicity of a correct $k$-mer.  We call a $k$-mer $r$ weak if $m(r)$ is much less than $\gamma$. Specifically, we say $r$ is weak if $m(r) \leq \gamma'$, where $\gamma'=\gamma/c$ and $c$ is a constant we must choose. We can bound the probability that a weak $k$-mer is added to Bloom filter A given sampling rate $\alpha$:
+%Say $\gamma$ is the expected multiplicity of a correct \kmer.  We call a \kmer $r$ weak if $m(r)$ is much less than $\gamma$. Specifically, we say $r$ is weak if $m(r) \leq \gamma'$, where $\gamma'=\gamma/c$ and $c$ is a constant we must choose. We can bound the probability that a weak \kmer is added to Bloom filter A given sampling rate $\alpha$:
 
 %$$P(\alpha, 1) \leq P_{weak}(\alpha) \leq P(\alpha, \gamma')$$
 
-%The lower bound corresponds to the case where all weak $k$-mers have multiplicity 1 and the upper bound corresponds to the case where all weak $k$-mers have multiplicity $\gamma'$.  Additionally taking false positive rate into account, we can bound the probability $P^*_{weak}(\alpha)$ that the Bloom filter gives a positive response when queried with a weak $k$-mer:
+%The lower bound corresponds to the case where all weak \kmers have multiplicity 1 and the upper bound corresponds to the case where all weak \kmers have multiplicity $\gamma'$.  Additionally taking false positive rate into account, we can bound the probability $P^*_{weak}(\alpha)$ that the Bloom filter gives a positive response when queried with a weak \kmer:
 
 %$$P^*(\alpha, 1) \leq P^*_{weak}(\alpha) \leq P^*(\alpha, \gamma')$$
 
@@ -320,54 +332,56 @@ One property of this threshold is that when $\alpha$ is small, $P(\alpha/z)=1-(1
 
 %:  above by $P(\alpha, \gamma')$ and below by .
 
-%For the $k$-mers containing sequencing errors, we will call it true weak kmers. In practice, the multiplicity of most true weak $k$-mers grows much slower when we increase $\gamma$ namely increasing the coverage. So $\gamma'$ will overestimate the mulitplicity of true weak $k$-mers a lot. 
+%For the \kmers containing sequencing errors, we will call it true weak kmers. In practice, the multiplicity of most true weak \kmers grows much slower when we increase $\gamma$ namely increasing the coverage. So $\gamma'$ will overestimate the mulitplicity of true weak \kmers a lot. 
 
- %To determine whether a position is incorrect, we perform a one-tailed hypothesis test where the null hypothesis is that all overlapping $k$-mers are weak.  For a weak $k$-mer, a positive response from Bloom filter A happens with probability $P^*(\alpha, \gamma')$ (conservatively), and the number of overlapping $k$-mers yielding a positive response follows a binomial distribution with success probability $P^*(\alpha, \gamma')$ and number of trials $x$.  Let $y \leq x$ be the actual number of $k$-mers overlapping the read position that appear in A and let $y'$ be the minimum integer value for $y$ such that the hypothesis test P value is less than 0.005.  If $y \geq y'$, we reject the null hypothesis and the read position is called \emph{trusted}, otherwise it is called \emph{untrusted}. 
+ %To determine whether a position is incorrect, we perform a one-tailed hypothesis test where the null hypothesis is that all overlapping \kmers are weak.  For a weak \kmer, a positive response from Bloom filter A happens with probability $P^*(\alpha, \gamma')$ (conservatively), and the number of overlapping \kmers yielding a positive response follows a binomial distribution with success probability $P^*(\alpha, \gamma')$ and number of trials $x$.  Let $y \leq x$ be the actual number of \kmers overlapping the read position that appear in A and let $y'$ be the minimum integer value for $y$ such that the hypothesis test P value is less than 0.005.  If $y \geq y'$, we reject the null hypothesis and the read position is called \emph{trusted}, otherwise it is called \emph{untrusted}. 
 
 %Framing the problem as a hypothesis test is convenient since it naturally handles the case where $x<k$.  $y'$ thresholds can be pre-calculated for efficiency.
 
 %A one-tail hypothesis testing. The null hypothesis is that this position is wrong and the p-value can be get from test again $(x,P^*(\alpha, \gamma'))$ using the actual number of kmers in $A$ containing that position. We use $y$ to denote this actual number of kmers. In our method, suppose $y'$ is the first number whose p-value is smaller than 0.005, if $y>y'$, we reject the null hypothes and the position is trusted. The benefit of using hypothesis testing instead of using a fixed threshold is that we can handle the case where $x<k$ in a consistent way and it can tolerate the ill-chosen $\alpha$. Notice that, the position near the left and right boundary or near an error may never be trusted.
 
-\paragraph{Finding solid $k$-mers.}  Once all positions in a read have been marked \emph{trusted} or \emph{untrusted}, we scan the read and find all places where $k$ trusted positions are in a row.  The $k$-mer made up by those positions is likely solid, and so we add it to Bloom filter B.  
+Once all positions in a read have been marked \emph{trusted} or \emph{untrusted} using the threshold, we find all instances where $k$ trusted positions appear consecutively.  The \kmer made up by those positions is added to Bloom filter $B$.
 
-%After marking each positions, if there are consecutive k trusted positions, we store the corresponding kmer, which is likely a solid $k$-mer, in another bloom filter $B$. Because these kmers are likely from the real genome, the size of $B$ also only depends on the genome size. 
+%After marking each positions, if there are consecutive k trusted positions, we store the corresponding kmer, which is likely a solid \kmer, in another bloom filter $B$. Because these kmers are likely from the real genome, the size of $B$ also only depends on the genome size. 
 
-\paragraph{Scaling with coverage.}  We now show that we can keep the space consumption almost constant by adjust $\alpha$ according to the coverage. If the coverage increases by factor z, we can set $\alpha_2=\alpha_1/z$, and we will show that it almost keeps the performance of the capturing solid kmers and rejecting weak kmers in the next.
+\paragraph{Third pass.} 
+In the third pass, a simple, greedy error correction procedure is applied to each read.
+For a read $r$ of length $|r|$, we have $|r|-k+1$ \kmers and $k_i$ denotes the \kmer starting at read position $i$ where $1\le i\le|r|-k+1$.
+We first identify the longest consecutive stretch of \kmers from the read that appear in Bloom filter $B$.
+If the stretch covers the entire read, we conclude there are no errors and make no corrections.
+Otherwise, let $k_b$ and $k_e$ be the \kmers at the extreme left and right edges of the stretch.
+If $k_e$ is not the rightmost \kmer in the read, we examine successive \kmers to the right, $k_e+1$ through $k_{|r|+k+1}$.
+For each \kmer $k_i$ that does not appear in $B$, we assume the nucleotide at offset $i+k-1$ is incorrect.
+We consider all possible ways of substituting for the incorrect nucleotide; for each, we count how many consecutive \kmers beginning with $k_i$ and stretching to the right now appear in Bloom filter $B$.
+We choose the nucleotide that creates the longest stretch of consecutive \kmers in $B$.
+If more than one candidate substitution is equally good, we declare position $i+k-1$ to be ambiguous and we resume the scanning process starting with \kmer $k_i+k$.  The procedure is illustrated in Figure \ref{fig:error_correction}.
 
-We use a simple model of the sequencing process, including errors.  Let $K$ be the total number of $k$-mers obtained by the sequencer.  Let $\epsilon$ be the fraction that are incorrect, i.e. altered by at least one sequencing error.  We assume the sequencer obtains correct $k$-mers by sampling independently and uniformly from $k$-mers in the genome.  We also assume the number of $k$-mers in the genome is $G$, and that all genomic $k$-mers are distinct.  If $\kappa_c$ is a random variable representing the multiplicity of a correct $k$-mer in the input, $\kappa_c$ has a binomial distribution with success probability $1/G$ and number of trials $(1-\epsilon)K$: $\kappa_c \sim Binom((1-\epsilon)K, 1/G)$. In Lighter, after the sequencer obtained this kmer, it has to be sampled again by the probability of $\alpha$. Let $\kappa'_c$ denotes the randome variable representing the number of times that a correct $k$-mer get sampled by both sequencer and Lighter, so $\kappa'_c \sim Binom((1-\epsilon)K, \alpha/G)$. This binomial distribution can also be approximated by a Poisson distribution, thus $\kappa'_c \sim Pois(\alpha(1-\epsilon)K/G)$. Simiarly, $\kappa_c\sim Pois((1-\epsilon)K)$.
-
-Similarly, we assume that the sequencer obtains incorrect $k$-mers by sampling independently and uniformly from $k$-mers that are ``close to'' a $k$-mer in the genome.  For example, we might define these to be the set of all $k$-mers with low Hamming distance from some genomic $k$-mer.  If $\kappa_e$ is a random variable representing the multiplicity of an incorrect $k$-mer, $\kappa_e$ has a binomial distribution with success probability $1/H$ for some $H$, and number of trials $\epsilon K$: $\kappa_e \sim Binom(\epsilon K, 1/H)$.  It's reasonable to assume $H$ is much larger $G$, but we need not specify $H$ precisely for our analysis. We use $\kappa'_e$ to represent the number of times that an incorrect $k$-mer get sampled by both sequencer and Lighter, and by the same argument $\kappa'_e \sim Pois(\alpha\epsilon K / H)$ and $\kappa_e \sim Pois(\epsilon K / H)$.
-
-Finally, we assume $\epsilon$ does not vary with the depth of sequencing. 
-
-We can show that false positive of Bloom filter $A$ stays almost constant. Suppose we have two scenarios, in scenario I, the sequencer outputs $K_1$ $k$-mers and in scenario II, the sequencer outputs $zK_1$ $k$-mers. If we set $\alpha$ to be $\alpha_1$ in scenario I, then $\alpha_2=\alpha_1/z$ in scenario II. As a result, the distribution of $\kappa'_c$ and $\kappa'_e$ do not change in scenario II and are $Pois(\alpha_1(1-\epsilon)K_1)$ and $Pois(\alpha_1\epsilon K_1 / H)$ repsectively. The number of correct $k$-mer get stored in Bloom filter $A$ is $Gp(\kappa'_c\ge 1)$ and the number of incorrector $k$-mer stored in Bloom filter $A$ is $Hp(\kappa'_e\ge 1)$. These two numbers are the same in scenarios I and II, thus the occupancy rate and the false positive rate of Bloom filter $A$ stays almost the same.
-
-Secondly, we can show that if a position and its nearby positions are error-free then its probability of setting as trusted does not change. We already showed that when $\alpha$ is small, $P(\alpha_1)\approx P(\alpha_2)$ and the FPR of Bloom filter $A$ is almost the same, hence $P^*(\alpha_1)\approx P^*(\alpha_2)$. So the threshold $y'$ differentiating whether a position is trusted or not is constant when changing the coverage. Let $p_1=\frac{p(\kappa'_c\ge 1)}{p(\kappa_c\ge 1)}$ be the probability of a correct kmer get sampled by both sequencer and Lighter conditioned on it is sampled by the sequencer. The number of $k$-mers covering this position in Bloom filter $A$ follows a binomial distribution $B_1\sim Binom(x, p_1+\beta-\beta p_1)$. In general, $p_1=\frac{1-e^{-\alpha(1-\epsilon) K/G}}{1-e^{-(1-\epsilon) K/G}}\approx 1-e^{-\alpha(1-\epsilon)K/G}$, which is because $(1-\epsilon)K/G$ is a large number and $e^{-(1-\epsilon)K/G}$ is close to 0. As a result, $p_1$ does not change in scenario I and II and is about $1-e^{-\alpha_1(1-\epsilon)K_1/G}$. So the binomial distribution $B_1$ does not change. Moreover, the number of different test cases does not change and the overall positions that get classified as trusted is almost the same when changing the coverage.
- 
-Thirdly, we show that the number of positions that contain error and are falsely set as trusted position does not cause trouble. For simplicity, we ignore $\beta$, the affect of the false responses from the Bloom filter $A$, for now. Let $p_2=\frac{p(\kappa'_e\ge 1)}{p(\kappa_e\ge 1)}$. And the number of sampled $k$-mers covering this position is roughly a binomial distribution $B_2\sim Binom(x, p_2)$. In general, $p_2=\frac{1-e^{-\alpha\epsilon K/H}}{1-e^{-\epsilon K/H}}$. Since $\epsilon K/H$ is very close to 0, $e^{-\epsilon K/H}\approx 1-\epsilon K/H$. So $p_2\approx \frac{\alpha \epsilon K/H}{\epsilon K/H}=\alpha$. In sceanrio I, $p_2=\alpha_1$; and in scenario II, $p_2=\alpha_1/z$. The probability of falsely trusting a position is: 
-$p(B_2\geq y')=\sum_{i=y'}^x \binom{x}{i} p_2^i(1-p_2)^{x-i} \leq \sum_{i=y'}^x \binom{x}{i} p_2^i$. Thus the upper bound decreases by a factor much larger than $z$ when we decrease $\alpha$ by factor $z$. After verifying by simple experiments on the binomial distribution, we conclude that when $p_2$ is small, $p(B_2\ge y')$ should decrease by factor no less than $z$. In other words, the probability of falsely trusting a position is decreased by factor $z$. After increaing the coverage, we introduce new sequence errors and the total number of different test cases will roughly increase by factor $z$. Therefore, the number of false trusting will stay the same. Another perspective to get is conclusion is that because the total number of weak kmers get stored in Bloom filter $A$ is constant and the number of different test cases increase, for each test case the number of $k$-mers we retrieved from Bloom filter $A$ will decrease. When $\alpha$ gets too small, $\beta$ may dominant the probability. However, in that case, the probability of $B_2\ge y'$ is extremely small, so it does not cause trouble at that time. For example, in this paper, $\beta$ is less than $0.004$ and the threshold $y'$ is 6 when $\alpha\le 0.05$ and the $k$-mer size is $17$. Considering the binomial distribution $B'_2\sim Binom(x, 0.004)$, the probability $p(B'_2\ge 6)$ is about $5*10^{-11}$. 
-
-Therefore, the number of $k$-mers coming from the consecutive trusted positions does not increase which means there is no need to increase the size of Bloom filter $B$ when increasing coverage. Also, the analysis showed that the ability of capturing solid kmers remains almost the same when we change $\alpha$ linearly. 
-
-In both table $A$ and $B$, we only store the cannonical form of a kmer, that is the kmer itself or its reverse complement depending on who has smaller lexicographical order. 
-
-In Lighter, user need to specify the value of $\alpha$. A rule of thumb for choosing $\alpha$ is by applying the nearly linear relationship between $1/\alpha$ and the coverage, and in this paper we choose $\alpha=0.05$ when the coverage is $70\times$. So given the coverage $C$, we can set $\alpha$ to $0.05\frac{70}{C}$. 
-
-\subsection*{Third pass: error correction}
-To show that our method of getting and storing solid kmers is reliable, we designed an error correction method just using the kmers stored in bloom filter $B$.
-
-The correction is done read by read. For a read of length $|r|$, we have $|r|-k+1$ kmers and $k_i$ denote the kmer starts at position $i$ where $1\le i\le|r|-k+1$. We start the correction by finding a longest consecutive kmers that are stored in $B$, and then do the correction by scanning towards left and right. Since the correction towards left and right are symmetric, we only demonstrate the correction for the right-hand scanning. Ideally, when we move from the solid kmers towards right, the first time we see ay weak kmer, say $k_i$, there must be an error at position $i+k-1$. There are three candidates or four(if the position is N) to replace this position. For each candidate, we see how many consecutive kmers is solid starting from $k_i$ with this new character. We choose the candidate creating most solid kmers. Then we resume scanning towards right starting from the next unstored kmer. If none of the candidate makes $k_i$ solid or more than one candidate create most solid kmers, we say position $i+k-1$ is ambiguous and stop there. If $i+k-1$ is far from the end of the read, we do the error correction on the substring from $i+k-1$ to the end of a read.
-
-The scheme of this greedy error correction method is shown in Figure \ref{fig:error_correction}, where we found the error because there is no kmer CCGATTC. We choose A to replace C since it gives us most consecutive solid kmers.
+If $k_b$ is not the leftmost \kmer in the read, we apply a similar procedure moving to the left.
 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.75\textwidth]{ErrorCorrection.jpg}
-\caption{The framework of Lighter\label{fig:error_correction}}
+\caption{An example of the greedy error correction procedure.  \kmer CCGATTC does not appear in Bloom filter $B$, so we attempt to substitute a different nucleotide for the C shown in red.  We select A since it yields the longest stretch of consecutive \kmers that appear in Bloom filter $B$.  \label{fig:error_correction}}
 \end{center}
 \end{figure}
 
 If the error is located near the end of the read, for each candidate substitution, we will extend reads using the kmer reported in Bloom filter $A$ by one path that has the least lexicographical order. Thus we can solve some ties that are more likely to happend near the end of a read due to insufficient extension. 
+
+\subsection*{Scaling with coverage}
+We show we can keep \tool's memory footprint constant and keep accuracy near-constant as the depth of sequencing $K$ increases.  When $K$ increases, we adjust $\alpha$ in inverse proportion.  That is, we hold $\alpha K$ constant.  If the coverage increases by factor z, we can set $\alpha_2=\alpha_1/z$, and we will show that it almost keeps the performance of the capturing solid kmers and rejecting weak kmers in the next.
+
+We can show that false positive of Bloom filter $A$ stays almost constant. Suppose we have two scenarios, in scenario I, the sequencer outputs $K_1$ \kmers and in scenario II, the sequencer outputs $zK_1$ \kmers. If we set $\alpha$ to be $\alpha_1$ in scenario I, then $\alpha_2=\alpha_1/z$ in scenario II. As a result, the distribution of $\kappa'_c$ and $\kappa'_e$ do not change in scenario II and are $Pois(\alpha_1(1-\epsilon)K_1)$ and $Pois(\alpha_1\epsilon K_1 / H)$ repsectively. The number of correct \kmer get stored in Bloom filter $A$ is $Gp(\kappa'_c\ge 1)$ and the number of incorrector \kmer stored in Bloom filter $A$ is $Hp(\kappa'_e\ge 1)$. These two numbers are the same in scenarios I and II, thus the occupancy rate and the false positive rate of Bloom filter $A$ stays almost the same.
+
+Secondly, we can show that if a position and its nearby positions are error-free then its probability of setting as trusted does not change. We already showed that when $\alpha$ is small, $P(\alpha_1)\approx P(\alpha_2)$ and the FPR of Bloom filter $A$ is almost the same, hence $P^*(\alpha_1)\approx P^*(\alpha_2)$. So the threshold $y'$ differentiating whether a position is trusted or not is constant when changing the coverage. Let $p_1=\frac{p(\kappa'_c\ge 1)}{p(\kappa_c\ge 1)}$ be the probability of a correct kmer get sampled by both sequencer and Lighter conditioned on it is sampled by the sequencer. The number of \kmers covering this position in Bloom filter $A$ follows a binomial distribution $B_1\sim Binom(x, p_1+\beta-\beta p_1)$. In general, $p_1=\frac{1-e^{-\alpha(1-\epsilon) K/G}}{1-e^{-(1-\epsilon) K/G}}\approx 1-e^{-\alpha(1-\epsilon)K/G}$, which is because $(1-\epsilon)K/G$ is a large number and $e^{-(1-\epsilon)K/G}$ is close to 0. As a result, $p_1$ does not change in scenario I and II and is about $1-e^{-\alpha_1(1-\epsilon)K_1/G}$. So the binomial distribution $B_1$ does not change. Moreover, the number of different test cases does not change and the overall positions that get classified as trusted is almost the same when changing the coverage.
+ 
+Thirdly, we show that the number of positions that contain error and are falsely set as trusted position does not cause trouble. For simplicity, we ignore $\beta$, the affect of the false responses from the Bloom filter $A$, for now. Let $p_2=\frac{p(\kappa'_e\ge 1)}{p(\kappa_e\ge 1)}$. And the number of sampled \kmers covering this position is roughly a binomial distribution $B_2\sim Binom(x, p_2)$. In general, $p_2=\frac{1-e^{-\alpha\epsilon K/H}}{1-e^{-\epsilon K/H}}$. Since $\epsilon K/H$ is very close to 0, $e^{-\epsilon K/H}\approx 1-\epsilon K/H$. So $p_2\approx \frac{\alpha \epsilon K/H}{\epsilon K/H}=\alpha$. In sceanrio I, $p_2=\alpha_1$; and in scenario II, $p_2=\alpha_1/z$. The probability of falsely trusting a position is: 
+$p(B_2\geq y')=\sum_{i=y'}^x \binom{x}{i} p_2^i(1-p_2)^{x-i} \leq \sum_{i=y'}^x \binom{x}{i} p_2^i$. Thus the upper bound decreases by a factor much larger than $z$ when we decrease $\alpha$ by factor $z$. After verifying by simple experiments on the binomial distribution, we conclude that when $p_2$ is small, $p(B_2\ge y')$ should decrease by factor no less than $z$. In other words, the probability of falsely trusting a position is decreased by factor $z$. After increaing the coverage, we introduce new sequence errors and the total number of different test cases will roughly increase by factor $z$. Therefore, the number of false trusting will stay the same. Another perspective to get is conclusion is that because the total number of weak kmers get stored in Bloom filter $A$ is constant and the number of different test cases increase, for each test case the number of \kmers we retrieved from Bloom filter $A$ will decrease. When $\alpha$ gets too small, $\beta$ may dominant the probability. However, in that case, the probability of $B_2\ge y'$ is extremely small, so it does not cause trouble at that time. For example, in this paper, $\beta$ is less than $0.004$ and the threshold $y'$ is 6 when $\alpha\le 0.05$ and the \kmer size is $17$. Considering the binomial distribution $B'_2\sim Binom(x, 0.004)$, the probability $p(B'_2\ge 6)$ is about $5*10^{-11}$. 
+
+Therefore, the number of \kmers coming from the consecutive trusted positions does not increase which means there is no need to increase the size of Bloom filter $B$ when increasing coverage. Also, the analysis showed that the ability of capturing solid kmers remains almost the same when we change $\alpha$ linearly. 
+
+In both table $A$ and $B$, we only store the cannonical form of a kmer, that is the kmer itself or its reverse complement depending on who has smaller lexicographical order. 
+
+In Lighter, user need to specify the value of $\alpha$. A rule of thumb for choosing $\alpha$ is by applying the nearly linear relationship between $1/\alpha$ and the coverage, and in this paper we choose $\alpha=0.05$ when the coverage is $70\times$. So given the coverage $C$, we can set $\alpha$ to $0.05\frac{70}{C}$. 
 
 \subsection*{Quality score}
 Lighter can also uses the information of quality score. It firstly looks at the first up to 1 million reads of the file, and record the quality score for the last base. Then Lighter will choose the lowest quality score such that at least 5\% of the last base's quality scrore from the reads it just looked is no more than it. Then later, when Lighter decides whether a position is trusted or not, if its qulaity score is no more than the threshold quality score, then we set it to untrusted no matter what.
@@ -377,7 +391,7 @@ As shown in Figure \ref{fig:lighter_framework}, Lighter works in three stages: s
 
 \section*{Evaluation}
 \subsection*{Simulated data set}
-We compared the our result with other released programs, Quake[cite], Musket[cite] and Bless[cite]. We use Mason[cite] to generate a set of data sets with ecoli as the reference genome. The K12 strain of ecoli is fully sequenced and has the decent length for us to generated different scenarios easily. The $k$-mer size is 17 for all the programs.
+We compared the our result with other released programs, Quake[cite], Musket[cite] and Bless[cite]. We use Mason[cite] to generate a set of data sets with ecoli as the reference genome. The K12 strain of ecoli is fully sequenced and has the decent length for us to generated different scenarios easily. The \kmer size is 17 for all the programs.
 
 In the simulated data set, we considered the coverage of $35$x, $75$x, $140$x, and the average error rate of $1\%$ and $3\%$. So there are totally 6 data sets. Because Mason can also specifiy the error rate of the first and the last base repsectively, suppose the average error rate is $e$, we set the error rate of the first base to $e/2$ and the error rate of the last base is $3e$. This setting is more realistic than a uniform error rate model. 
 %TODO: define recall,...
@@ -445,7 +459,7 @@ The sampling rate $\alpha$ is the key in Lighter which ensures the near constant
 
 If $\alpha$ is too small, too much solid kmers will be failed to get in table $A$ and too many positions will fail the hypothesis test. As a result, Lighter will try to correct those error-free region which also brings down the precision. And if $\alpha$ become even smaller, then there is no kmer in $B$, so Lighter will fail to correct all the reads because there is no candidate kmers. 
 
-If $\alpha$ is larger, $y'$ will increase due to larger $\beta$ and the $f(\alpha)$ becomes constant when $\alpha>0.05$. As a result, it can handle this case nicely. However, when $\alpha$ is too large, the $k$-mer length $k$ will be smaller than $y'$, and all the positions will be regarded as untrusted. We can observe this from the dramatic drop in Figure \ref{fig:alpha}.
+If $\alpha$ is larger, $y'$ will increase due to larger $\beta$ and the $f(\alpha)$ becomes constant when $\alpha>0.05$. As a result, it can handle this case nicely. However, when $\alpha$ is too large, the \kmer length $k$ will be smaller than $y'$, and all the positions will be regarded as untrusted. We can observe this from the dramatic drop in Figure \ref{fig:alpha}.
 
 This explanation can also be verified by looking at the occupancy rate of table A and B from the simulated data sets with 3 different coverage and $1\%$ error rate when changing $\alpha$ shown in Figure \ref{fig:bloom_occupancy_alpha}. Also, we can see the occupancy rate of table A is almost the same given the same $\alpha\times\mbox{coverage}$ across the 3 data sets. And the occupancy rate of table B is very steady because the solid kmers from the genome are the same for the 3 data sets. 
 
@@ -457,14 +471,14 @@ This explanation can also be verified by looking at the occupancy rate of table 
 \end{figure}
 
 \subsubsection*{Effect of kmer length}
-One important parameters for $k$-mer based error correction methods is the value of $k$. When $k$ is too small, the $k$-mer containing sequencing error comes will likely be a $k$-mer from another location of the genome. When $k$ is too large, there may not be enough error-free $k$-mers for us to do error correction, especially when the coverage is not high. From the perspective of efficiency, when $k$ is large, we need more time to process a $k$-mer. And for the programs which requires storing the $k$-mer information, like using a hash table to store the counts, larger $k$ causes more memory consumption. Since Lighter does not store the $k$-mers' information explicitly, larger $k$ will only make Lighter slower but does not affect the memory usage.  In \cite{kelley2010quake}, the authors suggested that we can select $4^k$ around two hundred times the genome size. 
+One important parameters for \kmer based error correction methods is the value of $k$. When $k$ is too small, the \kmer containing sequencing error comes will likely be a \kmer from another location of the genome. When $k$ is too large, there may not be enough error-free \kmers for us to do error correction, especially when the coverage is not high. From the perspective of efficiency, when $k$ is large, we need more time to process a \kmer. And for the programs which requires storing the \kmer information, like using a hash table to store the counts, larger $k$ causes more memory consumption. Since Lighter does not store the \kmers' information explicitly, larger $k$ will only make Lighter slower but does not affect the memory usage.  In \cite{kelley2010quake}, the authors suggested that we can select $4^k$ around two hundred times the genome size. 
 
 We measured the affect of $k$ using the simulated data set with $35 \times$ coverage and $1\%$ error rate, the result is shown in Figure \ref{fig:kmerLength}. 
 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.5\textwidth]{kmerLength.jpg}
-\caption{The effect of $k$-mer length\label{fig:kmerLength}}
+\caption{The effect of \kmer length\label{fig:kmerLength}}
 \end{center}
 \end{figure}
 
@@ -523,7 +537,7 @@ Lighter &	105,574	& 104,682	& 5.02	& 5	& 97.548 \\ \hline
 N50 is the length such that the total length of the contigs longer or equal to than this length covers half of the assembled genome. And NG50 is the length of the contig with respect to the reference genome. Edits per 100kbps is the number of mismatches or indels per 100kbps when aligning the contigs to the reference genome. Misassembly is a position of a contig that its left sequence and right sequence are mapped far away on the genome or overlap too much. The coverage are the portion of the reference genome that are covered by contigs.
 
 \subsubsection*{Human Chr14}
-So far, we only tested the data on the genome of E.Coli, which is a pretty small. In this section, we use a data set from Gage[cite] on human chromosome 14. This data set is about 35x coverage and 101bp pair-end reads. And the $k$-mer size is 19 for all the programs in this data set.
+So far, we only tested the data on the genome of E.Coli, which is a pretty small. In this section, we use a data set from Gage[cite] on human chromosome 14. This data set is about 35x coverage and 101bp pair-end reads. And the \kmer size is 19 for all the programs in this data set.
 
 Like for the E.Coli data set, we evaluate the result using both Bowtie2 and SOAPdenovo2.
 
@@ -594,16 +608,16 @@ So far, Bless can only run in single-thread mode and it takes 1475s to finish wh
 The result shows that Lighter is very efficient and scalable. 
 
 \section*{Discussion}
-\emph{Lighter} is a software tool for correcting sequencing errors in sequencing datasets.
-At \emph{Lighter}'s core is a method for obtaining a set of solid $k$-mers from a large collection of sequencing reads.
-Unlike previous methods, \emph{Lighter} does this without counting $k$-mers in the reads.
+\tool is a software tool for correcting sequencing errors in sequencing datasets.
+At \tool's core is a method for obtaining a set of solid \kmers from a large collection of sequencing reads.
+Unlike previous methods, \tool does this without counting \kmers in the reads.
 By setting its parameters appropriately, its memory usage and accuracy can be held almost constant with respect to depth of coverage.
 It is also quite fast and practical.
 
-Though we demonstrate \emph{Lighter} in the context of sequencing error correction, \emph{Lighter}'s counting-free approach could be applied in other situation where a collection of solid $k$-mers is desired.
-For example, one tool for scaling metagenome sequence assembly uses of a Bloom filter populated with solid $k$-mers as a memory-efficient, probabilistic representation of a De Bruijn graph \cite{pell2012scaling}.
+Though we demonstrate \tool in the context of sequencing error correction, \tool's counting-free approach could be applied in other situation where a collection of solid \kmers is desired.
+For example, one tool for scaling metagenome sequence assembly uses of a Bloom filter populated with solid \kmers as a memory-efficient, probabilistic representation of a De Bruijn graph \cite{pell2012scaling}.
 Other tools use counting Bloom filters \cite{fan2000summary, bonomi2006improved} or the related CountMin sketch \cite{cormode2005improved} to represent De Bruijn graphs for compression \cite{jones2012compression} or digital normalization and related tasks \cite{zhang2013these}.
-We expect Ideas from \emph{Lighter} could be useful in reducing the memory footprint of these and other tools. 
+We expect Ideas from \tool could be useful in reducing the memory footprint of these and other tools. 
 
 %We use this method to implement an error correction program Lighter for DNA-seq reads. As we expect, Light is space-efficient . Moreover, it is very fast and gives performance is comparable with other programs. This shows that our method of finding solid kmer is quite reliable. 
 
@@ -613,7 +627,7 @@ We expect Ideas from \emph{Lighter} could be useful in reducing the memory footp
 
 In this paper, we did not analyze the effect of $\alpha$ analytically and it is a difficult problem. So far, the size of table $A$ and $B$ are setting by considering unpractical pessimestic scenarios. If we know the effect in some compact form, we can optimize the performance of obtaining solid kmers by setting the best $\alpha$ and also use less space.
 
-\emph{Lighter} is free open source software released under the XXX license.  The software and its source are available from \url{https://github.com/mourisl/Lighter/}.
+\tool is free open source software released under the XXX license.  The software and its source are available from \url{https://github.com/mourisl/Lighter/}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgements}
