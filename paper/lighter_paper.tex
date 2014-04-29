@@ -173,9 +173,10 @@
         % Do not use inserted blank lines (ie \\) until main body of text.
 \emph{Lighter} is a fast and memory-efficient tool for correcting sequencing errors in high-throughput sequencing datasets.
 \tool avoids counting \kmers in the sequencing reads.
-Instead, it uses a pair of Bloom filters, one populated with a sample of the input \kmers and the other populated with \kmers likely to be correct based on a statistical test.
+Instead, it uses a pair of Bloom filters, one populated with a sample of the input \kmers and the other populated with \kmers likely to be correct based on a simple test.
 As long as the sampling fraction is adjusted in inverse proportion to the dataset's average coverage, the Bloom filter size can be held constant while maintaining near-constant accuracy.
-\tool is easily applied to very large sequencing datasets.  It is parallelized, uses no secondary storage, and is both faster and more memory-efficient than competing approaches while achieving comparable accuracy.
+\tool is easily applied to very large sequencing datasets.
+It is parallelized, uses no secondary storage, and is both faster and more memory-efficient than competing approaches while achieving comparable accuracy.
 \tool is free open source software available from \url{https://github.com/mourisl/Lighter/}.
 \end{abstract}
 
@@ -373,7 +374,7 @@ If the error is located near the end of the read, for each candidate substitutio
 \subsection*{Scaling with coverage}
 \tool's accuracy is near-constant as the depth of sequencing $K$ increases and its memory footprint is held constant.  The basic idea is that as $K$ increases, we adjust $\alpha$ in inverse proportion.  That is, we hold $\alpha K$ constant.  For concreteness, consider two scenarios: scenario I, where coverage is $K_1$ and subsampling fraction is $\alpha_1$, and scenario II where coverage is $K_2=z K_1$ and subsampling fraction is $\alpha_2 = \alpha_1 / z$.
 
-\paragraph{Contents of Bloom filter A.} The occupancy of Bloom filter $A$, as well as the fraction of correct \kmers in $A$, are approximately the same in both scenarios.  This follows from the fact that $\kappa'_c ~ \sim Pois(\alpha K (1 - \epsilon) / G)$, $\kappa'_e \sim Pois(\alpha K \epsilon / H)$, and $\alpha K$, $\epsilon$, $G$, and $H$ are constant across scenarios.  This is also supported by our experiments, as seen in Table \ref{table:bloom_occupancy_coverage}.  Because the occupancy does not change, we can hold the Bloom filter's size constant and achieve the same false positive rate.
+\paragraph{Contents of Bloom filter A.} The occupancy of Bloom filter $A$, as well as the fraction of correct \kmers in $A$, are approximately the same in both scenarios.  This follows from the fact that $\kappa'_c ~ \sim Pois(\alpha K (1 - \epsilon) / G)$, $\kappa'_e \sim Pois(\alpha K \epsilon / H)$, and $\alpha K$, $\epsilon$, $G$, and $H$ are constant across scenarios.  This is also supported by our experiments, as seen in Table \ref{table:bloom_occupancy_coverage}.  Because the occupancy does not change, we can hold the Bloom filter's size constant while achieving the same false positive rate.
 
 % show that false positive of Bloom filter $A$ stays almost constant. Suppose we have two scenarios, in scenario I, the sequencer outputs $K_1$ \kmers and in scenario II, the sequencer outputs $zK_1$ \kmers. If we set $\alpha$ to be $\alpha_1$ in scenario I, then $\alpha_2=\alpha_1/z$ in scenario II. As a result, the distribution of $\kappa'_c$ and $\kappa'_e$ do not change in scenario II and are $Pois(\alpha_1(1-\epsilon)K_1)$ and $Pois(\alpha_1\epsilon K_1 / H)$ repsectively. The number of correct \kmer get stored in Bloom filter $A$ is $Gp(\kappa'_c\ge 1)$ and the number of incorrector \kmer stored in Bloom filter $A$ is $Hp(\kappa'_e\ge 1)$. These two numbers are the same in scenarios I and II, thus the occupancy rate and the false positive rate of Bloom filter $A$ stays almost the same.
 
@@ -409,19 +410,21 @@ Given the analysis in the previous section, we expect that the collection of \km
 %Therefore, the number of \kmers coming from the consecutive trusted positions does not increase which means there is no need to increase the size of Bloom filter $B$ when increasing coverage. Also, the analysis showed that the ability of capturing solid kmers remains almost the same when we change $\alpha$ linearly. 
 
 \subsection*{Quality score}
-Lighter can also use base quality values, essentially by allowing a low quality value to ``veto'' a trusted position.  First, \tool scans the first 1 million reads in the input, recording the quality value at the last position in each read.  \tool then chooses the 5th-percentile quality value; that is, the value such that 5\% of the values are less than or equal to it.  When Lighter decides whether a position is trusted or not, if its quality score is less than the 5th-percentile value, then call it untrusted regardless of how many of the overlapping \kmers appear in Bloom filter $A$.
+Lighter can make use of base quality values.  Specifically, a low quality value at a certain position can force that position to be untrusted, even if the overlapping \kmers indicate it is trusted.  First, \tool scans the first 1 million reads in the input, recording the quality value at the last position in each read.  \tool then chooses the 5th-percentile quality value; that is, the value such that 5\% of the values are less than or equal to it.  When Lighter decides whether a position is trusted or not, if its quality score is less than the 5th-percentile value, then call it untrusted regardless of how many of the overlapping \kmers appear in Bloom filter $A$.
 
 \subsection*{Parallization} 
-As shown in Figure \ref{fig:lighter_framework}, Lighter works in three stages: sampling \kmers, obtaining solid kmers and error correction. For the sampling kmers stage, because $\alpha$ is very small, most of the time is spent on scanning the reads namely reading the files. As a result, the overhead of parallilize this part will dominate the benefits, so we decide to remain this stage serial. In the second stage, each thread will handle different reads independently. Reading bloom filter in parallel is very efficient since there is no data race. When a thread find a solid kmer, it firstly tests whether this kmer is stored in table B or not. If this kmer is not in table B, then we write this kmer into the table. In this way, we can avoid many writing locks for table B because a solid kmer shows up many times. The thrid stage can parallized embarrsingly.
+As shown in Figure \ref{fig:lighter_framework}, Lighter works in three passes: (1) populating Bloom filter $A$ with a \kmer subsample, (2) applying the per-position test and populating Bloom filter $B$ with likely-correct \kmers, and (3) error correction.  For pass 1, because $\alpha$ is usually small, most time is spent scanning the input reads.  Consequently, we found little benefit to parallelizing pass 1.  Pass 2 is parallelized by using concurrent threads handle subsets of input reads.  Because Bloom filter $A$ is only being queried (not added to), we need not synchronize accesses to $A$.  Accesses to $B$ are synchronized so that additions of \kmers to $B$ by different threads do not interfere.  Since it is typical for the same correct \kmer to be added repeatedly to $B$, we can save synchronization effort by first checking whether the \kmer is already present and adding it (synchronously) only if necessary.  Pass 3 is parallelized by using concurrent threads to handle subsets of the reads; since Bloom filter $B$ is only being queried, we need not synchronize accesses.
 
 \section*{Evaluation}
 \subsection*{Simulated data set}
-We compared the our result with other released programs, Quake[cite], Musket[cite] and Bless[cite]. We use Mason[cite] to generate a set of data sets with ecoli as the reference genome. The K12 strain of ecoli is fully sequenced and has the decent length for us to generated different scenarios easily. The \kmer size is 17 for all the programs.
+% TODO: add version numbers for all the tools
 
-In the simulated data set, we considered the coverage of $35$x, $75$x, $140$x, and the average error rate of $1\%$ and $3\%$. So there are totally 6 data sets. Because Mason can also specifiy the error rate of the first and the last base repsectively, suppose the average error rate is $e$, we set the error rate of the first base to $e/2$ and the error rate of the last base is $3e$. This setting is more realistic than a uniform error rate model. 
+We compared \tool's performance with three other published tools: Quake \cite{kelley2010quake}, Musket\cite{liu2013musket} and Bless \cite{heo2014bless}.  For the first experiment, we generated collection of reads simulated from the reference genome for the K12 strain of \emph{E. coli} using Mason v0.1.2 \cite{holtgrewe2010mason}.  We let \kmer size $k=17$ for all programs unless otherwise noted.
+
+We simulated six distinct datasets, which vary in average coverage ($35$x, $75$x $140$x) and average error rate ($1\%$ and $3\%$).  Because Mason can also specifiy the error rate of the first and the last base repsectively, suppose the average error rate is $e$, we set the error rate of the first base to $e/2$ and the error rate of the last base is $3e$. This setting is more realistic than a uniform error rate model. 
 %TODO: define recall,...
 
-We say a base is true positive(TP) if we identify the error and correct it into the right one; a base is false positive(FP) if we correct an original error-free base; a base is false negative(FN) if it is wrong and we either fail to detect its error or we make a wrong correction. As tradition[cite], we use four measurement to evaluate the error correction methods: recall=TP/(TP$+$NP), precision=TP/(TP$+$FP), F-score=2$\times$recall$\times$precision/(recall$+$precision) which is a kind of average of recall and precision and Gain=(TP-FP)/(TP+FN) which measure the benefit of using error correction.
+In the following evaluation, we say a base is a true positive(TP) if we identify the error and correct it into the right one; a base is false positive(FP) if we correct an original error-free base; a base is false negative(FN) if it is wrong and we either fail to detect its error or we make a wrong correction. As tradition[cite], we use four measurement to evaluate the error correction methods: recall=TP/(TP$+$NP), precision=TP/(TP$+$FP), F-score=2$\times$recall$\times$precision/(recall$+$precision) which is a kind of average of recall and precision and Gain=(TP-FP)/(TP+FN) which measure the benefit of using error correction.
 
 % Insert the table here.
 \mbox{
@@ -656,7 +659,10 @@ In this paper, we did not analyze the effect of $\alpha$ analytically and it is 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgements}
-  Text for this section \ldots
+The authors thank Jeff Leek for helpful discussions.
+
+\noindent\emph{Funding:} National Science Foundation grant DBI-1159078 to LF and a Sloan Research Fellowship to BL.
+\noindent\emph{Conflicts of Interest:} none declared.
 
 \bibliographystyle{abbrv}
 \bibliography{lighter_paper}
