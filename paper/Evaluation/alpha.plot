@@ -8,6 +8,13 @@ set key bottom
 set xlabel "alpha"
 set ylabel "percent(%)"
 
-set yrange [0:100]
+set yrange [1:100]
+
+plot "alpha" using 1:2 with linespoint title "Recall", "alpha" using 1:3 with linespoint title "Precision", "alpha" using 1:4 with linespoint title "F-score", "alpha" using 1:5 with linespoint title "Gain"
+
+set output "alpha0.jpg"
+set yrange [85:100]
+
+set key bottom center
 
 plot "alpha" using 1:2 with linespoint title "Recall", "alpha" using 1:3 with linespoint title "Precision", "alpha" using 1:4 with linespoint title "F-score", "alpha" using 1:5 with linespoint title "Gain"

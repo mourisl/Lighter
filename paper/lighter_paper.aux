@@ -24,37 +24,51 @@
 \citation{shi2010parallel}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces The framework of Lighter}}{2}}
 \newlabel{fig:lighter_framework}{{1}{2}}
+\citation{melsted2014kmerstream}
 \citation{pevzner2001eulerian,chaisson2004fragment}
-\@writefile{toc}{\contentsline {paragraph}{Sampling.}{3}}
-\@writefile{toc}{\contentsline {paragraph}{Finding trusted read positions.}{4}}
-\@writefile{toc}{\contentsline {paragraph}{Finding solid $k$-mers.}{4}}
-\@writefile{toc}{\contentsline {paragraph}{Scaling with coverage.}{4}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces The framework of Lighter}}{6}}
-\newlabel{fig:error_correction}{{2}{6}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Occupancy rate(\%) for each table for different coverages}}{8}}
-\newlabel{table:bloom_occupancy_coverage}{{1}{8}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces The effect of $\alpha $}}{8}}
-\newlabel{fig:alpha}{{3}{8}}
+\citation{heo2014bless}
+\@writefile{toc}{\contentsline {paragraph}{First pass.}{4}}
+\@writefile{toc}{\contentsline {paragraph}{Second pass.}{4}}
+\@writefile{toc}{\contentsline {paragraph}{Third pass.}{4}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces An example of the greedy error correction procedure. \ensuremath  {k}-mer\xspace  CCGATTC does not appear in Bloom filter $B$, so we attempt to substitute a different nucleotide for the C shown in red. We select A since it yields the longest stretch of consecutive \ensuremath  {k}-mers\xspace  that appear in Bloom filter $B$. }}{5}}
+\newlabel{fig:error_correction}{{2}{5}}
+\@writefile{toc}{\contentsline {paragraph}{Contents of Bloom filter A.}{5}}
+\@writefile{toc}{\contentsline {paragraph}{Accuracy of trusted / untrusted classifications.}{5}}
+\@writefile{toc}{\contentsline {paragraph}{Contents of Bloom filter B.}{6}}
 \citation{kelley2010quake}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces The effect of $\alpha $ on occupancy rate}}{9}}
+\citation{liu2013musket}
+\citation{heo2014bless}
+\citation{holtgrewe2010mason}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Accuracy measures for simulated rate(\%) for each table for different coverages}}{7}}
+\newlabel{table:accuracy}{{1}{7}}
+\@writefile{toc}{\contentsline {paragraph}{Accuracy on simulated data.}{7}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Occupancy rate(\%) for each table for different coverages}}{8}}
+\newlabel{table:bloom_occupancy_coverage}{{2}{8}}
+\@writefile{toc}{\contentsline {paragraph}{Scaling with depth of simulated sequencing.}{8}}
+\@writefile{toc}{\contentsline {paragraph}{Cardinality of Bloom filter B.}{8}}
+\@writefile{toc}{\contentsline {paragraph}{Effect of varying $\alpha $.}{8}}
+\@writefile{toc}{\contentsline {paragraph}{Effect of varying $k$.}{8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces The effect of $\alpha $ on accuracy using the simulated $35\times $ dataset.}}{9}}
+\newlabel{fig:alpha}{{3}{9}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces The effect of $\alpha $ on occupancy of Bloom filters $A$ and $B$ using simulated $35\times $, $70\times $ and $140\times $ datasets.}}{9}}
 \newlabel{fig:bloom_occupancy_alpha}{{4}{9}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The effect of $k$-mer length}}{10}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The effect of \ensuremath  {k}-mer\xspace  length $k$ on accuracy.}}{10}}
 \newlabel{fig:kmerLength}{{5}{10}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Alignment of E.Coli data set}}{10}}
-\newlabel{table:ecoli_alignment}{{2}{10}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Alignment of E.Coli data set}}{10}}
+\newlabel{table:ecoli_alignment}{{3}{10}}
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces The matching ratio for each base in E.Coli data set}}{11}}
 \newlabel{fig:ecoli_perbase}{{6}{11}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces De novo assembly of E.Coli data set}}{11}}
-\newlabel{table:ecoli_assembly}{{3}{11}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces De novo assembly of E.Coli data set}}{11}}
+\newlabel{table:ecoli_assembly}{{4}{11}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Alignment of chr14 data set}}{11}}
+\newlabel{table:chr14_alignment}{{5}{11}}
 \citation{pell2012scaling}
 \citation{fan2000summary,bonomi2006improved}
 \citation{cormode2005improved}
 \citation{jones2012compression}
 \citation{zhang2013these}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Alignment of chr14 data set}}{12}}
-\newlabel{table:chr14_alignment}{{4}{12}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces De novo assembly of chr14 data set}}{12}}
-\newlabel{table:chr14_assembly}{{5}{12}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces De novo assembly of chr14 data set}}{12}}
+\newlabel{table:chr14_assembly}{{6}{12}}
 \bibstyle{abbrv}
 \bibdata{lighter_paper}
 \bibcite{bloom1970space}{1}
@@ -63,9 +77,9 @@
 \bibcite{cormode2005improved}{4}
 \bibcite{fan2000summary}{5}
 \bibcite{glenn2011field}{6}
+\bibcite{1kgenomeforreal}{7}
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces The running time on simulated data set with different number of threads}}{13}}
 \newlabel{fig:runtime}{{7}{13}}
-\bibcite{1kgenomeforreal}{7}
 \bibcite{heo2014bless}{8}
 \bibcite{ilie2011hitec}{9}
 \bibcite{jones2012compression}{10}

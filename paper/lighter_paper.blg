@@ -2,9 +2,11 @@ This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
 The top-level auxiliary file: lighter_paper.aux
 The style file: abbrv.bst
 Database file #1: lighter_paper.bib
+Warning--I didn't find a database entry for "melsted2014kmerstream"
+Warning--I didn't find a database entry for "holtgrewe2010mason"
 You've used 24 entries,
             2118 wiz_defined-function locations,
-            651 strings with 8034 characters,
+            653 strings with 8073 characters,
 and the built_in function-call counts, 9008 in all, are:
 = -- 900
 > -- 459
@@ -43,3 +45,4 @@ warning$ -- 0
 while$ -- 90
 width$ -- 26
 write$ -- 265
+(There were 2 warnings)
