@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.17)  1 MAY 2014 01:01
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.17)  3 MAY 2014 00:05
 entering extended mode
  %&-line parsing enabled.
 **lighter_paper
@@ -472,58 +472,75 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 <kmerLength.jpg, id=48, 642.4pt x 481.8pt>
 File: kmerLength.jpg Graphic file (type jpg)
- <use kmerLength.jpg>
+ <use kmerLength.jpg> [8]
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[8] [9 <./alpha.jpg> <./bloom_occupancy_alpha.jpg>]
-<per_base.jpg, id=55, 642.4pt x 481.8pt>
+[9 <./alpha.jpg> <./bloom_occupancy_alpha.jpg>]
+
+LaTeX Warning: Citation `langmead2012fast' on page 10 undefined on input line 5
+40.
+
+<per_base.jpg, id=56, 642.4pt x 481.8pt>
 File: per_base.jpg Graphic file (type jpg)
  <use per_base.jpg>
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[10 <./kmerLength.jpg>] [11 <./per_base.jpg>]
-<runtime.jpg, id=62, 642.4pt x 481.8pt>
+
+LaTeX Warning: Citation `zerbino2008velvet' on page 10 undefined on input line 
+573.
+
+
+LaTeX Warning: Citation `gurevich2013quast' on page 10 undefined on input line 
+573.
+
+[10 <./kmerLength.jpg>]
+
+LaTeX Warning: Citation `salzberg2012gage' on page 11 undefined on input line 5
+93.
+
+[11 <./per_base.jpg>] <runtime.jpg, id=63, 642.4pt x 481.8pt>
 File: runtime.jpg Graphic file (type jpg)
- <use runtime.jpg>
+
+<use runtime.jpg>
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[12] (./lighter_paper.bbl [13 <./runtime.jpg>]) [14] (./lighter_paper.aux)
+[12] (./lighter_paper.bbl [13 <./runtime.jpg>] [14]) [15] (./lighter_paper.aux)
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 2648 strings out of 495061
- 31648 string characters out of 1182620
+ 2654 strings out of 495061
+ 31746 string characters out of 1182620
  111111 words of memory out of 3000000
- 5794 multiletter control sequences out of 15000+50000
- 11327 words of font info for 41 fonts, out of 3000000 for 9000
+ 5799 multiletter control sequences out of 15000+50000
+ 11686 words of font info for 42 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  27i,10n,35p,1687b,261s stack positions out of 5000i,500n,10000p,200000b,50000s
 </usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/sha
 re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-te
 xlive/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texmf-texlive/fonts/
-type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-texlive/fonts/type1/publi
-c/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/
-cm/cmmi5.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi7.pfb
-></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share
-/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texli
-ve/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/typ
-e1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fonts/type1/public/am
-sfonts/cm/cmr7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr
-8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/s
-hare/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-
-texlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/font
-s/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-texlive/fonts/type1/publ
-ic/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts
-/cm/cmti9.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.p
-fb>
-Output written on lighter_paper.pdf (14 pages, 787509 bytes).
+type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texmf-texlive/fonts/type1/pub
+lic/amsfonts/cm/cmex10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfont
+s/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi5.
+pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/sh
+are/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texmf-te
+xlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/
+type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public
+/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm
+/cmr7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></u
+sr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texm
+f-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/f
+onts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts/type1/p
+ublic/amsfonts/cm/cmsy8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfon
+ts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti9
+.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on lighter_paper.pdf (15 pages, 799005 bytes).
 PDF statistics:
- 135 PDF objects out of 1000 (max. 8388607)
+ 142 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  36 words of extra memory for PDF output out of 10000 (max. 10000000)
 

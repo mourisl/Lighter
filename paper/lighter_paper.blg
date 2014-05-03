@@ -4,9 +4,13 @@ The style file: abbrv.bst
 Database file #1: lighter_paper.bib
 Warning--I didn't find a database entry for "melsted2014kmerstream"
 Warning--I didn't find a database entry for "holtgrewe2010mason"
+Warning--I didn't find a database entry for "langmead2012fast"
+Warning--I didn't find a database entry for "zerbino2008velvet"
+Warning--I didn't find a database entry for "gurevich2013quast"
+Warning--I didn't find a database entry for "salzberg2012gage"
 You've used 24 entries,
             2118 wiz_defined-function locations,
-            653 strings with 8073 characters,
+            657 strings with 8139 characters,
 and the built_in function-call counts, 9008 in all, are:
 = -- 900
 > -- 459
@@ -45,4 +49,4 @@ warning$ -- 0
 while$ -- 90
 width$ -- 26
 write$ -- 265
-(There were 2 warnings)
+(There were 6 warnings)
