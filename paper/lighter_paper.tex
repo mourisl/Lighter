@@ -412,7 +412,7 @@ Given the analysis in the previous section, we expect that the collection of \km
 %Therefore, the number of \kmers coming from the consecutive trusted positions does not increase which means there is no need to increase the size of Bloom filter $B$ when increasing coverage. Also, the analysis showed that the ability of capturing solid kmers remains almost the same when we change $\alpha$ linearly. 
 
 \subsection*{Quality score}
-Lighter can make use of base quality values.  Specifically, a low quality value at a certain position can force that position to be untrusted, even if the overlapping \kmers indicate it is trusted.  First, \tool scans the first 1 million reads in the input, recording the quality value at the last position in each read.  \tool then chooses the 5th-percentile quality value; that is, the value such that 5\% of the values are less than or equal to it.  When Lighter decides whether a position is trusted or not, if its quality score is less than the 5th-percentile value, then call it untrusted regardless of how many of the overlapping \kmers appear in Bloom filter $A$.
+Lighter can make use of base quality values.  Specifically, a low quality value at a certain position can force that position to be untrusted, even if the overlapping \kmers indicate it is trusted.  First, \tool scans the first 1 million reads in the input, recording the quality value at the last position in each read.  \tool then chooses the 5th-percentile quality value; that is, the value such that 5\% of the values are less than or equal to it say $t_1$. Use the same idea, we get another 5th-percentile quality, say $t_2$ value for the first 1 million reads' first base. When Lighter decides whether a position is trusted or not, if its quality score is less or equal to $min\{t_1, t_2 - 1\}$, then call it untrusted regardless of how many of the overlapping \kmers appear in Bloom filter $A$. 
 
 \subsection*{Parallization} 
 As shown in Figure \ref{fig:lighter_framework}, Lighter works in three passes: (1) populating Bloom filter $A$ with a \kmer subsample, (2) applying the per-position test and populating Bloom filter $B$ with likely-correct \kmers, and (3) error correction.  For pass 1, because $\alpha$ is usually small, most time is spent scanning the input reads.  Consequently, we found little benefit to parallelizing pass 1.  Pass 2 is parallelized by using concurrent threads handle subsets of input reads.  Because Bloom filter $A$ is only being queried (not added to), we need not synchronize accesses to $A$.  Accesses to $B$ are synchronized so that additions of \kmers to $B$ by different threads do not interfere.  Since it is typical for the same correct \kmer to be added repeatedly to $B$, we can save synchronization effort by first checking whether the \kmer is already present and adding it (synchronously) only if necessary.  Pass 3 is parallelized by using concurrent threads to handle subsets of the reads; since Bloom filter $B$ is only being queried, we need not synchronize accesses.
@@ -422,10 +422,10 @@ As shown in Figure \ref{fig:lighter_framework}, Lighter works in three passes: (
 % TODO: add version numbers for all the tools
 
 \paragraph{Accuracy on simulated data.} We compared \tool's performance with Quake \cite{kelley2010quake}, Musket\cite{liu2013musket} and Bless \cite{heo2014bless}.  We generated collection of reads simulated from the reference genome for the K12 strain of \ecoli using Mason v0.1.2 \cite{holtgrewe2010mason}.  We let \kmer size $k=17$ for all programs unless otherwise noted.
-\myworries{Li: please fill in the proper Mason version number as well as version numbers for the three error correctors.  Also, please specify full set of Mason parameters somewhere and mention at least the read length in the main text.}
+\myworries{Li: (done)please fill in the proper Mason version number as well as version numbers for the three error correctors.  Also, please specify full set of Mason parameters somewhere and mention at least the read length in the main text.}
 
-We simulated six distinct datasets, varying average coverage ($35$x, $75$x $140$x) and average error rate ($1\%$ and $3\%$).  For a given error rate $e$ we specify Mason parameters \verb+-qmb+ $e/2$ \verb+-qme+ $3e/2$, so that the average error rate is $e$ but errors are more common toward the 3' end, as in real datasets.
-\myworries{Li: please correct what I say here, which I don't think is quite what you do}
+We simulated six distinct datasets whose reads length are all 101bp, varying average coverage ($35$x, $75$x $140$x) and average error rate ($1\%$ and $3\%$).  For a given error rate $e$ we specify Mason parameters \verb+-qmb+ $e/2$ \verb+-qme+ $3e$, so that the average error rate is $e$ but errors are more common toward the 3' end, as in real datasets.
+\myworries{(done)Li: please correct what I say here, which I don't think is quite what you do}
 
 We then ran all three tools on all six datasets, with results presented in Table \ref{table:accuracy}.  In these comparisons, a true positive (TP) is an instance where an error is successfully corrected, \thatis with the correct base substituted.  A false positive (FP) is an instance where a spurious substitution is made at an error-free position.  A false negative (FN) is an instance where we either fail to detect an error or an incorrect base is substituted.  As in previous studies, we report the following summaries: recall = TP/(TP$+$NP), precision = TP/(TP$+$FP), F-score = 2$\times$recall$\times$precision/(recall$+$precision) and gain = (TP-FP)/(TP+FN).
 
@@ -481,12 +481,12 @@ $280\times$ & 41.571 & 33.903 \\ \hline
 \caption{Occupancy rate(\%) for each table for different coverages\label{table:bloom_occupancy_coverage}}
 \end{table}
 
-\paragraph{Cardinality of Bloom filter B.}  We also measured the number of \kmers added to table $B$, \thatis its cardinality. We used the Mason dataset with $70$x coverage and $1\%$ error rate. The \ecoli genome has 4,553,699 distinct canonicalized \kmers, and 4,553,653 (99.999\%) of them are in table $B$ them.  The missing \kmers are likely due to low coverage at the extreme ends of the chromosome.
-\myworries{Li: Is 4,553,653 the number of \emph{correct} \kmers in the filter, or just the number of \kmers?}
+\paragraph{Cardinality of Bloom filter B.}  We also measured the number of \kmers added to table $B$, \thatis its cardinality. We used the Mason dataset with $70$x coverage and $1\%$ error rate. The \ecoli genome has 4,553,699 distinct \kmers, and 4,553,653 (99.999\%) of them are in table $B$.  The missing \kmers are likely due to low coverage at the extreme ends of the chromosome.
+\myworries{Li: Is 4,553,653 the number of \emph{correct} \kmers in the filter, or just the number of \kmers? (4553653 are the number of correct \kmers. Also The 4553699 is the number of total distinct kmers not distinct canonicalized kmers.)}
 
 We conducted a similar experiment with Mason configured to simulate reads from a diploid version of the \ecoli genome.  Specifically, Mason was configured to introduce heterozygous SNPs at $0.1\%$ of the reference positions. Mason then sampled the same numbers of reads from both haplotypes, making a dataset with $70$x average coverage.
 Of the 159,117 simulated \kmers overlapping a position with a heterozygous SNP, table $B$ held 158,987 (99.918\%) of them at the end of the run.
-\myworries{Li: Need to explain how we configured \ecoli better.  0.1\% SNP is HETs?  HOMs?  Both?  Also, need to have the exact command-line arguments used written down somewhere.}
+\myworries{Li: Need to explain how we configured \ecoli better.  0.1\% SNP is HETs?  HOMs?  Both?  Also, need to have the exact command-line arguments used written down somewhere. (They are are HET. I make sure the corresponding positions of the two references are different.)}
 
 % test the performance of alpha
 \paragraph{Effect of varying $\alpha$.} In a series of experiments, we measured how different settings for the subsampling fraction $\alpha$ affected \tool's accuracy (recall, precision, F-score and gain) as well as the occupancies of Bloom filters $A$ and $B$.  We three datasets simulated by Mason with $35\times$, $70\times$ and $140\times$ coverage.  The simulated error rate was $1\%$ in all cases.
@@ -500,8 +500,8 @@ Of the 159,117 simulated \kmers overlapping a position with a heterozygous SNP, 
 \end{center}
 \end{figure}
 
-As shown in Figures \ref{fig:alpha} and \ref{fig:bloom_occupancy_alpha}, only a fraction of the correct \kmers are added to $A$ when $\alpha$ is very small, causing many correct read positions to fail the threshold test.  \tool attempts to ``correct'' these error-free positions, decreasing accuracy.  This also has the effect of reducing the number of consecutive stretches of $k$ trusted positions in the reads, leading to a smaller fraction of correct \kmers added to $B$, and ultimately to lower accuracy.  When $\alpha$ grows too large, the $y_x$ thresholds grow to be greater than $k$, causing all positions to fail the threshold test, as seen in Figure \ref{fig:bloom_occupancy_alpha}'s right-hand side.  This also leads to a dramatic drop in accuracy as seen in Figure \ref{fig:alpha}.  Between the two extremes, we find a broad range of values for $\alpha$ (from 0.05 to 0.45) that yield high accuracy.
-\myworries{Li: Figure 3 is too hard to read.  We might either supplement with a table, or make a second plot zoomed in on y = [95, 100] or something.}
+As shown in Figures \ref{fig:alpha} and \ref{fig:bloom_occupancy_alpha}, only a fraction of the correct \kmers are added to $A$ when $\alpha$ is very small, causing many correct read positions to fail the threshold test.  \tool attempts to ``correct'' these error-free positions, decreasing accuracy.  This also has the effect of reducing the number of consecutive stretches of $k$ trusted positions in the reads, leading to a smaller fraction of correct \kmers added to $B$, and ultimately to lower accuracy.  When $\alpha$ grows too large, the $y_x$ thresholds grow to be greater than $k$, causing all positions to fail the threshold test, as seen in Figure \ref{fig:bloom_occupancy_alpha}'s right-hand side.  This also leads to a dramatic drop in accuracy as seen in Figure \ref{fig:alpha}.  Between the two extremes, we find a broad range of values for $\alpha$ (from 0.06 to 0.45) that yield high accuracy.
+\myworries{Li: Figure 3 is too hard to read.  We might either supplement with a table, or make a second plot zoomed in on y = [95, 100] or something. (Replaced by a figure from [85-100])}
 
 %If $\alpha$ is larger, $y'$ will increase due to larger $\beta$ and the $f(\alpha)$ becomes constant when $\alpha>0.05$. As a result, it can handle this case nicely. However, when $\alpha$ is too large, the \kmer length $k$ will be smaller than $y'$, and all the positions will be regarded as untrusted. We can observe this from the dramatic drop in Figure \ref{fig:alpha}.
 
@@ -534,7 +534,7 @@ A key parameter of \tool is the \kmer length $k$.  When $k$ is smalls, there is 
 \paragraph{\ecoli.}  Here we analyze ERR022075, a real sequencing dataset containing very deep coverage of the K-12 strain of the \ecoli genome.  We again used Quake, Musket, Bless and Lighter to correct errors in the dataset.
 To obtain a level of coverage more reflective of other projects, we randomly subsampled the reads in the dataset to obtain roughly 75x coverage (~3.5M reads).  The reads are paired-end with the ends having lengths 100 nt and 102 nt.  Because Bless cannot handle paired-end reads with different length, we truncate the last 2 bases from the 102 nt end.
 
-We measured that out of 4,553,699 distinct canonicalized \kmers in the \ecoli K12 reference genome, 4,519,538 (99.250\%) appear in table $B$.  This number can be slightly improved by increasing $\alpha$. 
+We measured that out of 4,553,699 distinct \kmers in the \ecoli K12 reference genome, 4,519,538 (99.250\%) appear in table $B$. 
  
 % Result of bowtie2
 Since these data are not simulated, we cannot measure accuracy directly.  We can measure it indirectly, as other have done \cite{heo2014bless}, by measuring how error correction affects read alignment statistics.  We use Bowtie2 \cite{langmead2012fast} to align the original reads and the corrected reads to the reference genome, then count the total number of the matched positions in the alignments in both cases.  The results are shown in Table \ref{table:ecoli_alignment}.  \tool yields the greatest improvement in fraction of reads aligned and in fraction of alignment positions that are matches.  As before, Quake is hard to compare to the other tools because it both trims reads and suppresses reads it cannot correct.  This leads to negative values in the ``Gain'' columns.
@@ -558,7 +558,7 @@ Lighter	 & 3,497,616	&  3,476,425	& 0.35	& 99.611	& 0.58  \\ \hline
 %For Quake, the gain is negative mainly due to unreported reads and trimmed 3' end. It turns out Lighter gives the most improvement for both read level and base level.
 
 Also, for each tool we took the reads that aligned without indels and without trimming (in the case of Quake) and calculated the fraction of matching bases at each read position.  These fractions are plotted in Figure \ref{fig:ecoli_perbase}.  An unusual feature of this dataset is that many of the reads begin with an ``N'' indicating that the sequencer was unable to make a base call at that position.
-\myworries{Li: These are paired-end reads.  Are we plotting end 1 or end 2, or both?  Also, is the fact that many of the reads begin with N affecting the results in an important way?  That might put us at a disadvantage, since we're less able to correct an error at the extreme end of the read than a tool that counts \kmers.  We could pick another dataset, or exclude reads with Ns when we subsample.}
+\myworries{Li: These are paired-end reads.  Are we plotting end 1 or end 2, or both?(Both)  Also, is the fact that many of the reads begin with N affecting the results in an important way?  That might put us at a disadvantage, since we're less able to correct an error at the extreme end of the read than a tool that counts \kmers.  We could pick another dataset, or exclude reads with Ns when we subsample.(But the results of alignment and assembly looks very nice, so I think it is fine.)}
 
 %For those reads not got trimmed and aligned to the genome without indels (cigar field like 100M in the SAM file), we measure the matched ratio for each position shown in Figure \ref{fig:ecoli_perbase}. Since many of the reads in this data set start with N, the first base's matching ratio of the original data set is very low. 
 
@@ -570,8 +570,8 @@ Also, for each tool we took the reads that aligned without indels and without tr
 \end{figure}
 
 % Result of Velvet
-To further assess accuracy, we assembled the reads before and after error correction and measured relevant assembly statistics.  We used Velvet \cite{zerbino2008velvet}, a De Bruijn graph-based assembler for second-generation sequencing reads.  A key parameter of Velvet is the graph's \kmer length.  To avoid being overly affected by poor choice of \kmer length, for each dataset we ran Velvet with several \kmer lengths and reported statistics for the assembly with the best N50 contig size.  For each assembly, we then evaluated the assembly's quality using Quast \cite{gurevich2013quast}. Since assemblers often generate many very short contigs, we only evaluate contigs with length $\geq 100$ bp.
-\myworries{Li: I'm unclear on what exactly we aren't doing with the contigs less than 100 bp.  Please fill in the version of Velvet used.}
+To further assess accuracy, we assembled the reads before and after error correction and measured relevant assembly statistics.  We used Velvet 1.2.10\cite{zerbino2008velvet}, a De Bruijn graph-based assembler for second-generation sequencing reads.  A key parameter of Velvet is the graph's \kmer length.  To avoid being overly affected by poor choice of \kmer length, for each dataset we ran Velvet with several \kmer lengths and reported statistics for the assembly with the best N50 contig size.  For each assembly, we then evaluated the assembly's quality using Quast \cite{gurevich2013quast}. Since assemblers often generate many very short contigs, we only evaluate contigs with length $\geq 100$ bp.
+\myworries{Li: I'm unclear on what exactly we aren't doing with the contigs less than 100 bp(By default, Quast will throw away all the contigs less than 500. I think it is too harsh, so I choose 100bp which is the default threshold used by SOAPdenovo2.).  Please fill in the version of Velvet used.(done)}
 
 \begin{table}
 \centering
@@ -590,9 +590,9 @@ N50 is the length such that the total length of the contigs no shorter than the 
 \myworries{Li: I'm unclear on the meaning of misassembly here.}
 
 \subsubsection*{Human Chr14}
-We also evaluated \tool's effect on alignment and assembly using a dataset from the GAGE project \cite{salzberg2012gage}.  The dataset consists of real 101 $\times$ 101 bp paired-end reads covering human chromosome 14 to $35\times$ average coverage.  We specified a \kmer length of 19 for.... \myworries{Li: We specified \kmer length 19 for all tools including both error correctors and assemblers?.}
+We also evaluated \tool's effect on alignment and assembly using a dataset from the GAGE project \cite{salzberg2012gage}.  The dataset consists of real 101 $\times$ 101 bp paired-end reads covering human chromosome 14 to $35\times$ average coverage.  We specified a \kmer length of 19 for \tool \myworries{Li: We specified \kmer length 19 for all tools including both error correctors and assemblers?(done)}
 
-Error correction's effect on Bowtie 2 alignment statistics are shown in Table \ref{table:chr14_alignment}.  Here Bowtie 2 is aligning the reads to an index consisting of just the human chromosome 14 sequence.  \myworries{Li: Correct?  Which assembly?}
+Error correction's effect on Bowtie 2 alignment statistics are shown in Table \ref{table:chr14_alignment}.  Here Bowtie 2 is aligning the reads to an index consisting of just the human chromosome 14 sequence of hg19.  \myworries{Li: Correct?  Which assembly?}
 
 \begin{table}
 \centering
@@ -626,10 +626,10 @@ Lighter	& 8370	&6211	&133.22	&1416	&78.858 \\ \hline
 
 \subsection*{Speed, space usage, and scalability}
 %describe the machine
-We compared \tool's memory usage, disk usage, and running time with Quake, Musket and Bless.  These experiments use a computer with 48 2.1GHz processors and 512G memory.
-\myworries{Li: Please also give OS with version, and give CPU version.}
+We compared \tool's memory usage, disk usage, and running time with Quake, Musket and Bless.  These experiments use a computer with 48 2.1GHz AMD Opteron processors, 512G memory and operating system Red Hat 4.1.2-52.
+\myworries{Li: Please also give OS with version, and give CPU version.(done)}
 %The memory or disk usage from different programs 
-The input data is  on the simulated data set with different coverage and with $1\%$ error rate and the chr14 real data from Gage.  \myworries{Li: The simulated data is simulated from \ecoli?  How do you measure peak memory usage?  Is it peak virtual memory usage?}
+The input data is on the simulated data set with different coverage and with $1\%$ error rate used in the previous section and the chr14 real data from Gage.  \myworries{Li: The simulated data is simulated from \ecoli?(yes)  How do you measure peak memory usage?  Is it peak virtual memory usage?(the resident memory)}
 
 \begin{tabular}{|c|c|c||c|c||c|c||c|c|} \hline
 		& \multicolumn{2}{|c||}{$35\times$} & \multicolumn{2}{|c||}{$70\times$}  & \multicolumn{2}{|c||}{$140\times$} & \multicolumn{2}{|c|}{chr14}  \\ \hline
@@ -643,7 +643,7 @@ Lighter	& 31M	& 0 & 31M & 0 & 31M & 0 & 510M & 0 \\ \hline
 Bless and \tool achieve constant memory footprint across sequencing depths.  While Musket uses less memory than Quake, it uses more than either Bless or \tool.  Bless achieves constant memory footprint across sequencing depths, this comes at the cost of disk consumption.  Note that Bless can be configured to trade off between peak memory footprint and peak disk usage.
 
 %runtime on simulated_70_1
-To assess scalability, we also compared running time for Quake, Musket and \tool using a different number of threads.  For these experiments we used the simulated data set with $70\times$ coverage and $1\%$ error in Figure \ref{fig:runtime}.  \myworries{Li: simulated \ecoli dataset?}   Note that Musket requires at least 2 threads due to its master-slave design.  Bless can only be run with one thread and its running time is 1475s, which is slower than Quake.
+To assess scalability, we also compared running time for Quake, Musket and \tool using a different number of threads.  For these experiments we used the simulated data set with $70\times$ coverage and $1\%$ error in Figure \ref{fig:runtime}.  \myworries{Li: simulated \ecoli dataset?(yes)}   Note that Musket requires at least 2 threads due to its master-slave design.  Bless can only be run with one thread and its running time is 1475s, which is slower than Quake.
 
 \begin{figure}[h!]
 \begin{center}
@@ -678,7 +678,8 @@ We expect Ideas from \tool could be useful in reducing the memory footprint of t
 The authors thank Jeff Leek for helpful discussions.
 
 \noindent\emph{Funding:} National Science Foundation grant DBI-1159078 to LF and a Sloan Research Fellowship to BL.
-\noindent\emph{Conflicts of Interest:} none declared.
+
+\noindent\emph{Conflicts of Interest:} none declared.
 
 \bibliographystyle{abbrv}
 \bibliography{lighter_paper}
