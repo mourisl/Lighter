@@ -105,22 +105,33 @@ char GetGoodQuality( Reads &reads )
 char GetBadQuality( Reads &reads )
 {
 	int i ;
-	int qualHisto[300] ;
+	int qualHisto[300], firstQualHisto[300] ;
 	int totalCnt, cnt ;
-
+	int t1, t2 ;
 	//Reads reads( readFile ) ;
 	if ( !reads.HasQuality() )
 		return 0 ;
 
 	memset( qualHisto, 0, sizeof( qualHisto ) ) ;
+	memset( firstQualHisto, 0, sizeof( firstQualHisto )) ;
 	for ( i = 0 ; i < 1000000 ; ++i )
 	{
 		if ( !reads.Next() )
 			break ;
 		++qualHisto[ (int)reads.qual[ strlen( reads.seq ) - 1 ] ] ;
+		++firstQualHisto[ (int)reads.qual[0] ] ;
 	}
 
 	totalCnt = i ;
+	cnt = 0 ;
+	for ( i = 0 ; i < 300 ; ++i )
+	{
+		cnt += firstQualHisto[i] ;
+		if ( cnt > totalCnt * 0.05 )
+			break ;
+	}
+	t1 = i - 1 ;
+	
 	cnt = 0 ;
 	for ( i = 0 ; i < 300 ; ++i )
 	{
@@ -128,7 +139,9 @@ char GetBadQuality( Reads &reads )
 		if ( cnt > totalCnt * 0.05 )
 			break ;
 	}
-	return (char)i ;
+	t2 = i ;
+	//printf( "%d %d\n", t1, t2 ) ;
+	return (char)( t2 < t1 ? t2 : t1 ) ;
 }
 
 void PrintLog( const char *log )

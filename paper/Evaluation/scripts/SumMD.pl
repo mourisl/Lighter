@@ -1,7 +1,7 @@
 #!/bin/perl
 use strict ;
 
-my $sumAS = 0 ;
+my $sumMD = 0 ;
 my $sum = 0 ;
 my @cols = 0 ;
 my $i ;
@@ -20,7 +20,7 @@ while(<>)
 			#print $cols[$i], " " ;
 			$sum1 += $cols[$i] ;
 		}
-		$sumAS += $sum1 ;
+		$sumMD += $sum1 ;
 		
 		#print "\n" ;
 		# then the penalty
@@ -34,4 +34,4 @@ while(<>)
 	}
 	++$sum ;
 }
-print $sum, " ",$sumAS, "\n"
+print $sum, " ",$sumMD, "\n"
