@@ -15,6 +15,11 @@ M.~Chaisson, P.~Pevzner, and H.~Tang.
 \newblock Fragment assembly with short reads.
 \newblock {\em Bioinformatics}, 20(13):2067--2074, 2004.
 
+\bibitem{chikhi2014informed}
+R.~Chikhi and P.~Medvedev.
+\newblock Informed and automated k-mer size selection for genome assembly.
+\newblock {\em Bioinformatics}, 30(1):31--37, 2014.
+
 \bibitem{cormode2005improved}
 G.~Cormode and S.~Muthukrishnan.
 \newblock An improved data stream summary: the count-min sketch and its
@@ -31,6 +36,11 @@ T.~C. Glenn.
 \newblock Field guide to next-generation dna sequencers.
 \newblock {\em Molecular Ecology Resources}, 11(5):759--769, 2011.
 
+\bibitem{gurevich2013quast}
+A.~Gurevich, V.~Saveliev, N.~Vyahhi, and G.~Tesler.
+\newblock Quast: quality assessment tool for genome assemblies.
+\newblock {\em Bioinformatics}, 29(8):1072--1075, 2013.
+
 \bibitem{1kgenomeforreal}
 E.~C. Hayden.
 \newblock Is the \$1,000 genome for real?
@@ -41,6 +51,11 @@ Y.~Heo, X.-L. Wu, D.~Chen, J.~Ma, and W.-M. Hwu.
 \newblock Bless: Bloom-filter-based error correction solution for
   high-throughput sequencing reads.
 \newblock {\em Bioinformatics}, page btu030, 2014.
+
+\bibitem{holtgrewe2010mason}
+M.~Holtgrewe.
+\newblock Mason--a read simulator for second generation sequencing data.
+\newblock {\em Technical Report FU Berlin}, 2010.
 
 \bibitem{ilie2011hitec}
 L.~Ilie, F.~Fazayeli, and S.~Ilie.
@@ -63,6 +78,11 @@ D.~R. Kelley, M.~C. Schatz, S.~L. Salzberg, et~al.
 \newblock Quake: quality-aware detection and correction of sequencing errors.
 \newblock {\em Genome Biol}, 11(11):R116, 2010.
 
+\bibitem{langmead2012fast}
+B.~Langmead and S.~L. Salzberg.
+\newblock Fast gapped-read alignment with bowtie 2.
+\newblock {\em Nature methods}, 9(4):357--359, 2012.
+
 \bibitem{liu2013musket}
 Y.~Liu, J.~Schr{\"o}der, and B.~Schmidt.
 \newblock Musket: a multistage k-mer spectrum-based error corrector for
@@ -80,6 +100,11 @@ P.~Medvedev, E.~Scott, B.~Kakaradov, and P.~Pevzner.
 \newblock Error correction of high-throughput sequencing datasets with
   non-uniform coverage.
 \newblock {\em Bioinformatics}, 27(13):i137--i141, 2011.
+
+\bibitem{melsted2014kmerstream}
+P.~Melsted and B.~V. Halld{\'o}rsson.
+\newblock Kmerstream: Streaming algorithms for k-mer abundance estimation.
+\newblock {\em bioRxiv}, 2014.
 
 \bibitem{melsted2011efficient}
 P.~Melsted and J.~K. Pritchard.
@@ -104,6 +129,13 @@ L.~Salmela and J.~Schr{\"o}der.
 \newblock Correcting errors in short reads by multiple alignments.
 \newblock {\em Bioinformatics}, 27(11):1455--1461, 2011.
 
+\bibitem{salzberg2012gage}
+S.~L. Salzberg, A.~M. Phillippy, A.~Zimin, D.~Puiu, T.~Magoc, S.~Koren, T.~J.
+  Treangen, M.~C. Schatz, A.~L. Delcher, M.~Roberts, et~al.
+\newblock Gage: A critical evaluation of genome assemblies and assembly
+  algorithms.
+\newblock {\em Genome research}, 22(3):557--567, 2012.
+
 \bibitem{schroder2009shrec}
 J.~Schr{\"o}der, H.~Schr{\"o}der, S.~J. Puglisi, R.~Sinha, and B.~Schmidt.
 \newblock Shrec: a short-read error correction method.
@@ -125,6 +157,12 @@ S.~Tarkoma, C.~E. Rothenberg, and E.~Lagerspetz.
 X.~Yang, K.~S. Dorman, and S.~Aluru.
 \newblock Reptile: representative tiling for short read error correction.
 \newblock {\em Bioinformatics}, 26(20):2526--2533, 2010.
+
+\bibitem{zerbino2008velvet}
+D.~R. Zerbino and E.~Birney.
+\newblock Velvet: algorithms for de novo short read assembly using de bruijn
+  graphs.
+\newblock {\em Genome research}, 18(5):821--829, 2008.
 
 \bibitem{zhang2013these}
 Q.~Zhang, J.~Pell, R.~Canino-Koning, A.~C. Howe, and C.~T. Brown.

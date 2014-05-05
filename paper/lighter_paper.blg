@@ -1,52 +1,45 @@
-This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
+This is BibTeX, Version 0.99c (Web2C 7.5.4)
 The top-level auxiliary file: lighter_paper.aux
 The style file: abbrv.bst
 Database file #1: lighter_paper.bib
-Warning--I didn't find a database entry for "melsted2014kmerstream"
-Warning--I didn't find a database entry for "holtgrewe2010mason"
-Warning--I didn't find a database entry for "langmead2012fast"
-Warning--I didn't find a database entry for "zerbino2008velvet"
-Warning--I didn't find a database entry for "gurevich2013quast"
-Warning--I didn't find a database entry for "salzberg2012gage"
-You've used 24 entries,
+You've used 31 entries,
             2118 wiz_defined-function locations,
-            657 strings with 8139 characters,
-and the built_in function-call counts, 9008 in all, are:
-= -- 900
-> -- 459
+            685 strings with 9162 characters,
+and the built_in function-call counts, 11455 in all, are:
+= -- 1140
+> -- 599
 < -- 2
-+ -- 185
-- -- 156
-* -- 731
-:= -- 1509
-add.period$ -- 73
-call.type$ -- 24
-change.case$ -- 149
++ -- 240
+- -- 204
+* -- 926
+:= -- 1934
+add.period$ -- 94
+call.type$ -- 31
+change.case$ -- 193
 chr.to.int$ -- 0
-cite$ -- 24
-duplicate$ -- 288
-empty$ -- 653
-format.name$ -- 156
-if$ -- 1822
+cite$ -- 31
+duplicate$ -- 363
+empty$ -- 822
+format.name$ -- 204
+if$ -- 2306
 int.to.chr$ -- 0
-int.to.str$ -- 24
-missing$ -- 24
-newline$ -- 123
-num.names$ -- 48
-pop$ -- 113
+int.to.str$ -- 31
+missing$ -- 31
+newline$ -- 158
+num.names$ -- 62
+pop$ -- 147
 preamble$ -- 1
-purify$ -- 125
+purify$ -- 162
 quote$ -- 0
-skip$ -- 200
+skip$ -- 254
 stack$ -- 0
-substring$ -- 694
-swap$ -- 46
+substring$ -- 854
+swap$ -- 53
 text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 96
+type$ -- 124
 warning$ -- 0
-while$ -- 90
-width$ -- 26
-write$ -- 265
-(There were 6 warnings)
+while$ -- 114
+width$ -- 33
+write$ -- 340

@@ -1,15 +1,17 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.17)  3 MAY 2014 00:05
+This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4) (format=pdflatex 2012.8.24)  5 MAY 2014 11:31
 entering extended mode
- %&-line parsing enabled.
 **lighter_paper
 (./lighter_paper.tex
-LaTeX2e <2009/09/24>
-Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
-yphenation, loaded.
-(/usr/share/texmf-texlive/tex/latex/base/article.cls
-Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
-(/usr/share/texmf-texlive/tex/latex/base/size10.clo
-File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+LaTeX2e <2003/12/01>
+Babel <v3.8d> and hyphenation patterns for american, french, german, ngerman, b
+ahasa, basque, bulgarian, catalan, croatian, czech, danish, dutch, esperanto, e
+stonian, finnish, greek, icelandic, irish, italian, latin, magyar, norsk, polis
+h, portuges, romanian, russian, serbian, slovak, slovene, spanish, swedish, tur
+kish, ukrainian, nohyphenation, loaded.
+(/usr/share/texmf/tex/latex/base/article.cls
+Document Class: article 2004/02/16 v1.4f Standard LaTeX document class
+(/usr/share/texmf/tex/latex/base/size10.clo
+File: size10.clo 2004/02/16 v1.4f Standard LaTeX file (size option)
 )
 \c@part=\count79
 \c@section=\count80
@@ -23,20 +25,20 @@ File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 )
-(/usr/share/texmf-texlive/tex/latex/cite/cite.sty
-LaTeX Info: Redefining \cite on input line 285.
-LaTeX Info: Redefining \nocite on input line 356.
-Package: cite 2009/08/29  v 5.2
+(/usr/share/texmf/tex/latex/cite/cite.sty
+LaTeX Info: Redefining \cite on input line 149.
+LaTeX Info: Redefining \nocite on input line 214.
+Package: cite 2003/11/04  v 4.01
 )
-(/usr/share/texmf-texlive/tex/latex/ltxmisc/url.sty
+(/usr/local/share/texmf/tex/latex/ltxmisc/url.sty
 \Urlmuskip=\muskip10
-Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
+Package: url 2005/06/27  ver 3.2  Verb mode for urls, etc.
 )
-(/usr/share/texmf-texlive/tex/latex/base/ifthen.sty
+(/usr/share/texmf/tex/latex/base/ifthen.sty
 Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
 )
-(/usr/share/texmf-texlive/tex/latex/tools/multicol.sty
-Package: multicol 2008/12/05 v1.6h multicolumn formatting (FMi)
+(/usr/share/texmf/tex/latex/tools/multicol.sty
+Package: multicol 2004/02/14 v1.6e multicolumn formatting (FMi)
 \c@tracingmulticols=\count87
 \mult@box=\box26
 \multicol@leftmargin=\dimen103
@@ -82,23 +84,21 @@ Package: multicol 2008/12/05 v1.6h multicolumn formatting (FMi)
 \mult@nat@firstbox=\box50
 \colbreak@box=\box51
 )
-(/usr/share/texmf-texlive/tex/latex/tools/hhline.sty
+(/usr/share/texmf/tex/latex/tools/hhline.sty
 Package: hhline 1994/05/23 v2.03 Table rule package (DPC)
 )
-(/usr/share/texmf-texlive/tex/latex/base/inputenc.sty
-Package: inputenc 2008/03/30 v1.1d Input encoding file
-\inpenc@prehook=\toks14
-\inpenc@posthook=\toks15
+(/usr/share/texmf/tex/latex/base/inputenc.sty
+Package: inputenc 2004/02/05 v1.0d Input encoding file
 
-(/usr/share/texmf-texlive/tex/latex/base/utf8.def
-File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
+(/usr/share/texmf/tex/latex/base/utf8.def
+File: utf8.def 2004/02/09 v1.1b UTF-8 support for inputenc
 Now handling font encoding OML ...
 ... no UTF-8 mapping file for font encoding OML
 Now handling font encoding T1 ...
 ... processing UTF-8 mapping file for font encoding T1
 
-(/usr/share/texmf-texlive/tex/latex/base/t1enc.dfu
-File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+(/usr/share/texmf/tex/latex/base/t1enc.dfu
+File: t1enc.dfu 2004/02/09 v1.1b UTF-8 support for inputenc
    defining Unicode char U+00A1 (decimal 161)
    defining Unicode char U+00A3 (decimal 163)
    defining Unicode char U+00AB (decimal 171)
@@ -186,8 +186,6 @@ File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+011F (decimal 287)
    defining Unicode char U+0130 (decimal 304)
    defining Unicode char U+0131 (decimal 305)
-   defining Unicode char U+0132 (decimal 306)
-   defining Unicode char U+0133 (decimal 307)
    defining Unicode char U+0139 (decimal 313)
    defining Unicode char U+013A (decimal 314)
    defining Unicode char U+013D (decimal 317)
@@ -247,8 +245,8 @@ File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
 Now handling font encoding OT1 ...
 ... processing UTF-8 mapping file for font encoding OT1
 
-(/usr/share/texmf-texlive/tex/latex/base/ot1enc.dfu
-File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+(/usr/share/texmf/tex/latex/base/ot1enc.dfu
+File: ot1enc.dfu 2004/02/09 v1.1b UTF-8 support for inputenc
    defining Unicode char U+00A1 (decimal 161)
    defining Unicode char U+00A3 (decimal 163)
    defining Unicode char U+00B8 (decimal 184)
@@ -278,11 +276,11 @@ File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
 Now handling font encoding OMS ...
 ... processing UTF-8 mapping file for font encoding OMS
 
-(/usr/share/texmf-texlive/tex/latex/base/omsenc.dfu
-File: omsenc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+(/usr/share/texmf/tex/latex/base/omsenc.dfu
+File: omsenc.dfu 2004/02/09 v1.1b UTF-8 support for inputenc
    defining Unicode char U+00A7 (decimal 167)
    defining Unicode char U+00B6 (decimal 182)
-   defining Unicode char U+00B7 (decimal 183)
+   defining Unicode char U+02D9 (decimal 729)
    defining Unicode char U+2020 (decimal 8224)
    defining Unicode char U+2021 (decimal 8225)
    defining Unicode char U+2022 (decimal 8226)
@@ -296,61 +294,61 @@ Now handling font encoding U ...
    defining Unicode char U+00AE (decimal 174)
    defining Unicode char U+00BA (decimal 186)
    defining Unicode char U+02C6 (decimal 710)
-   defining Unicode char U+02DC (decimal 732)
+   defining Unicode char U+02CA (decimal 714)
    defining Unicode char U+200C (decimal 8204)
    defining Unicode char U+2026 (decimal 8230)
    defining Unicode char U+2122 (decimal 8482)
    defining Unicode char U+2423 (decimal 9251)
 ))
-(/usr/share/texmf-texlive/tex/latex/graphics/graphicx.sty
+(/usr/share/texmf/tex/latex/graphics/graphicx.sty
 Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
 
-(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty
+(/usr/share/texmf/tex/latex/graphics/keyval.sty
 Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
-\KV@toks@=\toks16
+\KV@toks@=\toks14
 )
-(/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
-Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+(/usr/share/texmf/tex/latex/graphics/graphics.sty
+Package: graphics 2001/07/07 v1.0n Standard LaTeX Graphics (DPC,SPQR)
 
-(/usr/share/texmf-texlive/tex/latex/graphics/trig.sty
+(/usr/share/texmf/tex/latex/graphics/trig.sty
 Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 )
-(/etc/texmf/tex/latex/config/graphics.cfg
-File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
+(/usr/share/texmf/tex/latex/graphics/graphics.cfg
+File: graphics.cfg 2005/02/03 v1.3 graphics configuration of teTeX/TeXLive
 )
-Package graphics Info: Driver file: pdftex.def on input line 91.
+Package graphics Info: Driver file: pdftex.def on input line 80.
 
-(/usr/share/texmf-texlive/tex/latex/pdftex-def/pdftex.def
-File: pdftex.def 2009/08/25 v0.04m Graphics/color for pdfTeX
+(/usr/share/texmf/tex/latex/graphics/pdftex.def
+File: pdftex.def 2002/06/19 v0.03k graphics/color for pdftex
 \Gread@gobject=\count95
 ))
 \Gin@req@height=\dimen111
 \Gin@req@width=\dimen112
 )
-(/usr/share/texmf-texlive/tex/latex/tools/verbatim.sty
+(/usr/share/texmf/tex/latex/tools/verbatim.sty
 Package: verbatim 2003/08/22 v1.5q LaTeX2e package for verbatim enhancements
-\every@verbatim=\toks17
-\verbatim@line=\toks18
+\every@verbatim=\toks15
+\verbatim@line=\toks16
 \verbatim@in@stream=\read1
 )
-(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+(/usr/share/texmf/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2000/07/18 v2.13 AMS math features
 \@mathmargin=\skip45
 
 For additional information on amsmath, use the `?' option.
-(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf/tex/latex/amsmath/amstext.sty
 Package: amstext 2000/06/29 v2.01
 
-(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty
+(/usr/share/texmf/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0
-\@emptytoks=\toks19
+\@emptytoks=\toks17
 \ex@=\dimen113
 ))
-(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty
+(/usr/share/texmf/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d
 \pmbraise@=\dimen114
 )
-(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty
+(/usr/share/texmf/tex/latex/amsmath/amsopn.sty
 Package: amsopn 1999/12/14 v2.01 operator names
 )
 \inf@bad=\count96
@@ -373,44 +371,44 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
 \dotsspace@=\muskip11
 \c@parentequation=\count103
 \dspbrk@lvl=\count104
-\tag@help=\toks20
+\tag@help=\toks18
 \row@=\count105
 \column@=\count106
 \maxfields@=\count107
-\andhelp@=\toks21
+\andhelp@=\toks19
 \eqnshift@=\dimen116
 \alignsep@=\dimen117
 \tagshift@=\dimen118
 \tagwidth@=\dimen119
 \totwidth@=\dimen120
 \lineht@=\dimen121
-\@envbody=\toks22
+\@envbody=\toks20
 \multlinegap=\skip46
 \multlinetaggap=\skip47
-\mathdisplay@stack=\toks23
+\mathdisplay@stack=\toks21
 LaTeX Info: Redefining \[ on input line 2666.
 LaTeX Info: Redefining \] on input line 2667.
 )
-(/usr/share/texmf-texlive/tex/latex/tools/xspace.sty
-Package: xspace 2006/05/08 v1.12 Space after command names (DPC,MH)
+(/usr/share/texmf/tex/latex/tools/xspace.sty
+Package: xspace 1997/10/13 v1.06 Space after command names (DPC)
 )
 (/usr/share/texmf/tex/latex/xcolor/xcolor.sty
-Package: xcolor 2007/01/21 v2.11 LaTeX color extensions (UK)
+Package: xcolor 2004/07/04 v2.00 LaTeX color extensions (UK)
 
-(/etc/texmf/tex/latex/config/color.cfg
-File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+(/usr/share/texmf/tex/latex/graphics/color.cfg
+File: color.cfg 2005/02/03 v1.3 color configuration of teTeX/TeXLive
 )
-Package xcolor Info: Driver file: pdftex.def on input line 225.
-Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1337.
-Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1341.
-Package xcolor Info: Model `RGB' extended on input line 1353.
-Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1355.
-Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1356.
-Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1357.
-Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1358.
-Package xcolor Info: Model `Gray' substituted by `gray' on input line 1359.
-Package xcolor Info: Model `wave' substituted by `hsb' on input line 1360.
-) (./lighter_paper.aux)
+Package xcolor Info: Driver file: pdftex.def on input line 136.
+Package xcolor Info: Color model `cmy' added on input line 972.
+Package xcolor Info: Color model `hsb' added on input line 980.
+Package xcolor Info: Color model `HTML' added on input line 1000.
+Package xcolor Info: Color model `HSB' added on input line 1006.
+Package xcolor Info: Color model `Gray' added on input line 1012.
+) (./lighter_paper.aux
+
+LaTeX Warning: Label `table:chr14_assembly' multiply defined.
+
+)
 \openout1 = `lighter_paper.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 115.
@@ -425,82 +423,67 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 115.
 LaTeX Font Info:    ... okay on input line 115.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 115.
 LaTeX Font Info:    ... okay on input line 115.
-
-(/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
-[Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count108
+ (/usr/share/texmf/tex/context/base/supp-pdf.tex
+(/usr/share/texmf/tex/context/base/supp-mis.tex
+loading : Context Support Macros / Miscellaneous (2004.10.26)
+\protectiondepth=\count108
+\scratchcounter=\count109
+\scratchtoks=\toks22
 \scratchdimen=\dimen122
+\scratchskip=\skip48
+\scratchmuskip=\muskip12
 \scratchbox=\box54
-\nofMPsegments=\count109
-\nofMParguments=\count110
-\everyMPshowfont=\toks24
-\MPscratchCnt=\count111
-\MPscratchDim=\dimen123
-\MPnumerator=\count112
+\scratchread=\read2
+\scratchwrite=\write3
+\zeropoint=\dimen123
+\onepoint=\dimen124
+\onebasepoint=\dimen125
+\minusone=\count110
+\thousandpoint=\dimen126
+\onerealpoint=\dimen127
+\emptytoks=\toks23
+\nextbox=\box55
+\nextdepth=\dimen128
+\everyline=\toks24
+\!!counta=\count111
+\!!countb=\count112
+\recursecounter=\count113
+)
+loading : Context Support Macros / PDF (2004.03.26)
+\nofMPsegments=\count114
+\nofMParguments=\count115
+\MPscratchCnt=\count116
+\MPscratchDim=\dimen129
+\MPnumerator=\count117
 \everyMPtoPDFconversion=\toks25
 ) [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-<lighter_framework.jpg, id=17, 1061.9675pt x 796.9775pt>
+{/usr/share/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+<lighter_framework.jpg, id=41, 1061.9675pt x 796.9775pt>
 File: lighter_framework.jpg Graphic file (type jpg)
 
-<use lighter_framework.jpg> [2 <./lighter_framework.jpg>]
-
-LaTeX Warning: Citation `melsted2014kmerstream' on page 3 undefined on input li
-ne 290.
-
-[3] [4] <ErrorCorrection.jpg, id=34, 1061.9675pt x 622.325pt>
+<use lighter_framework.jpg> [2 <./lighter_framework.jpg>] [3] [4]
+<ErrorCorrection.jpg, id=72, 1061.9675pt x 622.325pt>
 File: ErrorCorrection.jpg Graphic file (type jpg)
 
-<use ErrorCorrection.jpg> [5 <./ErrorCorrection.jpg>] [6]
-
-LaTeX Warning: Citation `holtgrewe2010mason' on page 7 undefined on input line 
-424.
-
-[7] <alpha.jpg, id=46, 642.4pt x 481.8pt>
+<use ErrorCorrection.jpg> [5 <./ErrorCorrection.jpg>] [6] [7]
+<alpha.jpg, id=86, 642.4pt x 481.8pt>
 File: alpha.jpg Graphic file (type jpg)
- <use alpha.jpg>
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<bloom_occupancy_alpha.jpg, id=47, 642.4pt x 481.8pt>
+ <use alpha.jpg> [8 <./alpha.jpg>]
+<bloom_occupancy_alpha.jpg, id=90, 642.4pt x 481.8pt>
 File: bloom_occupancy_alpha.jpg Graphic file (type jpg)
 
-<use bloom_occupancy_alpha.jpg>
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<kmerLength.jpg, id=48, 642.4pt x 481.8pt>
+<use bloom_occupancy_alpha.jpg> <kmerLength.jpg, id=91, 642.4pt x 481.8pt>
 File: kmerLength.jpg Graphic file (type jpg)
- <use kmerLength.jpg> [8]
 
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[9 <./alpha.jpg> <./bloom_occupancy_alpha.jpg>]
-
-LaTeX Warning: Citation `langmead2012fast' on page 10 undefined on input line 5
-40.
-
-<per_base.jpg, id=56, 642.4pt x 481.8pt>
+<use kmerLength.jpg> [9 <./bloom_occupancy_alpha.jpg> <./kmerLength.jpg>]
+<per_base.jpg, id=95, 642.4pt x 481.8pt>
 File: per_base.jpg Graphic file (type jpg)
  <use per_base.jpg>
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-
-LaTeX Warning: Citation `zerbino2008velvet' on page 10 undefined on input line 
-573.
-
-
-LaTeX Warning: Citation `gurevich2013quast' on page 10 undefined on input line 
-573.
-
-[10 <./kmerLength.jpg>]
-
-LaTeX Warning: Citation `salzberg2012gage' on page 11 undefined on input line 5
-93.
-
-[11 <./per_base.jpg>] <runtime.jpg, id=63, 642.4pt x 481.8pt>
+[10] [11 <./per_base.jpg>] <runtime.jpg, id=105, 642.4pt x 481.8pt>
 File: runtime.jpg Graphic file (type jpg)
 
 <use runtime.jpg>
@@ -509,38 +492,33 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [12] (./lighter_paper.bbl [13 <./runtime.jpg>] [14]) [15] (./lighter_paper.aux)
 
-LaTeX Warning: There were undefined references.
+LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 2654 strings out of 495061
- 31746 string characters out of 1182620
- 111111 words of memory out of 3000000
- 5799 multiletter control sequences out of 15000+50000
- 11686 words of font info for 42 fonts, out of 3000000 for 9000
- 28 hyphenation exceptions out of 8191
- 27i,10n,35p,1687b,261s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/sha
-re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-te
-xlive/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texmf-texlive/fonts/
-type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texmf-texlive/fonts/type1/pub
-lic/amsfonts/cm/cmex10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfont
-s/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi5.
-pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/sh
-are/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texmf-te
-xlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/
-type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public
-/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm
-/cmr7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></u
-sr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texm
-f-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/f
-onts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts/type1/p
-ublic/amsfonts/cm/cmsy8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfon
-ts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti9
-.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on lighter_paper.pdf (15 pages, 799005 bytes).
+ 2473 strings out of 94500
+ 28883 string characters out of 1176766
+ 99541 words of memory out of 1000000
+ 5610 multiletter control sequences out of 10000+50000
+ 11686 words of font info for 42 fonts, out of 500000 for 2000
+ 580 hyphenation exceptions out of 1000
+ 27i,10n,38p,1687b,260s stack positions out of 1500i,500n,5000p,200000b,5000s
 PDF statistics:
- 142 PDF objects out of 1000 (max. 8388607)
- 0 named destinations out of 1000 (max. 500000)
- 36 words of extra memory for PDF output out of 10000 (max. 10000000)
-
+ 118 PDF objects out of 300000
+ 0 named destinations out of 131072
+ 36 words of extra memory for PDF output out of 65536
+</usr/share/texmf/fonts/type1/bluesky/cm/cmbxti10.pfb></usr/share/texmf/fonts
+/type1/bluesky/cm/cmtt10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmbx10.pf
+b></usr/share/texmf/fonts/type1/bluesky/cm/cmex10.pfb></usr/share/texmf/fonts/t
+ype1/bluesky/cm/cmmi5.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy10.pfb><
+/usr/share/texmf/fonts/type1/bluesky/cm/cmsy7.pfb></usr/share/texmf/fonts/type1
+/bluesky/cm/cmmi7.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr7.pfb></usr/s
+hare/texmf/fonts/type1/bluesky/cm/cmti10.pfb></usr/share/texmf/fonts/type1/blue
+sky/cm/cmmi10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr10.pfb></usr/shar
+e/texmf/fonts/type1/bluesky/cm/cmbx12.pfb></usr/share/texmf/fonts/type1/bluesky
+/cm/cmmi9.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr9.pfb></usr/share/tex
+mf/fonts/type1/bluesky/cm/cmti9.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cm
+bx9.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy8.pfb></usr/share/texmf/fo
+nts/type1/bluesky/cm/cmr8.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr12.pf
+b></usr/share/texmf/fonts/type1/bluesky/cm/cmr17.pfb>
+Output written on lighter_paper.pdf (15 pages, 679330 bytes).
