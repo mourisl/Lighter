@@ -1,0 +1,1 @@
+~/Softwares/quast-2.3/quast.py -o quast_M100 -T 10 -M 100 -R ~/data/Lighter/gage_chr14/chr14.fa orig/velvet_53/contigs.fa quake/velvet_57/contigs.fa musket/velvet_63/contigs.fa bless/velvet_63/contigs.fa lighter/velvet_63/contigs.fa
