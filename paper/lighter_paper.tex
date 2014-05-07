@@ -421,7 +421,7 @@ As shown in Figure \ref{fig:lighter_framework}, Lighter works in three passes: (
 \subsection*{Simulated data set}
 % TODO: add version numbers for all the tools
 
-\paragraph{Accuracy on simulated data.} We compared \tool's performance with Quake \cite{kelley2010quake}, Musket\cite{liu2013musket} and Bless \cite{heo2014bless}.  We generated collection of reads simulated from the reference genome for the K12 strain of \ecoli using Mason v0.1.2 \cite{holtgrewe2010mason}.  We let \kmer size $k=17$ for all programs unless otherwise noted.
+\paragraph{Accuracy on simulated data.} We compared \tool's performance with Quake v0.3\cite{kelley2010quake}, Musket v1.1\cite{liu2013musket} and Bless v0.12 \cite{heo2014bless}.  We generated collection of reads simulated from the reference genome for the K12 strain of \ecoli (NC_000913.2) using Mason v0.1.2 \cite{holtgrewe2010mason}.  We let \kmer size $k=17$ for all programs unless otherwise noted.
 %\myworries{Li: (done)please fill in the proper Mason version number as well as version numbers for the three error correctors.  Also, please specify full set of Mason parameters somewhere and mention at least the read length in the main text.}
 
 We simulated six distinct datasets with 101bp reads, varying average coverage ($35$x, $75$x $140$x) and average error rate ($1\%$ and $3\%$).  For a given error rate $e$ we specify Mason parameters \verb+-qmb+ $e/2$ \verb+-qme+ $3e$, so that the average error rate is $e$ but errors are more common toward the 3' end, as in real datasets.
@@ -459,7 +459,7 @@ Gain	& musket	& 92.40	& 91.70	& 92.39	& 91.71	& 92.39	& 91.69 \\ \cline{2-8}
 \caption{Accuracy measures for simulated  rate(\%) for each table for different coverages\label{table:accuracy}}
 \end{table}
 
-Unlike the other tools, Quake both trims the untrusted tails of the reads, and discards reads that it cannot correct.  This leads to very high precision relative to other tools, though at the expense of discarded data.  Of the remaining tools, \tool and Musket achieve the highest precision, with Musket achieving slightly higher precision.  \tool achieves the highest recall, F-score and gain in all experiments.
+Unlike the other tools, Quake both trims the untrusted tails of the reads, and discards reads that it cannot correct. For a more fair comparison, Quake's result will contain the non-correctable reads through out this paper. And for the trimmed reads, the evaluation is done only on the reported portion. This leads to very high precision relative to other tools, though at the expense of discarded data.  Of the remaining tools, \tool and Musket achieve the highest precision, with Musket achieving slightly higher precision.  \tool achieves the highest recall, F-score and gain in all experiments.
 
 \paragraph{Scaling with depth of simulated sequencing.} We also used Mason to generate a series of datasets with 1\% error, similar to those used in Table \ref{table:accuracy}, but for $10\times$, $20\times$, $35\times$, $70\times$, $140\times$ and $280\times$ average coverage.  We ran \tool on each and measured final occupancies (fraction of bits set) for Bloom filters $A$ and $B$.  If our assumptions and scaling arguments are accurate, we expect the final occupancies of the Bloom filters to remain approximately constant for relatively high levels of coverage.  As seen in Table \ref{table:bloom_occupancy_coverage}, this is indeed the case.  Note that when coverage is quite low ($10\times$), the occupancy of table $B$ is significantly lower, since distributions of multiplicities of correct and incorrect \kmers become too similar to distinguish clearly.
 
@@ -485,7 +485,7 @@ $280\times$ & 41.571 & 33.903 \\ \hline
 %\myworries{Li: Is 4,553,653 the number of \emph{correct} \kmers in the filter, or just the number of \kmers? (4553653 are the number of correct \kmers. Also The 4553699 is the number of total distinct kmers not distinct canonicalized kmers.)}
 
 We conducted a similar experiment with Mason configured to simulate reads from a diploid version of the \ecoli genome.  Specifically, Mason was configured to introduce heterozygous SNPs at $0.1\%$ of the reference positions. Mason then sampled the same numbers of reads from both haplotypes, making a dataset with $70$x average coverage.
-Of the 159,117 simulated \kmers overlapping a position with a heterozygous SNP, table $B$ held 158,987 (99.918\%) of them at the end of the run.
+Of the 159,098 simulated \kmers overlapping a position with a heterozygous SNP, table $B$ held 158,723 (99.764\%) of them at the end of the run.
 %\myworries{Li: Need to explain how we configured \ecoli better.  0.1\% SNP is HETs?  HOMs?  Both?  Also, need to have the exact command-line arguments used written down somewhere. (They are are HET. I make sure the corresponding positions of the two references are different.)}
 
 % test the performance of alpha
@@ -537,18 +537,18 @@ To obtain a level of coverage more reflective of other projects, we randomly sub
 We measured that out of 4,553,699 distinct \kmers in the \ecoli K12 reference genome, 4,519,538 (99.250\%) appear in table $B$. 
  
 % Result of bowtie2
-Since these data are not simulated, we cannot measure accuracy directly.  We can measure it indirectly, as other have done \cite{heo2014bless}, by measuring how error correction affects read alignment statistics.  We use Bowtie2 \cite{langmead2012fast} to align the original reads and the corrected reads to the reference genome, then count the total number of the matched positions in the alignments in both cases.  The results are shown in Table \ref{table:ecoli_alignment}.  \tool yields the greatest improvement in fraction of reads aligned and in fraction of alignment positions that are matches.  As before, Quake is hard to compare to the other tools because it both trims reads and suppresses reads it cannot correct.  This leads to negative values in the ``Gain'' columns.
+Since these data are not simulated, we cannot measure accuracy directly.  We can measure it indirectly, as other have done \cite{heo2014bless}, by measuring how error correction affects read alignment statistics.  We use Bowtie2 \cite{langmead2012fast} to align the original reads and the corrected reads to the reference genome, then count the total number of the matched positions in the alignments in both cases.  The results are shown in Table \ref{table:ecoli_alignment}.  \tool yields the greatest improvement in fraction of reads aligned and in fraction of alignment positions that are matches.  As before, Quake is hard to compare to the other tools because it trims reads.  This leads to negative values in the ``Gain'' columns.
 
 \begin{table}
 \centering
-\begin{tabular}{|c|c|c|c||c|c|} \hline
-	 & \multicolumn{3}{|c||}{Read Level} & \multicolumn{2}{|c|}{Base Level} \\ \hline
-     & Total Reads 	& Mapped Reads & Gain(\%) & Match/Read & Gain(\%) \\ \hline
-Original & 3,497,616 & 	3,464,140	 & - & 99.038	& - \\ \hline
-Quake	& 3,369,584	& 3,368,911	& -2.75	& 97.305	& -1.75  \\ \hline
-Musket	& 3,497,616	& 3,467,878	& 0.11	& 99.601	& 0.57  \\ \hline
-Bless	& 3,497,616	& 3,472,979	& 0.26	& 99.611	& 0.58  \\ \hline
-Lighter	 & 3,497,616	&  3,476,425	& 0.35	& 99.611	& 0.58  \\ \hline
+\begin{tabular}{c|c|c||c|c|} \hline
+	 & \multicolumn{2}{|c||}{Read Level} & \multicolumn{2}{|c|}{Base Level} \\ \hline
+     & Mapped Reads & Gain(\%) & Match/Read & Gain(\%) \\ \hline
+Original & 	3,464,137	 & - & 99.038	& - \\ \hline
+Quake	& 3,475,689	& 0.33	& 97.982	& -1.97  \\ \hline
+Musket	& 3,467,875	& 0.11	& 99.601	& 0.57  \\ \hline
+Bless	& 3,472,976	& 0.26	& 99.611	& 0.58  \\ \hline
+Lighter	&  3,476,422	& 0.35	& 99.611	& 0.58  \\ \hline
 \end{tabular}
 \caption{Alignment statistics for the $75\times$ \ecoli data set, before error correction (Original row) and after error correction (Quake, Musket, Bless and \tool rows).  The first ``Gain'' column shows percent increase in reads aligned.  The second ``Gain'' column shows percent increase in average number of matching positions per aligned read.\label{table:ecoli_alignment}}
 \end{table}
@@ -577,11 +577,12 @@ To further assess accuracy, we assembled the reads before and after error correc
 \centering
 \begin{tabular}{|c|c|c|c|c|c|} \hline
 	 	& N50 &	NG50	 & Edits / 100kbps&	Misassemblies	& Coverage(\%) \\ \hline
-Original	& 100,039	& 100,039	& 4.18	& 0	& 97.412 \\ \hline
-Quake	& 125,252	& 125,252	& 4.23	& 8	& 97.450 \\ \hline
-Musket	& 99,995	& 95,384	& 6.96	& 3	& 97.579 \\ \hline
-Bless	& 104,682	& 99,991	& 4.45	& 3	& 97.352 \\ \hline
-Lighter &	105,574	& 104,682	& 5.02	& 5	& 97.548 \\ \hline
+Original &	94,879 &	87,008	& 3.41	& 0	& 97.496  \\ \hline
+Quake	& 100,379 &	91,194	& 5.6	& 2	 & 97.515  \\ \hline
+Musket	& 86,419  &	79,481	& 7.25	& 1	 & 97.504  \\ \hline
+Bless	& 94,879  &	90,126	& 4.72	& 1	& 97.419  \\ \hline
+Lighter	& 98,555  &	94,875	& 4.84	& 2	& 97.510  \\ \hline
+
 \end{tabular}
 \caption{De novo assembly of E.Coli data set\label{table:ecoli_assembly}}
 \end{table}
@@ -592,20 +593,20 @@ N50 is the length such that the total length of the contigs no shorter than the 
 %\myworries{Li: I'm unclear on the meaning of misassembly here.}
 
 \subsubsection*{Human Chr14}
-We also evaluated \tool's effect on alignment and assembly using a dataset from the GAGE project \cite{salzberg2012gage}.  The dataset consists of real 101 $\times$ 101 bp paired-end reads covering human chromosome 14 to $35\times$ average coverage.  We specified a \kmer length of 19 for \tool.
+We also evaluated \tool's effect on alignment and assembly using a dataset from the GAGE project \cite{salzberg2012gage}.  The dataset consists of real 101 $\times$ 101 bp paired-end reads covering human chromosome 14 to $35\times$ average coverage (~36.5M reads).  We specified a \kmer length of 19 for \tool.
 %\myworries{Li: We specified \kmer length 19 for all tools including both error correctors and assemblers?(done)}
 Error correction's effect on Bowtie 2 alignment statistics are shown in Table \ref{table:chr14_alignment}.  We used Bowtie 2 to align the reads to an index consisting of just the human chromosome 14 sequence of the hg19 build of the human genome.
 
 \begin{table}
 \centering
-\begin{tabular}{|c|c|c|c||c|c|}\hline
-  & \multicolumn{3}{|c||}{Read Level} & \multicolumn{2}{|c|}{Base Level} \\ \hline
-  & Total Reads  & Mapped  &Gain(\%) &	Match/Read	& Gain(\%) \\ \hline
-Original &	36,504,800	& 35,993,149	&- 		&	99.492	& - \\ \hline
-Quake 	&	32,560,518	& 32,546,450	& -9.58 &	93.411	& -6.11 \\ \hline
-Musket 	&	36,504,800 	&	36,276,990	& 0.79	& 100.104	& 0.62 \\ \hline
-Bless 	&	36,504,800	&36,297,288	& 0.84	& 100.192	&	0.70 \\ \hline
-Lighter	&   36,504,800	&36,280,350	& 0.80	& 100.109	& 0.62 \\ \hline
+\begin{tabular}{|c|c|c||c|c|}\hline
+  & \multicolumn{2}{|c||}{Read Level} & \multicolumn{2}{|c|}{Base Level} \\ \hline
+  & Mapped Reads  &Gain(\%) &	Match/Read	& Gain(\%) \\ \hline
+Original & 35,993,146	&- 		&	99.492	& - \\ \hline
+Quake 	& 36,164,028	& 0.47 &	92.622	& -6.90 \\ \hline
+Musket 	&	36,316,697	& 0.90	& 100.100	& 0.61 \\ \hline
+Bless 	&36,297,285	& 0.84	& 100.192	&	0.70 \\ \hline
+Lighter	&36,280,347	& 0.80	& 100.109	& 0.62 \\ \hline
 \end{tabular}
 \caption{Alignment of chr14 data set\label{table:chr14_alignment}}
 \end{table}
@@ -617,11 +618,12 @@ We also tested error correction's effect on de novo assembly using Velvet for as
 \centering
 \begin{tabular}{|c|c|c|c|c|c|} \hline
 	   & N50 &	NG50	& Edits / 100kbps &	Misassemblies	& Coverage(\%) \\ \hline
-Original &	8096 &5940	&134.53	&1097	&78.490 \\ \hline
-Quake	& 7935	&5809	&143.91	&2110	&77.303 \\ \hline
-Musket	& 6261	&4613	&128.97	&811	&78.984 \\ \hline
-Bless	& 8397	&6201	&131.87 &1425	&78.747 \\ \hline
-Lighter	& 8370	&6211	&133.22	&1416	&78.858 \\ \hline
+Original &	5277	&3847	&139.16	&1257	&78.777 \\ \hline
+Quake	&	4704	&3427	&131.98	&965	&78.55 \\ \hline
+Musket	&	5583	&4103	&131.04	&556	&79.175 \\ \hline
+Bless	&	5620	&4114	&128.42	&583	&79.204 \\ \hline
+Lighter	&	5712	&4195	&128.92	&544	&79.251 \\ \hline
+
 \end{tabular}
 \caption{De novo assembly of chr14 data set\label{table:chr14_assembly}}
 \end{table}
@@ -646,7 +648,7 @@ Lighter	& 31M	& 0 & 31M & 0 & 31M & 0 & 510M & 0 \\ \hline
 \caption{Comparison of four error correction tools based on their memory usage (peak resident memory) and disk usage.\label{table:chr14_assembly}}
 \end{table}
 
-Bless and \tool achieve constant memory footprint across sequencing depths.  While Musket uses less memory than Quake, it uses more than either Bless or \tool.  Bless achieves constant memory footprint across sequencing depths, this comes at the cost of disk consumption.  Note that Bless can be configured to trade off between peak memory footprint and peak disk usage.
+Bless and \tool achieve constant memory footprint across sequencing depths.  While Musket uses less memory than Quake, it uses more than either Bless or \tool.  Bless achieves constant memory footprint across sequencing depths, this comes at the cost of disk consumption.  Note that Bless can be configured to trade off between peak memory footprint and the number of temporary files it creates.
 
 %runtime on simulated_70_1
 To assess scalability, we also compared running time for Quake, Musket and \tool using a different number of threads.  For these experiments we used the simulated \ecoli data set with $70\times$ coverage and $1\%$ error.  Results are shown in Figure \ref{fig:runtime}.  Note that Musket requires at least 2 threads due to its master-slave design.  Bless can only be run with one thread and its running time is 1475s, which is slower than Quake.
@@ -682,7 +684,7 @@ This could be accomplished with methods proposed in the KmerGenie \cite{chikhi20
 
 %In this paper, we did not analyze the effect of $\alpha$ analytically and it is a difficult problem. So far, the size of table $A$ and $B$ are setting by considering unpractical pessimestic scenarios. If we know the effect in some compact form, we can optimize the performance of obtaining solid kmers by setting the best $\alpha$ and also use less space.
 
-\tool is free open source software released under the XXX license.  The software and its source are available from \url{https://github.com/mourisl/Lighter/}.
+\tool is free open source software released under the GNU GPL v3 license.  The software and its source are available from \url{https://github.com/mourisl/Lighter/}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgements}

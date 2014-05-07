@@ -1,6 +1,6 @@
 #!/bin/perl
 
-#ARGV[0]=0.77 when building 75x coverage
+#ARGV[0]=0.077 when building 75x coverage
 
 my $line ;
 
