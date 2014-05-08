@@ -35,3 +35,6 @@ Evaluating memory usage:
 compile memusage.cpp (obtained from musket's project)
 memusage (command to the program).
 For musket, we tested different number of size of bloom filter and choose the result with minimum memory consumption.
+e.g.
+For gage_chr14 data set:
+~/Tools/memusage ./musket -p 10 -inorder -k 19 2200000000 -omulti tmp ~/data/Lighter/gage_chr14/frag_1.fastq ~/data/Lighter/gage_chr14/frag_2.fastq 

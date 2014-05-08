@@ -421,7 +421,7 @@ As shown in Figure \ref{fig:lighter_framework}, Lighter works in three passes: (
 \subsection*{Simulated data set}
 % TODO: add version numbers for all the tools
 
-\paragraph{Accuracy on simulated data.} We compared \tool's performance with Quake v0.3\cite{kelley2010quake}, Musket v1.1\cite{liu2013musket} and Bless v0.12 \cite{heo2014bless}.  We generated collection of reads simulated from the reference genome for the K12 strain of \ecoli (NC_000913.2) using Mason v0.1.2 \cite{holtgrewe2010mason}.  We let \kmer size $k=17$ for all programs unless otherwise noted.
+\paragraph{Accuracy on simulated data.} We compared \tool's performance with Quake v0.3\cite{kelley2010quake}, Musket v1.1\cite{liu2013musket} and Bless v0.12 \cite{heo2014bless}.  We generated collection of reads simulated from the reference genome for the K12 strain of \ecoli (NC\_000913.2) using Mason v0.1.2 \cite{holtgrewe2010mason}.  We let \kmer size $k=17$ for all programs unless otherwise noted.
 %\myworries{Li: (done)please fill in the proper Mason version number as well as version numbers for the three error correctors.  Also, please specify full set of Mason parameters somewhere and mention at least the read length in the main text.}
 
 We simulated six distinct datasets with 101bp reads, varying average coverage ($35$x, $75$x $140$x) and average error rate ($1\%$ and $3\%$).  For a given error rate $e$ we specify Mason parameters \verb+-qmb+ $e/2$ \verb+-qme+ $3e$, so that the average error rate is $e$ but errors are more common toward the 3' end, as in real datasets.
@@ -684,7 +684,7 @@ This could be accomplished with methods proposed in the KmerGenie \cite{chikhi20
 
 %In this paper, we did not analyze the effect of $\alpha$ analytically and it is a difficult problem. So far, the size of table $A$ and $B$ are setting by considering unpractical pessimestic scenarios. If we know the effect in some compact form, we can optimize the performance of obtaining solid kmers by setting the best $\alpha$ and also use less space.
 
-\tool is free open source software released under the GNU GPL v3 license.  The software and its source are available from \url{https://github.com/mourisl/Lighter/}.
+\tool is free open source software released under the GNU GPL license.  The software and its source are available from \url{https://github.com/mourisl/Lighter/}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgements}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.17)  7 MAY 2014 13:56
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.17)  7 MAY 2014 23:58
 entering extended mode
  %&-line parsing enabled.
 **lighter_paper
@@ -454,24 +454,34 @@ File: ErrorCorrection.jpg Graphic file (type jpg)
 <use ErrorCorrection.jpg> [5 <./ErrorCorrection.jpg>] [6] [7]
 <alpha.jpg, id=46, 642.4pt x 481.8pt>
 File: alpha.jpg Graphic file (type jpg)
- <use alpha.jpg> [8 <./alpha.jpg>]
-<bloom_occupancy_alpha.jpg, id=50, 642.4pt x 481.8pt>
+ <use alpha.jpg>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<bloom_occupancy_alpha.jpg, id=47, 642.4pt x 481.8pt>
 File: bloom_occupancy_alpha.jpg Graphic file (type jpg)
 
-<use bloom_occupancy_alpha.jpg> <kmerLength.jpg, id=51, 642.4pt x 481.8pt>
-File: kmerLength.jpg Graphic file (type jpg)
+<use bloom_occupancy_alpha.jpg>
 
-<use kmerLength.jpg> [9 <./bloom_occupancy_alpha.jpg> <./kmerLength.jpg>]
-<per_base.jpg, id=55, 642.4pt x 481.8pt>
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<kmerLength.jpg, id=48, 642.4pt x 481.8pt>
+File: kmerLength.jpg Graphic file (type jpg)
+ <use kmerLength.jpg>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[8] [9 <./alpha.jpg> <./bloom_occupancy_alpha.jpg>]
+<per_base.jpg, id=56, 642.4pt x 481.8pt>
 File: per_base.jpg Graphic file (type jpg)
  <use per_base.jpg>
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[10] [11 <./per_base.jpg>] <runtime.jpg, id=63, 642.4pt x 481.8pt>
+[10 <./kmerLength.jpg>] [11 <./per_base.jpg>]
+<runtime.jpg, id=63, 642.4pt x 481.8pt>
 File: runtime.jpg Graphic file (type jpg)
-
-<use runtime.jpg>
+ <use runtime.jpg>
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
@@ -481,10 +491,10 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 2656 strings out of 495061
- 31774 string characters out of 1182620
- 111177 words of memory out of 3000000
- 5801 multiletter control sequences out of 15000+50000
+ 2657 strings out of 495061
+ 31792 string characters out of 1182620
+ 111178 words of memory out of 3000000
+ 5802 multiletter control sequences out of 15000+50000
  11686 words of font info for 42 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  27i,10n,35p,1687b,261s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -506,7 +516,7 @@ onts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts/type1/p
 ublic/amsfonts/cm/cmsy8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfon
 ts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti9
 .pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on lighter_paper.pdf (15 pages, 803222 bytes).
+Output written on lighter_paper.pdf (15 pages, 803331 bytes).
 PDF statistics:
  142 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
