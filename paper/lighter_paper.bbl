@@ -124,6 +124,11 @@ P.~A. Pevzner, H.~Tang, and M.~S. Waterman.
 \newblock {\em Proceedings of the National Academy of Sciences},
   98(17):9748--9753, 2001.
 
+\bibitem{Putze:2010:CHS:1498698.1594230}
+F.~Putze, P.~Sanders, and J.~Singler.
+\newblock Cache-, hash-, and space-efficient bloom filters.
+\newblock {\em J. Exp. Algorithmics}, 14:4:4.4--4:4.18, Jan. 2010.
+
 \bibitem{salmela2011correcting}
 L.~Salmela and J.~Schr{\"o}der.
 \newblock Correcting errors in short reads by multiple alignments.

@@ -244,7 +244,7 @@ More recent tools such as Musket \cite{liu2013musket} and BLESS \cite{heo2014ble
 
 \emph{Lighter} (LIGHTweight ERror corrector) is also in the family of spectral alignment methods, but differs from previous approaches in that it avoids counting \kmers.
 Rather than count \kmers, \tool samples \kmers randomly, storing the sample in a Bloom filter.
-\tool then uses a statistical test applied to each position of each read to compile a set of solid \kmers, stored in a second Bloom filter.
+\tool then uses a simple test applied to each position of each read to compile a set of solid \kmers, stored in a second Bloom filter.
 These two Bloom filters are the only sizable data structures used by \tool.
 
 \tool's crucial advantage is that its parameters can be set such that the memory footprint and the accuracy of the approach are near-constant with respect to coverage.
@@ -280,9 +280,9 @@ A Bloom filter \cite{bloom1970space} is a compact probabilistic data structure r
 
 By way of contrast, another way to represent a set is with a hash table.  Hash tables do not yield false positives, but Bloom filters are far smaller.  Whereas a Bloom filter is an array of bits, a hash table is an array of buckets, each large enough to store a pointer, key, or both.  If chaining is used, lists associated with buckets incur additional overhead.  While the Bloom filter's small size comes at the expense of false positives, these can be tolerated in many settings including in error correction.
 
-As Figure \ref{fig:lighter_framework} shows, the efficiency of bloom filter affects the running time of Lighter a lot. For a standard Bloom filter, the $h$ hash functions may map $o$ to any places in the bit array. The bit array is usually very large, so all the $h$ accesses will likely to cause cache miss. In [cite], the authors proposed blocked Bloom filter which can decrease the number of cache misses. Given a block size $b$, it will use $H_0(o)$ to decide the start position on the bit array, and then map $H_0(o), H_1(o),...,H_{h-1}(o)$ onto the block starting from that position. It choose $b$ about the size of a cache line, then the $h$ accesses will not cause $h$ cache misses. The drawback of using blocked Bloom filter is that we have to use a bit larger $h$ and $m$ to have the same FPR when using the standard bloom filter. To estimate the FPR of blocked Bloom filter, we can consider each of the possible $m-b+1$ blocks. for the $i$-th block, the FPR within this block is $(b'_i/b)^h$, where $b'_i$ is the number of bits set to 1 in block $i$. So the overall FPR is $\displaystyle\frac{\sum_i (b'_i/b)^h}{m-b+1}$.
+As Figure \ref{fig:lighter_framework} shows, the efficiency of bloom filter affects the running time of Lighter a lot. For a standard Bloom filter, the $h$ hash functions may map $o$ to any places in the bit array. The bit array is usually very large, so all the $h$ accesses will likely to cause cache miss. In \cite{Putze:2010:CHS:1498698.1594230}, the authors proposed blocked Bloom filter which can decrease the number of cache misses. Given a block size $b$, it will use $H_0(o)$ to decide the start position on the bit array, and then map $H_0(o), H_1(o),...,H_{h-1}(o)$ onto the block starting from that position. It choose $b$ about the size of a cache line, then the $h$ accesses will not cause $h$ cache misses. The drawback of using blocked Bloom filter is that we have to use a bit larger $h$ and $m$ to have the same FPR when using the standard bloom filter. To estimate the FPR of blocked Bloom filter, we can consider each of the possible $m-b+1$ blocks. for the $i$-th block, the FPR within this block is $(b'_i/b)^h$, where $b'_i$ is the number of bits set to 1 in block $i$. So the overall FPR is $\displaystyle\frac{\sum_i (b'_i/b)^h}{m-b+1}$.
 
-In our method, the objects to be stored in the Bloom filters are k-mers.  Because we would like to treat genome strands equivalently for counting purposes, we will always \emph{canonicalize} a \kmer before adding it to, or using it to query a Bloom filter.  A canonicalized \kmer is either the \kmer itself or its reverse complement, whichever is lexicographically prior.
+In our method, the objects to be stored in the Bloom filters are \kmers.  Because we would like to treat genome strands equivalently for counting purposes, we will always \emph{canonicalize} a \kmer before adding it to, or using it to query a Bloom filter.  A canonicalized \kmer is either the \kmer itself or its reverse complement, whichever is lexicographically prior. If a \kmer contains ambiguous nucleotides such as ``N'', we will just ignore it.
 
 % What do we do with k-mers with ambiguous nucleotides?
 
@@ -298,7 +298,7 @@ Others have noted that, given a dataset with deep and uniform coverage, incorrec
 \subsection*{Stages of the method}
 \paragraph{First pass.}    In the first pass, Lighter examines each \kmer of each read.  With probability $1 - \alpha$, the \kmer is ignored.  Otherwise, it is canonicalized and added to Bloom filter $A$.
 
-Say a distinct \kmer $K$ occurs a total of $N_K$ times in the dataset.  If subsampling discards all $N_K$ occurrences, the \kmer is never added to $A$ and $A$'s cardinality is reduced by one.  Thus, reducing $\alpha$ can in turn reduce $A$'s cardinality.  Because correct \kmers are more numerous, incorrect \kmers tend to be discarded from $A$ before correct \kmers as $\alpha$ decreases.  Later we show that if $K$ increases but $\alpha K$ is held constant, the cardinality of $A$ and the fraction of correct \kmers in $A$ both remain nearly constant.
+Say a distinct \kmer $a$ occurs a total of $N_a$ times in the dataset.  If subsampling discards all $N_a$ occurrences, the \kmer is never added to $A$ and $A$'s cardinality is reduced by one.  Thus, reducing $\alpha$ can in turn reduce $A$'s cardinality.  Because correct \kmers are more numerous, incorrect \kmers tend to be discarded from $A$ before correct \kmers as $\alpha$ decreases.  Later we show that if the total number of \kmers $K$ increases but $\alpha K$ is held constant, the cardinality of $A$ and the fraction of correct \kmers in $A$ both remain nearly constant.
 
 The subsampling fraction $\alpha$ is set by the user.  We suggest adjusting $\alpha$ in inverse proportion to depth of sequencing.  For our experiments, we set $\alpha=0.05$ when the average coverage is 70-fold.  That is, we set $\alpha$ to $0.05\frac{70}{C}$ where $C$ is fold coverage.
 
@@ -310,7 +310,7 @@ Otherwise we say it is \emph{trusted}.
 Each instance where the threshold is applied is called a \emph{test case}.
 When one or more of the $x$ \kmers involved in two test cases differ, we say the test cases are distinct.
 
-Let $P^*(\alpha)$ be the probability an incorrect \kmer appears in $A$, taking the Bloom filter's false positive rate into account.  If random variable $B_{0,x}$ represents the number of \kmers appearing in $A$ for an untrusted position overlapped by $x$ \kmers, $B_{e,x} \sim Binom(x,P^*(\alpha))$.  We define thresholds $y_x$, for each possible value of $x$ in $[1, k]$.  Each $y_x$ is the minimum integer such that $p(B_{0,x}\le y_x - 1)\ge 0.995$.
+Let $P^*(\alpha)$ be the probability an incorrect \kmer appears in $A$, taking the Bloom filter's false positive rate into account.  If random variable $B_{e,x}$ represents the number of \kmers appearing in $A$ for an untrusted position overlapped by $x$ \kmers, $B_{e,x} \sim Binom(x,P^*(\alpha))$.  We define thresholds $y_x$ in those test cases, for each possible value of $x$ in $[1, k]$.  Each $y_x$ is the minimum integer such that $p(B_{0,x}\le y_x - 1)\ge 0.995$.
 
 Initially we ignore false positives and model the probability of a sequenced a \kmer having been added to $A$ as $P(\alpha)=1-(1-\alpha)^{f(\alpha)}$.  We define $f(\alpha)=max\{2,0.1/\alpha\}$.  That is, we assume the multiplicity of a weak \kmer is at most $f(\alpha)$, which will often be a conservative assumption, especially for small $\alpha$.  It is also possible to define $P(\alpha)$ in terms of random variables $\kappa_e$ and $\kappa'_e$, but we avoid this for simplicity.
 
@@ -375,7 +375,7 @@ The procedure is illustrated in Figure \ref{fig:error_correction}.  If $k_b$ is 
 If the error is located near the end of the read, for each candidate substitution, we will extend reads using the kmer reported in Bloom filter $A$ by one path that has the least lexicographical order. Thus we can solve some ties that are more likely to happend near the end of a read due to insufficient extension. 
 
 \subsection*{Scaling with coverage}
-\tool's accuracy is near-constant as the depth of sequencing $K$ increases and its memory footprint is held constant.  The basic idea is that as $K$ increases, we adjust $\alpha$ in inverse proportion.  That is, we hold $\alpha K$ constant.  For concreteness, consider two scenarios: scenario I, where coverage is $K_1$ and subsampling fraction is $\alpha_1$, and scenario II where coverage is $K_2=z K_1$ and subsampling fraction is $\alpha_2 = \alpha_1 / z$.
+\tool's accuracy is near-constant as the depth of sequencing $K$ increases and its memory footprint is held constant.  The basic idea is that as $K$ increases, we adjust $\alpha$ in inverse proportion.  That is, we hold $\alpha K$ constant.  For concreteness, consider two scenarios: scenario I, where the total number of \kmers is $K_1$ and subsampling fraction is $\alpha_1$, and scenario II where the number is $K_2=z K_1$ and subsampling fraction is $\alpha_2 = \alpha_1 / z$.
 
 \paragraph{Contents of Bloom filter A.} The occupancy of Bloom filter $A$, as well as the fraction of correct \kmers in $A$, are approximately the same in both scenarios.  This follows from the fact that $\kappa'_c ~ \sim Pois(\alpha K (1 - \epsilon) / G)$, $\kappa'_e \sim Pois(\alpha K \epsilon / H)$, and $\alpha K$, $\epsilon$, $G$, and $H$ are constant across scenarios.  This is also supported by our experiments, as seen in Table \ref{table:bloom_occupancy_coverage}.  Because the occupancy does not change, we can hold the Bloom filter's size constant while achieving the same false positive rate.
 
@@ -424,7 +424,7 @@ As shown in Figure \ref{fig:lighter_framework}, Lighter works in three passes: (
 \paragraph{Accuracy on simulated data.} We compared \tool's performance with Quake v0.3\cite{kelley2010quake}, Musket v1.1\cite{liu2013musket} and Bless v0.12 \cite{heo2014bless}.  We generated collection of reads simulated from the reference genome for the K12 strain of \ecoli (NC\_000913.2) using Mason v0.1.2 \cite{holtgrewe2010mason}.  We let \kmer size $k=17$ for all programs unless otherwise noted.
 %\myworries{Li: (done)please fill in the proper Mason version number as well as version numbers for the three error correctors.  Also, please specify full set of Mason parameters somewhere and mention at least the read length in the main text.}
 
-We simulated six distinct datasets with 101bp reads, varying average coverage ($35$x, $75$x $140$x) and average error rate ($1\%$ and $3\%$).  For a given error rate $e$ we specify Mason parameters \verb+-qmb+ $e/2$ \verb+-qme+ $3e$, so that the average error rate is $e$ but errors are more common toward the 3' end, as in real datasets.
+We simulated six distinct datasets with 101bp single-end reads, varying average coverage ($35$x, $75$x $140$x) and average error rate ($1\%$ and $3\%$).  For a given error rate $e$ we specify Mason parameters \verb+-qmb+ $e/2$ \verb+-qme+ $3e$, so that the average error rate is $e$ but errors are more common toward the 3' end, as in real datasets.
 %\myworries{(done)Li: please correct what I say here, which I don't think is quite what you do}
 
 We then ran all three tools on all six datasets, with results presented in Table \ref{table:accuracy}.  In these comparisons, a true positive (TP) is an instance where an error is successfully corrected, \thatis with the correct base substituted.  A false positive (FP) is an instance where a spurious substitution is made at an error-free position.  A false negative (FN) is an instance where we either fail to detect an error or an incorrect base is substituted.  As in previous studies, we report the following summaries: recall = TP/(TP$+$NP), precision = TP/(TP$+$FP), F-score = 2$\times$recall$\times$precision/(recall$+$precision) and gain = (TP-FP)/(TP+FN).
@@ -541,7 +541,7 @@ Since these data are not simulated, we cannot measure accuracy directly.  We can
 
 \begin{table}
 \centering
-\begin{tabular}{c|c|c||c|c|} \hline
+\begin{tabular}{|c|c|c||c|c|} \hline
 	 & \multicolumn{2}{|c||}{Read Level} & \multicolumn{2}{|c|}{Base Level} \\ \hline
      & Mapped Reads & Gain(\%) & Match/Read & Gain(\%) \\ \hline
 Original & 	3,464,137	 & - & 99.038	& - \\ \hline
@@ -557,7 +557,7 @@ Lighter	&  3,476,422	& 0.35	& 99.611	& 0.58  \\ \hline
 
 %For Quake, the gain is negative mainly due to unreported reads and trimmed 3' end. It turns out Lighter gives the most improvement for both read level and base level.
 
-Also, for each tool we took the left-mate reads that aligned without either indels or trimming and calculated the fraction of matching bases at each read position.  These fractions are plotted in Figure \ref{fig:ecoli_perbase}.  We considered both ends of the paired-end reads.   ``Position'' on the x axis is the offset from the 5' end.  Note that an unusual feature of this dataset is that many reads begin with an ``N,'' indicating that the sequencer was unable to make a base call at that position.
+Also, for each tool we took the left-mate reads that aligned without either indels or trimming and calculated the fraction of matching bases at each read position.  These fractions are plotted in Figure \ref{fig:ecoli_perbase}.  We considered both ends of the paired-end reads.   ``Position'' on the x axis is the offset from the 5' end.  Note that an unusual feature of this dataset is that many reads begin with an ``N'' indicating that the sequencer was unable to make a base call at that position.
 %\myworries{Given that we're plotting both ends, I want to make sure that the left-hand side of the plot is the 5' end for both mates, \thatis the left end of mate 1 and the right end of mate 2.  This makes more sense to me than making the x axis be offset from the left-hand side of the mate.  Maybe that's how you've done it already.}
 
 %For those reads not got trimmed and aligned to the genome without indels (cigar field like 100M in the SAM file), we measure the matched ratio for each position shown in Figure \ref{fig:ecoli_perbase}. Since many of the reads in this data set start with N, the first base's matching ratio of the original data set is very low. 
@@ -633,7 +633,7 @@ Lighter	&	5712	&4195	&128.92	&544	&79.251 \\ \hline
 We compared \tool's memory usage, disk usage, and running time with Quake, Musket and Bless.  These experiments were run on a computer running Red Hat Linux 4.1.2-52 with 48 2.1GHz AMD Opteron processors and 512G memory.
 %\myworries{Li: Please also give OS with version, and give CPU version.(done)}
 %The memory or disk usage from different programs 
-The input datasets are the same \ecoli datasetes with $1\%$ discussed previously, plus the human chromosome 14 data from Gage.  %\myworries{Li: The simulated data is simulated from \ecoli?(yes)  How do you measure peak memory usage?  Is it peak virtual memory usage?(the resident memory)}
+The input datasets are the same simulated \ecoli datasetes with $1\%$ error rate discussed previously, plus the human chromosome 14 data from Gage.  %\myworries{Li: The simulated data is simulated from \ecoli?(yes)  How do you measure peak memory usage?  Is it peak virtual memory usage?(the resident memory)}
 
 \begin{table}
 \centering
@@ -690,7 +690,7 @@ This could be accomplished with methods proposed in the KmerGenie \cite{chikhi20
 \section*{Acknowledgements}
 The authors thank Jeff Leek for helpful discussions.
 
-\noindent\emph{Funding:} National Science Foundation grant DBI-1159078 to LF and a Sloan Research Fellowship to BL.
+\noindent\emph{Funding:} National Science Foundation grant ABI-1159078 to LF and a Sloan Research Fellowship to BL.
 
 \noindent\emph{Conflicts of Interest:} none declared.
 

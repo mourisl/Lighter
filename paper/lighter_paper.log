@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.17)  7 MAY 2014 23:58
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.10.17)  12 MAY 2014 22:58
 entering extended mode
  %&-line parsing enabled.
 **lighter_paper
@@ -491,10 +491,10 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 2657 strings out of 495061
- 31792 string characters out of 1182620
- 111178 words of memory out of 3000000
- 5802 multiletter control sequences out of 15000+50000
+ 2658 strings out of 495061
+ 31824 string characters out of 1182620
+ 110182 words of memory out of 3000000
+ 5803 multiletter control sequences out of 15000+50000
  11686 words of font info for 42 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  27i,10n,35p,1687b,261s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -516,7 +516,7 @@ onts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts/type1/p
 ublic/amsfonts/cm/cmsy8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfon
 ts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti9
 .pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on lighter_paper.pdf (15 pages, 803331 bytes).
+Output written on lighter_paper.pdf (15 pages, 803839 bytes).
 PDF statistics:
  142 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

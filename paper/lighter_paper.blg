@@ -2,44 +2,44 @@ This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
 The top-level auxiliary file: lighter_paper.aux
 The style file: abbrv.bst
 Database file #1: lighter_paper.bib
-You've used 31 entries,
+You've used 32 entries,
             2118 wiz_defined-function locations,
-            685 strings with 9162 characters,
-and the built_in function-call counts, 11455 in all, are:
-= -- 1140
-> -- 599
+            692 strings with 9373 characters,
+and the built_in function-call counts, 11861 in all, are:
+= -- 1182
+> -- 617
 < -- 2
-+ -- 240
-- -- 204
-* -- 926
-:= -- 1934
-add.period$ -- 94
-call.type$ -- 31
-change.case$ -- 193
++ -- 247
+- -- 210
+* -- 961
+:= -- 2000
+add.period$ -- 97
+call.type$ -- 32
+change.case$ -- 199
 chr.to.int$ -- 0
-cite$ -- 31
-duplicate$ -- 363
-empty$ -- 822
-format.name$ -- 204
-if$ -- 2306
+cite$ -- 32
+duplicate$ -- 374
+empty$ -- 853
+format.name$ -- 210
+if$ -- 2388
 int.to.chr$ -- 0
-int.to.str$ -- 31
-missing$ -- 31
-newline$ -- 158
-num.names$ -- 62
-pop$ -- 147
+int.to.str$ -- 32
+missing$ -- 32
+newline$ -- 163
+num.names$ -- 64
+pop$ -- 151
 preamble$ -- 1
-purify$ -- 162
+purify$ -- 167
 quote$ -- 0
-skip$ -- 254
+skip$ -- 261
 stack$ -- 0
-substring$ -- 854
-swap$ -- 53
+substring$ -- 899
+swap$ -- 54
 text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 124
+type$ -- 128
 warning$ -- 0
-while$ -- 114
-width$ -- 33
-write$ -- 340
+while$ -- 118
+width$ -- 34
+write$ -- 351
