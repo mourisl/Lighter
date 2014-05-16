@@ -427,7 +427,7 @@ As shown in Figure \ref{fig:lighter_framework}, Lighter works in three passes: (
 We simulated six distinct datasets with 101bp single-end reads, varying average coverage ($35$x, $75$x $140$x) and average error rate ($1\%$ and $3\%$).  For a given error rate $e$ we specify Mason parameters \verb+-qmb+ $e/2$ \verb+-qme+ $3e$, so that the average error rate is $e$ but errors are more common toward the 3' end, as in real datasets.
 %\myworries{(done)Li: please correct what I say here, which I don't think is quite what you do}
 
-We then ran all three tools on all six datasets, with results presented in Table \ref{table:accuracy}.  In these comparisons, a true positive (TP) is an instance where an error is successfully corrected, \thatis with the correct base substituted.  A false positive (FP) is an instance where a spurious substitution is made at an error-free position.  A false negative (FN) is an instance where we either fail to detect an error or an incorrect base is substituted.  As in previous studies, we report the following summaries: recall = TP/(TP$+$NP), precision = TP/(TP$+$FP), F-score = 2$\times$recall$\times$precision/(recall$+$precision) and gain = (TP-FP)/(TP+FN).
+We then ran all three tools on all six datasets, with results presented in Table \ref{table:accuracy}.  In these comparisons, a true positive (TP) is an instance where an error is successfully corrected, \thatis with the correct base substituted.  A false positive (FP) is an instance where a spurious substitution is made at an error-free position.  A false negative (FN) is an instance where we either fail to detect an error or an incorrect base is substituted.  As in previous studies, we report the following summaries: recall = TP/(TP$+$NP), precision = TP/(TP$+$FP), F-score = 2$\times$recall$\times$precision/(recall$+$precision) and gain = (TP-FP)/(TP+FN). These four values are nice measures to evaluate the accuracy of error correction tools, which is also used \cite{liu2013musket}.
 
 % Insert the table here.
 \begin{table}
@@ -481,7 +481,7 @@ $280\times$ & 41.571 & 33.903 \\ \hline
 \caption{Occupancy rate(\%) for each table for different coverages\label{table:bloom_occupancy_coverage}}
 \end{table}
 
-\paragraph{Cardinality of Bloom filter B.}  We also measured the number of correct \kmers added to table $B$. We used the Mason dataset with $70$x coverage and $1\%$ error rate. The \ecoli genome has 4,553,699 distinct \kmers, and 4,553,653 (99.999\%) of them are in table $B$.  The missing \kmers are likely due to low coverage at the extreme ends of the chromosome.
+\paragraph{Cardinality of Bloom filter B.}  We also measured the number of correct \kmers added to table $B$. We used the Mason dataset with $70$x coverage and $1\%$ error rate. The \ecoli genome has 4,553,699 distinct \kmers, and 4,553,653 (99.999\%) of them are in table $B$.  
 %\myworries{Li: Is 4,553,653 the number of \emph{correct} \kmers in the filter, or just the number of \kmers? (4553653 are the number of correct \kmers. Also The 4553699 is the number of total distinct kmers not distinct canonicalized kmers.)}
 
 We conducted a similar experiment with Mason configured to simulate reads from a diploid version of the \ecoli genome.  Specifically, Mason was configured to introduce heterozygous SNPs at $0.1\%$ of the reference positions. Mason then sampled the same numbers of reads from both haplotypes, making a dataset with $70$x average coverage.
@@ -496,7 +496,7 @@ Of the 159,098 simulated \kmers overlapping a position with a heterozygous SNP, 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.5\textwidth]{alpha.jpg}
-\caption{The effect of $\alpha$ on accuracy using the simulated $35\times$ dataset.\label{fig:alpha}}
+\caption{The effect of $\alpha$ on the accuracy using the simulated $35\times$ dataset.\label{fig:alpha}}
 \end{center}
 \end{figure}
 
@@ -525,7 +525,7 @@ A key parameter of \tool is the \kmer length $k$.  When $k$ is smalls, there is 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.5\textwidth]{kmerLength.jpg}
-\caption{The effect of \kmer length $k$ on accuracy.\label{fig:kmerLength}}
+\caption{The effect of \kmer length $k$ on the accuracy.\label{fig:kmerLength}}
 \end{center}
 \end{figure}
 
@@ -537,27 +537,28 @@ To obtain a level of coverage more reflective of other projects, we randomly sub
 We measured that out of 4,553,699 distinct \kmers in the \ecoli K12 reference genome, 4,519,538 (99.250\%) appear in table $B$. 
  
 % Result of bowtie2
-Since these data are not simulated, we cannot measure accuracy directly.  We can measure it indirectly, as other have done \cite{heo2014bless}, by measuring how error correction affects read alignment statistics.  We use Bowtie2 \cite{langmead2012fast} to align the original reads and the corrected reads to the reference genome, then count the total number of the matched positions in the alignments in both cases.  The results are shown in Table \ref{table:ecoli_alignment}.  \tool yields the greatest improvement in fraction of reads aligned and in fraction of alignment positions that are matches.  As before, Quake is hard to compare to the other tools because it trims reads.  This leads to negative values in the ``Gain'' columns.
+Since these data are not simulated, we cannot measure accuracy directly.  We can measure it indirectly, as other have done \cite{heo2014bless}, by measuring how error correction affects read alignment statistics.  We use Bowtie2 \cite{langmead2012fast} to align the original reads and the corrected reads to the reference genome, then count the total number of the matched positions in the alignments in both cases.  The results are shown in Table \ref{table:ecoli_alignment}.  \tool yields the greatest improvement in number of reads aligned and in average matched positions per aligned reads.  As before, Quake is hard to compare to the other tools because it trims reads.  This leads to negative values in the ``Increase'' columns.
 
 \begin{table}
 \centering
 \begin{tabular}{|c|c|c||c|c|} \hline
 	 & \multicolumn{2}{|c||}{Read Level} & \multicolumn{2}{|c|}{Base Level} \\ \hline
-     & Mapped Reads & Gain(\%) & Match/Read & Gain(\%) \\ \hline
+     & Mapped Reads & Increase(\%) & Base Match/Read & Increase(\%) \\ \hline
 Original & 	3,464,137	 & - & 99.038	& - \\ \hline
 Quake	& 3,475,689	& 0.33	& 97.982	& -1.97  \\ \hline
 Musket	& 3,467,875	& 0.11	& 99.601	& 0.57  \\ \hline
 Bless	& 3,472,976	& 0.26	& 99.611	& 0.58  \\ \hline
 Lighter	&  3,476,422	& 0.35	& 99.611	& 0.58  \\ \hline
 \end{tabular}
-\caption{Alignment statistics for the $75\times$ \ecoli data set, before error correction (Original row) and after error correction (Quake, Musket, Bless and \tool rows).  The first ``Gain'' column shows percent increase in reads aligned.  The second ``Gain'' column shows percent increase in average number of matching positions per aligned read.\label{table:ecoli_alignment}}
+\caption{Alignment statistics for the $75\times$ \ecoli data set, before error correction (Original row) and after error correction (Quake, Musket, Bless and \tool rows).  The first ``Increase'' column shows percent increase in reads aligned.  The second ``Increase'' column shows percent increase in average number of matching positions per aligned read.\label{table:ecoli_alignment}}
 \end{table}
 
 %The, "Gain" means how much improvement for its previous column comparing with the original data set. Match/Read represents the average matched position against the reference genome for the mapped reads.
 
 %For Quake, the gain is negative mainly due to unreported reads and trimmed 3' end. It turns out Lighter gives the most improvement for both read level and base level.
 
-Also, for each tool we took the left-mate reads that aligned without either indels or trimming and calculated the fraction of matching bases at each read position.  These fractions are plotted in Figure \ref{fig:ecoli_perbase}.  We considered both ends of the paired-end reads.   ``Position'' on the x axis is the offset from the 5' end.  Note that an unusual feature of this dataset is that many reads begin with an ``N'' indicating that the sequencer was unable to make a base call at that position.
+Also, for each tool we took the left-mate reads that aligned without either indels or trimming and calculated the fraction of matching bases at each read position.  These fractions are plotted in Figure \ref{fig:ecoli_perbase}. ``Position'' on the x axis is the offset from the 5' end.  Note that an unusual feature of this dataset is that many reads begin with an ``N'' indicating that the sequencer was unable to make a base call at that position. Nevertheless, error correction signifcantly improved the accuracy of bases, especially at the ends of the reads.
+
 %\myworries{Given that we're plotting both ends, I want to make sure that the left-hand side of the plot is the 5' end for both mates, \thatis the left end of mate 1 and the right end of mate 2.  This makes more sense to me than making the x axis be offset from the left-hand side of the mate.  Maybe that's how you've done it already.}
 
 %For those reads not got trimmed and aligned to the genome without indels (cigar field like 100M in the SAM file), we measure the matched ratio for each position shown in Figure \ref{fig:ecoli_perbase}. Since many of the reads in this data set start with N, the first base's matching ratio of the original data set is very low. 
@@ -589,19 +590,22 @@ Lighter	& 98,555  &	94,875	& 4.84	& 2	& 97.510  \\ \hline
 
 N50 is the length such that the total length of the contigs no shorter than the N50 cover at least half the assembled genome.  NG50 is similar, but with the requirement that contigs cover half the reference genome rather than half the assembled genome. Edits per 100kbps is the number of mismatches or indels per 100kbps when aligning the contigs to the reference genome. A misassembly is an instance where two adjacent stretches of bases in the assembly align either to two very distant or to two highly overlapping stretches of the reference genome.  The Quast study defines these metrics in more detail \cite{gurevich2013quast}.
 
+Assemblies produced from reads corrected with the four programs are very similar by all measures, with Quake and Lighter yielding the longest contigs and the best genome coverage. Surprisingly, all ‘corrected’ assemblies have more differences at nucleotide level compared to the uncorrected data, due in part to over-correction.
+
 %a position of a contig that its left sequence and right sequence are mapped far away on the genome or overlap too much. The coverage are the portion of the reference genome that are covered by contigs.
 %\myworries{Li: I'm unclear on the meaning of misassembly here.}
 
 \subsubsection*{Human Chr14}
-We also evaluated \tool's effect on alignment and assembly using a dataset from the GAGE project \cite{salzberg2012gage}.  The dataset consists of real 101 $\times$ 101 bp paired-end reads covering human chromosome 14 to $35\times$ average coverage (~36.5M reads).  We specified a \kmer length of 19 for \tool.
+We also evaluated \tool's effect on alignment and assembly using a dataset from the GAGE project \cite{salzberg2012gage}.  The dataset consists of real 101 $\times$ 101 bp paired-end reads covering human chromosome 14 to $35\times$ average coverage (~36.5M reads).  We specified a \kmer length of 19 for all the error correctors.
 %\myworries{Li: We specified \kmer length 19 for all tools including both error correctors and assemblers?(done)}
-Error correction's effect on Bowtie 2 alignment statistics are shown in Table \ref{table:chr14_alignment}.  We used Bowtie 2 to align the reads to an index consisting of just the human chromosome 14 sequence of the hg19 build of the human genome.
+
+Error correction's effect on Bowtie 2 alignment statistics are shown in Table \ref{table:chr14_alignment}.  We used Bowtie 2 to align the reads to an index consisting of just the human chromosome 14 sequence of the hg19 build of the human genome. Programs had similar performance, adding between 171,000–323,000 alignable reads and increasing the base-level accuracy of mapped reads by 0.61-0.70 bases. As before, Quake produced fewer correct bases per mapped read on average due to trimming.   
 
 \begin{table}
 \centering
 \begin{tabular}{|c|c|c||c|c|}\hline
   & \multicolumn{2}{|c||}{Read Level} & \multicolumn{2}{|c|}{Base Level} \\ \hline
-  & Mapped Reads  &Gain(\%) &	Match/Read	& Gain(\%) \\ \hline
+  & Mapped Reads  &Increase(\%) & Base Match/Read	& Increase(\%) \\ \hline
 Original & 35,993,146	&- 		&	99.492	& - \\ \hline
 Quake 	& 36,164,028	& 0.47 &	92.622	& -6.90 \\ \hline
 Musket 	&	36,316,697	& 0.90	& 100.100	& 0.61 \\ \hline
@@ -612,7 +616,9 @@ Lighter	&36,280,347	& 0.80	& 100.109	& 0.62 \\ \hline
 \end{table}
 
 % Result of Velvet
-We also tested error correction's effect on de novo assembly using Velvet for assembly and Quast to evaluate the quality of the assembly.  Results are shown in Table \ref{table:chr14_assembly}. Overall, \tool's accuracy on real data is comparable with other error correction tools.
+We also tested error correction's effect on de novo assembly using Velvet for assembly and Quast to evaluate the quality of the assembly.  Results are shown in Table \ref{table:chr14_assembly}.
+
+Overall, \tool's accuracy on real data is comparable with other error correction tools, producing the longest contigs and covering the largest portion of the genome with the smallest number of assembly errors.   
 
 \begin{table}
 \centering
@@ -641,7 +647,7 @@ The input datasets are the same simulated \ecoli datasetes with $1\%$ error rate
 		& \multicolumn{2}{|c||}{$35\times$} & \multicolumn{2}{|c||}{$70\times$}  & \multicolumn{2}{|c||}{$140\times$} & \multicolumn{2}{|c|}{chr14}  \\ \hline
 		& memory & disk & memory & disk & memory & disk & memory & disk \\ \hline
 Quake   & 2.8G	& 3.3G & 7.1G & 6.0G & 14G & 12G & 48G & 57G \\ \hline		
-Musket	& 139M	& 0 & 160M & 0 & 241M & 0 & 1.9G & 0 \\ \hline
+Musket	& 139M	& 0 & 160M & 0 & 241M & 0 & 1.4G & 0 \\ \hline
 Bless	& 10M	& 661M & 11M & 1.3G & 13M & 2.6G & 600M & 15G \\ \hline
 Lighter	& 31M	& 0 & 31M & 0 & 31M & 0 & 510M & 0 \\ \hline
 \end{tabular}
@@ -651,7 +657,7 @@ Lighter	& 31M	& 0 & 31M & 0 & 31M & 0 & 510M & 0 \\ \hline
 Bless and \tool achieve constant memory footprint across sequencing depths.  While Musket uses less memory than Quake, it uses more than either Bless or \tool.  Bless achieves constant memory footprint across sequencing depths, this comes at the cost of disk consumption.  Note that Bless can be configured to trade off between peak memory footprint and the number of temporary files it creates.
 
 %runtime on simulated_70_1
-To assess scalability, we also compared running time for Quake, Musket and \tool using a different number of threads.  For these experiments we used the simulated \ecoli data set with $70\times$ coverage and $1\%$ error.  Results are shown in Figure \ref{fig:runtime}.  Note that Musket requires at least 2 threads due to its master-slave design.  Bless can only be run with one thread and its running time is 1475s, which is slower than Quake.
+To assess scalability, we also compared running time for Quake, Musket and \tool using different number of threads.  For these experiments we used the simulated \ecoli data set with $70\times$ coverage and $1\%$ error.  Results are shown in Figure \ref{fig:runtime}.  Note that Musket requires at least 2 threads due to its master-slave design.  Bless can only be run with one thread and its running time is 1475s, which is slower than Quake.
 
 \begin{figure}[h!]
 \begin{center}
