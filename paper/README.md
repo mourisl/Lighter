@@ -1,14 +1,16 @@
 First:
+
 1. Change to the `paper/Evaluation` subdirectory of the repo
-2. Obtain [Quake].  We used v0.3.
-3. Obtain [Musket].  We used v1.1.
-4. Obtain [BLESS].  We used v0p12.
+2. Obtain [Quake]; we used version 0.3
+3. Obtain [Musket]; we used version 1.1
+4. Obtain [BLESS]; we used v0p12
 
 [Quake]: http://www.cbcb.umd.edu/software/quake/
 [Musket]: http://musket.sourceforge.net/homepage.htm#latest
 [BLESS]: http://sourceforge.net/projects/bless-ec/
 
 To generate simulated E. coli data set:
+
 1. Download FASTA from refseq: http://www.ncbi.nlm.nih.gov/nuccore/NC_010473.1
 2. Move `sequnce.fa` to current directory and rename 
 3. Run `sh scripts/generate_simulate.sh`
