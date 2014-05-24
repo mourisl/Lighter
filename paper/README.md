@@ -1,8 +1,8 @@
 First:
 1. Change to the `paper/Evaluation` subdirectory of the repo
 2. Obtain [Quake].  We used v0.3.
-2. Obtain [Musket].  We used v1.1.
-2. Obtain [BLESS].  We used v0p12.
+3. Obtain [Musket].  We used v1.1.
+4. Obtain [BLESS].  We used v0p12.
 
 [Quake]: http://www.cbcb.umd.edu/software/quake/
 [Musket]: http://musket.sourceforge.net/homepage.htm#latest
