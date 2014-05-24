@@ -13,15 +13,18 @@ To generate simulated E. coli data set:
 
 1. Download FASTA from refseq: http://www.ncbi.nlm.nih.gov/nuccore/NC_010473.1
 2. Move `sequnce.fa` to current directory and rename 
-3. Run `sh scripts/generate_simulate.sh`
+3. Run `sh scripts/generate_simulate.sh`.  This will take a while and use several gigabytes of memory.
 
-Generating the diploid test case:
-generate_diploid.sh 
+To generate simualted diploid test data:
 
-Generating the 2x100bp 75x ERR022075 data set
-perl Sample.pl 0.077 < ERR022075_1.fastq > read1.fq
-perl Sample.pl 0.077 < ERR022075_1.fastq > read2_tmp.fq
-perl Trim.pl read2_tmp.fq > read2.fq
+1. Run `generate_diploid.sh`
+
+To generating the 2x100bp 75x ERR022075 data set:
+
+1. Download `ERR022075_1.fastq.gz` from the [European Nucleotide Archive](http://www.ebi.ac.uk/ena/data/view/ERR022075)
+2. Unzip it: `gunzip ERR022075_1.fastq.gz`
+3. Make untrimmed read set: `perl Sample.pl 0.077 < ERR022075_1.fastq > read1.fq`
+4. Make trimmed read set`perl Sample.pl 0.077 < ERR022075_1.fastq > read2_tmp.fq ; perl Trim.pl read2_tmp.fq > read2.fq`
 
 Generating the kmers to test:
 perl GetRefKmers.pl 17 < e_coli_k12.fa
