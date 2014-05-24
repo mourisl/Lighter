@@ -19,7 +19,7 @@ containing sequence errors.
 1. Clone the [GitHub repo](https://github.com/mourisl/lighter), e.g. with `git clone https://github.com/mourisl/Lighter.git`
 2. Run `make` in the repo directory
 
-Lighter has very few dependencies and we have successfully built it on Linux, Mac OS X, and Windows.
+Lighter is small and portable, with no library dependencies.  We have successfully built it on Linux, Mac OS X, and Windows.
 
 ### Usage
 
@@ -43,9 +43,11 @@ Lighter has very few dependencies and we have successfully built it on Linux, Ma
 Suppose the data sets' coverage is about 70x:
 
 Single-end data set:
+
     ./lighter -r read.fq -k 17 5000000 0.05 -t 10
 
 Paired-end data set:
+
     ./lighter -r left.fq -r right.fq -k 17 5000000 0.05 -t 10
 
 ### Terms of use
