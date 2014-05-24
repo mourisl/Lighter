@@ -19,7 +19,7 @@ containing sequence errors.
 1. Clone the [GitHub repo](https://github.com/mourisl/lighter), e.g. with `git clone https://github.com/mourisl/Lighter.git`
 2. Run `make` in the repo directory
 
-Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSIX_Threads) being the only library dependency.  We have successfully built it on Linux, Mac OS X, and Windows.
+Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSIX_Threads) being the only library dependency.  We have successfully built it on Linux, Mac OS X, and Windows.  To build on Windows, you will need to download the `pthreadsGC2.dll` library from the [Pthreads Win32 library](http://www.sourceware.org/pthreads-win32/) and copy it to the repo directory with the Lighter sources.
 
 ### Usage
 
