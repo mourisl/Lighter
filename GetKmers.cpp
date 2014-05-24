@@ -42,7 +42,8 @@ void *SampleKmers_Thread( void *arg )
 		else
 			break ;
 	}
-	pthread_exit( NULL ) ;	
+	pthread_exit( NULL ) ;
+	return NULL ;
 }
 
 void SampleKmersInRead( char *read, char *qual, int kmerLength, double alpha, KmerCode &kmerCode, Store *kmers )
@@ -137,7 +138,8 @@ void *StoreKmers_Thread( void *arg )
 		else
 			break ;
 	}
-	pthread_exit( NULL ) ;	
+	pthread_exit( NULL ) ;
+	return NULL ;ErrorCorrection.cpp
 }
 
 void StoreTrustedKmers( char *read, char *qual, int kmerLength, char badQuality, int *threshold,

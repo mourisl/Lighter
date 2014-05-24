@@ -30,6 +30,7 @@ void *ErrorCorrection_Thread( void *arg )
 	}
 
 	pthread_exit( NULL ) ;
+	return NULL ;
 }
 
 

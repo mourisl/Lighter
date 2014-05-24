@@ -312,6 +312,8 @@ public:
 	   unsigned long long used = 0 ;
 	   double sum = 0 ;
 	   double blockFP[BLOCK_SIZE + 1] ;
+	   tagK = 0;
+	   k = 0;
 
 	   // Precompute the false positive for each possible block's occupancy rate
 	   for ( i = 0 ; i <= BLOCK_SIZE ; ++i )
