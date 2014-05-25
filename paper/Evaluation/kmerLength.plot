@@ -1,7 +1,7 @@
 set terminal png truecolor enhanced linewidth 2
-set terminal jpeg truecolor enhanced linewidth 2
+#set terminal jpeg truecolor enhanced linewidth 2
 
-set output "kmerLength.jpg"
+set output "kmerLength.png"
 
 set key bottom 
 

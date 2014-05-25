@@ -1,6 +1,6 @@
 set terminal png truecolor enhanced linewidth 2
-set terminal jpeg truecolor enhanced linewidth 2
-set output "per_base.jpg"
+#set terminal jpeg truecolor enhanced linewidth 2
+set output "per_base.png"
 
 set key bottom 
 
