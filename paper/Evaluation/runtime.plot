@@ -1,6 +1,7 @@
 set terminal png truecolor enhanced linewidth 2
 #set terminal jpeg truecolor enhanced linewidth 2
-set output "runtime.png"
+set terminal postscript eps color enhanced linewidth 2
+set output "runtime.eps"
 
 set xlabel "# of threads"
 set ylabel "time(s)"

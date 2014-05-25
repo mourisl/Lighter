@@ -270,7 +270,7 @@ Lighter's workflow is illustrated in Figure \ref{fig:lighter_framework}. Lighter
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=0.75\textwidth]{lighter_framework.png}
+\includegraphics[width=0.75\textwidth]{lighter_framework.eps}
 \caption{The framework of Lighter\label{fig:lighter_framework}}
 \end{center}
 \end{figure}
@@ -366,7 +366,7 @@ The procedure is illustrated in Figure \ref{fig:error_correction}.  If $k_b$ is 
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=0.75\textwidth]{ErrorCorrection.png}
+\includegraphics[width=0.75\textwidth]{ErrorCorrection.eps}
 \caption{An example of the greedy error correction procedure.  \kmer CCGATTC does not appear in Bloom filter $B$, so we attempt to substitute a different nucleotide for the C shown in red.  We select A since it yields the longest stretch of consecutive \kmers that appear in Bloom filter $B$.  \label{fig:error_correction}}
 \end{center}
 \end{figure}
@@ -495,7 +495,7 @@ Of the 159,098 simulated \kmers overlapping a position with a heterozygous SNP, 
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=0.5\textwidth]{alpha.png}
+\includegraphics[width=0.5\textwidth]{alpha.eps}
 \caption{The effect of $\alpha$ on the accuracy using the simulated $35\times$ dataset.\label{fig:alpha}}
 \end{center}
 \end{figure}
@@ -511,7 +511,7 @@ As shown in Figures \ref{fig:alpha} and \ref{fig:bloom_occupancy_alpha}, only a 
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=0.5\textwidth]{bloom_occupancy_alpha.png}
+\includegraphics[width=0.5\textwidth]{bloom_occupancy_alpha.eps}
 \caption{The effect of $\alpha$ on occupancy of Bloom filters $A$ and $B$ using simulated $35\times$, $70\times$ and $140\times$ datasets.\label{fig:bloom_occupancy_alpha}}
 \end{center}
 \end{figure}
@@ -524,7 +524,7 @@ A key parameter of \tool is the \kmer length $k$.  When $k$ is smalls, there is 
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=0.5\textwidth]{kmerLength.png}
+\includegraphics[width=0.5\textwidth]{kmerLength.eps}
 \caption{The effect of \kmer length $k$ on the accuracy.\label{fig:kmerLength}}
 \end{center}
 \end{figure}
@@ -565,7 +565,7 @@ Also, for each tool we took the left-mate reads that aligned without either inde
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=0.5\textwidth]{per_base.png}
+\includegraphics[width=0.5\textwidth]{per_base.eps}
 \caption{The matching ratio for each base in \ecoli data set\label{fig:ecoli_perbase}}
 \end{center}
 \end{figure}
@@ -661,7 +661,7 @@ To assess scalability, we also compared running time for Quake, Musket and \tool
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=0.5\textwidth]{runtime.png}
+\includegraphics[width=0.5\textwidth]{runtime.eps}
 \end{center}
 \caption{Running times of Quake, Musket and \tool on $70\times$ simulated data set with increasing number of threads\label{fig:runtime}}
 \end{figure}

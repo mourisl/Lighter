@@ -1,6 +1,7 @@
 set terminal png truecolor enhanced linewidth 2
 #set terminal jpeg truecolor enhanced linewidth 2
-set output "bloom_occupancy_alpha.png"
+set terminal postscript eps color enhanced linewidth 2
+set output "bloom_occupancy_alpha.eps"
 
 set key top left 
 
