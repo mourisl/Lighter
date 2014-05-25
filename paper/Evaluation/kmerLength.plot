@@ -1,7 +1,8 @@
 set terminal png truecolor enhanced linewidth 2
-set terminal jpeg truecolor enhanced linewidth 2
+#set terminal jpeg truecolor enhanced linewidth 2
+set terminal postscript eps color enhanced linewidth 2
 
-set output "kmerLength.jpg"
+set output "kmerLength.eps"
 
 set key bottom 
 
