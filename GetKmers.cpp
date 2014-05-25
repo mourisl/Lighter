@@ -139,7 +139,7 @@ void *StoreKmers_Thread( void *arg )
 			break ;
 	}
 	pthread_exit( NULL ) ;
-	return NULL ;ErrorCorrection.cpp
+	return NULL ;
 }
 
 void StoreTrustedKmers( char *read, char *qual, int kmerLength, char badQuality, int *threshold,
