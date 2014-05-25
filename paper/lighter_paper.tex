@@ -59,6 +59,7 @@
 \usepackage{amsmath}
 \usepackage{xspace}
 \usepackage{xcolor}
+\usepackage{authblk}
 %\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
 \urlstyle{rm}
  
@@ -146,11 +147,19 @@
 %%                                          %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\author[1,2]{Li Song}
+\author[2,1]{Liliana Florea}
+\author[1,2]{Ben Langmead\thanks{langmea@cs.jhu.edu}}
+\affil[1]{Department of Computer Science, Johns Hopkins University}
+\affil[2]{McKusick-Nathans Institute of Genetic Medicine, Johns Hopkins University School of Medicine}
 
-\author{Li Song$^1$
-  Liliana Florea$^2$
-  Ben Langmead$^{*3}$
-}
+\renewcommand\Authands{ and }
+
+
+%\author{Li Song$^1$
+ % Liliana Florea$^2$
+ % Ben Langmead$^3$
+%}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                          %%
@@ -177,7 +186,7 @@
 \emph{Lighter} is a fast and memory-efficient tool for correcting sequencing errors in high-throughput sequencing datasets.
 \tool avoids counting \kmers in the sequencing reads.
 Instead, it uses a pair of Bloom filters, one populated with a sample of the input \kmers and the other populated with \kmers likely to be correct based on a simple test.
-As long as the sampling fraction is adjusted in inverse proportion to the dataset's average coverage, the Bloom filter size can be held constant while maintaining near-constant accuracy.
+As long as the sampling fraction is adjusted in inverse proportion to the depth of sequencing, the Bloom filter size can be held constant while maintaining near-constant accuracy.
 \tool is easily applied to very large sequencing datasets.
 It is parallelized, uses no secondary storage, and is both faster and more memory-efficient than competing approaches while achieving comparable accuracy.
 \tool is free open source software available from \url{https://github.com/mourisl/Lighter/}.
@@ -212,9 +221,9 @@ The cost and throughput of DNA sequencing have improved rapidly in the past seve
 With these advances has come an explosion of new software for analyzing large sequencing datasets.
 Sequencing error correction is a basic need for many of these tools.
 Removing errors at the outset of an analysis can improve accuracy of downstream tools such as variant callers \cite{kelley2010quake}.
-Removing errors can also improve the speed and memory-efficiency of downstream tools, particularly for analyses involving de novo assembly with De Bruijn graphs since the graph's size increases with the number of distinct \kmers in the dataset \cite{pevzner2001eulerian, chaisson2004fragment}.
+Removing errors can also improve the speed and memory-efficiency of downstream tools, particularly for de novo assemblers based on De Bruijn graphs  \cite{pevzner2001eulerian, chaisson2004fragment}.
 
-To be useful in practice, error correction software must make economical use of time and memory even when input datasets are extremely large (billions of reads) and when the genome under study is also large (billions of nucleotides).
+To be useful in practice, error correction software must make economical use of time and memory even when input datasets are large (many billions of reads) and when the genome under study is also large (billions of nucleotides).
 Several methods have been proposed, covering a wide tradeoff space between accuracy, speed and memory- and storage-efficiency.
 SHREC \cite{schroder2009shrec} and HiTEC \cite{ilie2011hitec} build a suffix index of the input reads and locate errors by finding instances where a substring is followed by a character less often than expected.
 Coral \cite{salmela2011correcting} and ECHO \cite{kao2011echo} find overlaps among reads and use the resulting multiple alignments to detect and correct errors.
@@ -247,11 +256,12 @@ Rather than count \kmers, \tool samples \kmers randomly, storing the sample in a
 \tool then uses a simple test applied to each position of each read to compile a set of solid \kmers, stored in a second Bloom filter.
 These two Bloom filters are the only sizable data structures used by \tool.
 
-\tool's crucial advantage is that its parameters can be set such that the memory footprint and the accuracy of the approach are near-constant with respect to coverage.
+A crucial advantage is that \tool's parameters can be set such that the memory footprint and the accuracy of the approach are near-constant with respect to depth of sequencing.
 That is, no matter how deep the coverage, \tool can allocate the same sized Bloom filters and achieve nearly the same (a) Bloom filter occupancy, (b) Bloom filter false positive rate, and (c) error correction accuracy.
 \tool does this without using any disk space or other secondary memory.
 This is in contrast to BLESS and Quake/Jellyfish, which use secondary memory to store some or all of the \kmer counts.
-\tool's accuracy is comparable to competing tools, as we show both in simulation experiments where false positives and false negatives can be measured, and in real-world experiments where read alignment scores and assembly statistics can be measured.  
+
+\tool's accuracy is comparable to competing tools.  We show this both in simulation experiments where false positives and false negatives can be measured, and in real-world experiments where read alignment scores and assembly statistics can be measured.  
 \tool is also very simple and fast, faster than all other tools tried in our experiments.
 These advantages make \tool quite practical compared to previous counting-based approaches, all of which require an amount of memory or secondary storage that increases with depth of coverage.
 
@@ -276,18 +286,18 @@ Lighter's workflow is illustrated in Figure \ref{fig:lighter_framework}. Lighter
 \end{figure}
 
 \subsection*{Bloom filter}
-A Bloom filter \cite{bloom1970space} is a compact probabilistic data structure representing a set.  It consists of an array of $m$ bits, initialized to 0.  To add an object $o$, $h$ independent hash functions $H_0(o), H_1(o),...,H_{h-1}(o)$ are applied.  Each maps $o$ to an integer in $[0, m)$ and the corresponding $h$ array bits are set to 1. To test if object $q$ is a member, the same hash functions are applied to $q$.  $q$ is a member if all corresponding bits are set to 1.  A false positive occurs when the corresponding bits are set to 1 ``by coincidence,'' that is, because of objects besides $q$ that were added previously.  Assuming the hash functions map objects to bit array elements with equal probability, the Bloom filter's false positive rate is approximately $(1-e^{-h\frac{n}{m}})^h$, where $n$ is the number of distinct objects added, which we call the \emph{cardinality}.  Given $n$, which is usually determined by the dataset, $m$ and $h$ can be adjusted to achieve a desired false positive rate.  Lower false positive rates can come at a cost, since greater values of $m$ require more memory and greater values of $k$ require more hash function calculations.  Many variations on Bloom filters have been proposed that additionally permit compression of the filter, storage of count data, representation of maps in addition to sets, etc \cite{tarkoma2012theory}.  Bloom filters and variants thereon have been applied in various bioinformatics settings, including assembly \cite{pell2012scaling}, compression \cite{jones2012compression}, k-mer counting \cite{melsted2011efficient}, and error correction \cite{shi2010parallel}.
+A Bloom filter \cite{bloom1970space} is a compact probabilistic data structure representing a set.  It consists of an array of $m$ bits, each initialized to 0.  To add an item $o$, $h$ independent hash functions $H_0(o), H_1(o),...,H_{h-1}(o)$ are applied.  Each maps $o$ to an integer in $[0, m)$ and the corresponding $h$ array bits are set to 1. To test if item $q$ is a member, the same hash functions are applied to $q$.  $q$ is a member if all corresponding bits are set to 1.  A false positive occurs when the corresponding bits are set to 1 ``by coincidence,'' that is, because of items besides $q$ that were added previously.  Assuming the hash functions map items to bit array elements with equal probability, the Bloom filter's false positive rate is approximately $(1-e^{-h\frac{n}{m}})^h$, where $n$ is the number of distinct items added, which we call the \emph{cardinality}.  Given $n$, which is usually determined by the dataset, $m$ and $h$ can be adjusted to achieve a desired false positive rate.  Lower false positive rates can come at a cost, since greater values of $m$ require more memory and greater values of $k$ require more hash function calculations.  Many variations on Bloom filters have been proposed that additionally permit compression of the filter, storage of count data, representation of maps in addition to sets, etc \cite{tarkoma2012theory}.  Bloom filters and variants thereon have been applied in various bioinformatics settings, including assembly \cite{pell2012scaling}, compression \cite{jones2012compression}, \kmer counting \cite{melsted2011efficient}, and error correction \cite{shi2010parallel}.
 
 By way of contrast, another way to represent a set is with a hash table.  Hash tables do not yield false positives, but Bloom filters are far smaller.  Whereas a Bloom filter is an array of bits, a hash table is an array of buckets, each large enough to store a pointer, key, or both.  If chaining is used, lists associated with buckets incur additional overhead.  While the Bloom filter's small size comes at the expense of false positives, these can be tolerated in many settings including in error correction.
 
-As Figure \ref{fig:lighter_framework} shows, the efficiency of bloom filter affects the running time of Lighter a lot. For a standard Bloom filter, the $h$ hash functions may map $o$ to any places in the bit array. The bit array is usually very large, so all the $h$ accesses will likely to cause cache miss. In \cite{Putze:2010:CHS:1498698.1594230}, the authors proposed blocked Bloom filter which can decrease the number of cache misses. Given a block size $b$, it will use $H_0(o)$ to decide the start position on the bit array, and then map $H_0(o), H_1(o),...,H_{h-1}(o)$ onto the block starting from that position. It choose $b$ about the size of a cache line, then the $h$ accesses will not cause $h$ cache misses. The drawback of using blocked Bloom filter is that we have to use a bit larger $h$ and $m$ to have the same FPR when using the standard bloom filter. To estimate the FPR of blocked Bloom filter, we can consider each of the possible $m-b+1$ blocks. for the $i$-th block, the FPR within this block is $(b'_i/b)^h$, where $b'_i$ is the number of bits set to 1 in block $i$. So the overall FPR is $\displaystyle\frac{\sum_i (b'_i/b)^h}{m-b+1}$.
+\tool's efficiency depends on the efficiency of the Bloom filter implementation.  Specifically \tool uses a ``blocked'' Bloom filter to decrease overall number of cache misses and improve efficiency.  This comes at the expense of needing a slightly larger filter to achieve a comparable false positive rate to a non-blocked filter, as discussed in Supplementary Note 1.
 
-In our method, the objects to be stored in the Bloom filters are \kmers.  Because we would like to treat genome strands equivalently for counting purposes, we will always \emph{canonicalize} a \kmer before adding it to, or using it to query a Bloom filter.  A canonicalized \kmer is either the \kmer itself or its reverse complement, whichever is lexicographically prior. If a \kmer contains ambiguous nucleotides such as ``N'', we will just ignore it.
+In our method, the items to be stored in the Bloom filters are \kmers.  Because we would like to treat genome strands equivalently for counting purposes, we will always \emph{canonicalize} a \kmer before adding it to, or using it to query a Bloom filter.  A canonicalized \kmer is either the \kmer itself or its reverse complement, whichever is lexicographically prior. If a \kmer contains ambiguous nucleotides such as ``N'', we will just ignore it.
 
 % What do we do with k-mers with ambiguous nucleotides?
 
 \subsection*{Sequencing model}
-We use a simple model for the sequencing process (including errors) and for \tool's subsampling.  The sequencing model resembles one suggested previously \cite{melsted2014kmerstream}.  Let $K$ be the total number of \kmers obtained by the sequencer.  We say a \kmer is \emph{incorrect} if its sequence has been altered by one or more sequencing errors.  Otherwise it is \emph{correct}.  Let $\epsilon$ be the fraction of \kmers that are incorrect.  We assume $\epsilon$ does not vary with the depth of sequencing.  The sequencer obtains correct \kmers by sampling independently and uniformly from \kmers in the genome.  Let the number of \kmers in the genome be $G$, and assume all are distinct.  If $\kappa_c$ is a random variable for the multiplicity of a correct \kmer in the input, $\kappa_c$ is binomial with success probability $1/G$ and number of trials $(1-\epsilon)K$: $\kappa_c \sim Binom((1-\epsilon)K, 1/G)$.  Since the number of trials is large and the success probability is small, the binomial is well approximated by a Poisson: $\kappa_c \sim Pois(K(1-\epsilon)/G)$
+We use a simple model for the sequencing process (including errors) and for \tool's subsampling.  The model resembles one suggested previously \cite{melsted2014kmerstream}.  Let $K$ be the total number of \kmers obtained by the sequencer.  We say a \kmer is \emph{incorrect} if its sequence has been altered by one or more sequencing errors.  Otherwise it is \emph{correct}.  Let $\epsilon$ be the fraction of \kmers that are incorrect.  We assume $\epsilon$ does not vary with the depth of sequencing.  The sequencer obtains correct \kmers by sampling independently and uniformly from \kmers in the genome.  Let the number of \kmers in the genome be $G$, and assume all are distinct.  If $\kappa_c$ is a random variable for the multiplicity of a correct \kmer in the input, $\kappa_c$ is binomial with success probability $1/G$ and number of trials $(1-\epsilon)K$: $\kappa_c \sim Binom((1-\epsilon)K, 1/G)$.  Since the number of trials is large and the success probability is small, the binomial is well approximated by a Poisson: $\kappa_c \sim Pois(K(1-\epsilon)/G)$
 
 A sequenced \kmer survives subsampling with probability $\alpha$.  If $\kappa'_c$ is a random variable for the number of times a correct \kmer appears in the subsample, $\kappa'_c \sim Binom((1-\epsilon)K, \alpha/G)$, which is approximately $Pois(\alpha K (1-\epsilon)/G)$.
 
@@ -371,37 +381,10 @@ The procedure is illustrated in Figure \ref{fig:error_correction}.  If $k_b$ is 
 \end{center}
 \end{figure}
 
-% BTL: I don't understand the following
 If the error is located near the end of the read, for each candidate substitution, we will extend reads using the kmer reported in Bloom filter $A$ by one path that has the least lexicographical order. Thus we can solve some ties that are more likely to happend near the end of a read due to insufficient extension. 
 
-\subsection*{Scaling with coverage}
-\tool's accuracy is near-constant as the depth of sequencing $K$ increases and its memory footprint is held constant.  The basic idea is that as $K$ increases, we adjust $\alpha$ in inverse proportion.  That is, we hold $\alpha K$ constant.  For concreteness, consider two scenarios: scenario I, where the total number of \kmers is $K_1$ and subsampling fraction is $\alpha_1$, and scenario II where the number is $K_2=z K_1$ and subsampling fraction is $\alpha_2 = \alpha_1 / z$.
-
-\paragraph{Contents of Bloom filter A.} The occupancy of Bloom filter $A$, as well as the fraction of correct \kmers in $A$, are approximately the same in both scenarios.  This follows from the fact that $\kappa'_c ~ \sim Pois(\alpha K (1 - \epsilon) / G)$, $\kappa'_e \sim Pois(\alpha K \epsilon / H)$, and $\alpha K$, $\epsilon$, $G$, and $H$ are constant across scenarios.  This is also supported by our experiments, as seen in Table \ref{table:bloom_occupancy_coverage}.  Because the occupancy does not change, we can hold the Bloom filter's size constant while achieving the same false positive rate.
-
-% show that false positive of Bloom filter $A$ stays almost constant. Suppose we have two scenarios, in scenario I, the sequencer outputs $K_1$ \kmers and in scenario II, the sequencer outputs $zK_1$ \kmers. If we set $\alpha$ to be $\alpha_1$ in scenario I, then $\alpha_2=\alpha_1/z$ in scenario II. As a result, the distribution of $\kappa'_c$ and $\kappa'_e$ do not change in scenario II and are $Pois(\alpha_1(1-\epsilon)K_1)$ and $Pois(\alpha_1\epsilon K_1 / H)$ repsectively. The number of correct \kmer get stored in Bloom filter $A$ is $Gp(\kappa'_c\ge 1)$ and the number of incorrector \kmer stored in Bloom filter $A$ is $Hp(\kappa'_e\ge 1)$. These two numbers are the same in scenarios I and II, thus the occupancy rate and the false positive rate of Bloom filter $A$ stays almost the same.
-
-\paragraph{Accuracy of trusted / untrusted classifications.}
-Also, if a read position and its neighbors within $k-1$ positions on either side are error-free, then the probability it will be called trusted does not change between scenarios.  We mentioned that when $\alpha$ is small, $P(\alpha_1) \approx P(\alpha_1/z) = P(\alpha_2)$.  We also showed that the false positive rate of the bloom filter is approximately constant between scenarios, so $P^*(\alpha_1) \approx P^*(\alpha_1/z) = P^*(\alpha_2)$.  Thus, the thresholds $y_x$ will also remain unchanged.
-$p_c=(p(\kappa'_c\ge 1))/(p(\kappa_c\ge 1))$ is the probability a correct \kmer is in the subsample given that it was sequenced.
-$p_c=(1-e^{-\alpha(1-\epsilon) K/G})/(1-e^{-(1-\epsilon) K/G})\approx 1-e^{-\alpha(1-\epsilon)K/G}$, since $(1-\epsilon)K/G$ is large.
-$p_c$ is constant across scenarios since $\alpha K$, $\epsilon$, and $G$ are constant.
-Since $p_c$ is constant, the parameters of the $B_{e,x}$ distribution are constant and the probability a correct position will be called trusted is also constant.
-%If $B_c$ is a random variable for the number of correct \kmers out of $x$ covering a position that appear in Bloom filter $A$, then $B_c \sim Binom(x, p_1+\beta-\beta p_1)$.
-%Moreover, the number of different test cases does not change and the overall positions that get classified as trusted is almost the same when changing the coverage.
-
-Now we consider an incorrect read position.  We ignore false positives from Bloom filter $A$ for now.
-$p_e = p(\kappa'_e\ge 1)/p(\kappa_e\ge 1) = (1-e^{-\alpha\epsilon K/H})/(1-e^{-\epsilon K/H})$ is the probability an incorrect \kmer is in the subsample given that it was sequenced.
-Since $\epsilon K/H$ is close to 0, $e^{-\epsilon K/H}\approx 1-\epsilon K/H$ and $p_e \approx (\alpha \epsilon K/H)/(\epsilon K/H)=\alpha$.
-Say an incorrect read position is covered by $x$ \kmers; if $B_{e,x}$ is a random variable for the number of \kmers overlapping the position that appear in Bloom filter $A$, then $B_{e,x} \sim Binom(x, p_e) \approx Binom(x, \alpha)$.  The probability of falsely trusting a position is therefore: 
-$p(B_{e, x}\geq y_x)=\sum_{i=y_x}^x \binom{x}{i} p_e^i(1-p_e)^{x-i} \approx \sum_{i=y_x}^x \binom{x}{i} \alpha^i(1-\alpha)^{x-i}$.  If we omit the $(1-\alpha)^{x-i}$ term in the sum, what remains is an upper bound, \thatis $\sum_{i=y_x}^x \binom{x}{i} \alpha^i(1-\alpha)^{x-i} \leq \sum_{i=y_x}^x \binom{x}{i} \alpha^i$.  Since $\alpha_2 = \alpha_1/z$, the upper bound in scenario II is lower by a factor of at least $1/z$ relative to the upper bound in scenario I.  So an upper bound on the probability of labeling an incorrect position as trusted decreases by a factor of at least $z$.  When $K$ increases, the number of distinct test cases for incorrect positions increases by a factor of at most $z$.  Thus, we expect the total number incorrect positions labeled as trusted to remain approximately constant.
-
-When $\alpha$ is small, the false positive rate $\beta$ may dominate the probability $p_e$.  In practice, however, the false positive rate is usually small enough that the probability of a incorrect position being labeled as trusted due to false positives is extremely low.  For example, for many of the experiments reported in this study, the k-mer length $k=17$, the false positive rate of Bloom A $\approx 0.004$, the threshold $y_{2k-1} = 6$, and $\alpha = 0.05$.  In this situation, $p(B_{e, x}\geq y_x) \approx 5 \cdot 10^{-11}.$
-
-The above is not an exhaustive analysis, since we have not examined the case where a read position is error-free but not all of its neighbors within $k-1$ positions on either side are error-free.  In this case, whether the threshold is passed depends chiefly on the whereabouts of the nearby errors.
-
-\paragraph{Contents of Bloom filter B.}
-Given the analysis in the previous section, we expect that the collection of \kmers drawn from the stretches of trusted positions in the reads will not change much across scenarios and, therefore, the contents of Bloom filter $B$ will not change much.  This conclusion is also supported by our experiments, as seen in Table \ref{table:bloom_occupancy_coverage}.
+\subsection*{Scaling with depth of sequencing}
+\tool's accuracy can be made near-constant as the depth of sequencing $K$ increases and its memory footprint is held constant.  This is accomplished by holding $\alpha K$ constant, \thatis, by adjusting $\alpha$ in inverse proportion to $K$.  For concreteness, consider two scenarios: scenario I, where the total number of \kmers is $K_1$ and subsampling fraction is $\alpha_1$, and scenario II where the number is $K_2=z K_1$ and subsampling fraction is $\alpha_2 = \alpha_1 / z$.  This is illustrated in Tables \ref{table:bloom_occupancy_coverage} and \ref{table:chr14_assembly}.  We argue this more formally in Supplementary Note 2.
 
 %Next we show that the number of positions that contain error and are falsely set as trusted position does not cause trouble. For simplicity, we ignore $\beta$, the affect of the false responses from the Bloom filter $A$, for now. Let $p_2=\frac{p(\kappa'_e\ge 1)}{p(\kappa_e\ge 1)}$. And the number of sampled \kmers covering this position is roughly a binomial distribution $B_2\sim Binom(x, p_2)$. In general, $p_2=\frac{1-e^{-\alpha\epsilon K/H}}{1-e^{-\epsilon K/H}}$. Since $\epsilon K/H$ is very close to 0, $e^{-\epsilon K/H}\approx 1-\epsilon K/H$. So $p_2\approx \frac{\alpha \epsilon K/H}{\epsilon K/H}=\alpha$. In sceanrio I, $p_2=\alpha_1$; and in scenario II, $p_2=\alpha_1/z$.
 
@@ -412,7 +395,7 @@ Given the analysis in the previous section, we expect that the collection of \km
 %Therefore, the number of \kmers coming from the consecutive trusted positions does not increase which means there is no need to increase the size of Bloom filter $B$ when increasing coverage. Also, the analysis showed that the ability of capturing solid kmers remains almost the same when we change $\alpha$ linearly. 
 
 \subsection*{Quality score}
-Lighter can make use of base quality values.  Specifically, a low quality value at a certain position can force that position to be untrusted, even if the overlapping \kmers indicate it is trusted.  First, \tool scans the first 1 million reads in the input, recording the quality value at the last position in each read.  \tool then chooses the 5th-percentile quality value; that is, the value such that 5\% of the values are less than or equal to it say $t_1$. Use the same idea, we get another 5th-percentile quality, say $t_2$ value for the first 1 million reads' first base. When Lighter decides whether a position is trusted or not, if its quality score is less or equal to $min\{t_1, t_2 - 1\}$, then call it untrusted regardless of how many of the overlapping \kmers appear in Bloom filter $A$. 
+A low base quality value at a certain position can force \tool to treat that position as untrusted even if the overlapping \kmers indicate it is trusted.  First, \tool scans the first 1 million reads in the input, recording the quality value at the last position in each read.  \tool then chooses the 5th-percentile quality value; that is, the value such that 5\% of the values are less than or equal to it say $t_1$. Use the same idea, we get another 5th-percentile quality, say $t_2$ value for the first 1 million reads' first base. When Lighter decides whether a position is trusted or not, if its quality score is less or equal to $min\{t_1, t_2 - 1\}$, then call it untrusted regardless of how many of the overlapping \kmers appear in Bloom filter $A$. 
 
 \subsection*{Parallization} 
 As shown in Figure \ref{fig:lighter_framework}, Lighter works in three passes: (1) populating Bloom filter $A$ with a \kmer subsample, (2) applying the per-position test and populating Bloom filter $B$ with likely-correct \kmers, and (3) error correction.  For pass 1, because $\alpha$ is usually small, most time is spent scanning the input reads.  Consequently, we found little benefit to parallelizing pass 1.  Pass 2 is parallelized by using concurrent threads handle subsets of input reads.  Because Bloom filter $A$ is only being queried (not added to), we need not synchronize accesses to $A$.  Accesses to $B$ are synchronized so that additions of \kmers to $B$ by different threads do not interfere.  Since it is typical for the same correct \kmer to be added repeatedly to $B$, we can save synchronization effort by first checking whether the \kmer is already present and adding it (synchronously) only if necessary.  Pass 3 is parallelized by using concurrent threads to handle subsets of the reads; since Bloom filter $B$ is only being queried, we need not synchronize accesses.

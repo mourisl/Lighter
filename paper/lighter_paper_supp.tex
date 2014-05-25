@@ -1,0 +1,250 @@
+%% BioMed_Central_Tex_Template_v1.06
+%%                                      %
+%  bmc_article.tex            ver: 1.06 %
+%                                       %
+
+%%IMPORTANT: do not delete the first line of this template
+%%It must be present to enable the BMC Submission system to 
+%%recognise this template!!
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                     %%
+%%  LaTeX template for BioMed Central  %%
+%%     journal article submissions     %%
+%%                                     %%
+%%         <14 August 2007>            %%
+%%                                     %%
+%%                                     %%
+%% Uses:                               %%
+%% cite.sty, url.sty, bmc_article.cls  %%
+%% ifthen.sty. multicol.sty		   %%
+%%				      	   %%
+%%                                     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%	
+%% For instructions on how to fill out this Tex template           %%
+%% document please refer to Readme.pdf and the instructions for    %%
+%% authors page on the biomed central website                      %%
+%% http://www.biomedcentral.com/info/authors/                      %%
+%%                                                                 %%
+%% Please do not use \input{...} to include other tex files.       %%
+%% Submit your LaTeX manuscript as one .tex document.              %%
+%%                                                                 %%
+%% All additional figures and files should be attached             %%
+%% separately and not embedded in the \TeX\ document itself.       %%
+%%                                                                 %%
+%% BioMed Central currently use the MikTex distribution of         %%
+%% TeX for Windows) of TeX and LaTeX.  This is available from      %%
+%% http://www.miktex.org                                           %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\documentclass[10pt]{article}    
+
+
+
+% Load packages
+\usepackage{cite} % Make references as [1-4], not [1,2,3,4]
+\usepackage{url}  % Formatting web addresses  
+\usepackage{ifthen}  % Conditional 
+\usepackage{multicol}   %Columns
+\usepackage{hhline}
+\usepackage[utf8]{inputenc} %unicode support
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{xspace}
+\usepackage{xcolor}
+\usepackage{authblk}
+%\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
+\urlstyle{rm}
+ 
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+%%                                             %%
+%%  If you wish to display your graphics for   %%
+%%  your own use using includegraphic or       %%
+%%  includegraphics, then comment out the      %%
+%%  following two lines of code.               %%   
+%%  NB: These line *must* be included when     %%
+%%  submitting to BMC.                         %% 
+%%  All figure files must be submitted as      %%
+%%  separate graphics through the BMC          %%
+%%  submission process, not included in the    %% 
+%%  submitted article.                         %% 
+%%                                             %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     
+
+
+%\def\includegraphic{}
+%\def\includegraphics{}
+
+
+
+\setlength{\topmargin}{0.0cm}
+\setlength{\textheight}{21.5cm}
+\setlength{\oddsidemargin}{0cm} 
+\setlength{\textwidth}{16.5cm}
+\setlength{\columnsep}{0.6cm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                              %%
+%% You may change the following style settings  %%
+%% Should you wish to format your article       %%
+%% in a publication style for printing out and  %%
+%% sharing with colleagues, but ensure that     %%
+%% before submitting to BMC that the style is   %%
+%% returned to the Review style setting.        %%
+%%                                              %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+
+%Review style settings
+%\newenvironment{bmcformat}{\begin{raggedright}\baselineskip20pt\sloppy\setboolean{publ}{false}}{\end{raggedright}\baselineskip20pt\sloppy}
+
+%Publication style settings
+%\newenvironment{bmcformat}{\fussy\setboolean{publ}{true}}{\fussy}
+
+%New style setting
+
+% Begin ...
+\begin{document}
+
+\newcommand{\forexample}{e.g.\@\xspace}
+\newcommand{\thatis}{i.e.\@\xspace}
+\newcommand{\andothers}{et al.\@\xspace}
+\newcommand{\kmer}{\ensuremath{k}-mer\xspace}
+\newcommand{\kmers}{\ensuremath{k}-mers\xspace}
+\newcommand{\tool}{Lighter\xspace}
+\newcommand{\ecoli}{\emph{E. coli}\xspace}
+
+\newcommand\myworries[1]{\textcolor{red}{#1}}%\usepackage[applemac]{inputenc} %applemac support if unicode package fails
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the title of your article here     %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\title{A Probablistic Space-efficient Method of Obtaining Solid Kmers with An Appliction of Error Correction}
+\title{Supplementary material for ``Lighter: fast and memory-efficient error correction without counting''}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors here                   %%
+%%                                          %%
+%% Ensure \and is entered between all but   %%
+%% the last two authors. This will be       %%
+%% replaced by a comma in the final article %%
+%%                                          %%
+%% Ensure there are no trailing spaces at   %% 
+%% the ends of the lines                    %%     	
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\author{Li Song, Liliana Florea, Ben Langmead}
+
+\renewcommand\Authands{ and }
+
+
+%\author{Li Song$^1$
+ % Liliana Florea$^2$
+ % Ben Langmead$^3$
+%}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors' addresses here        %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The Main Body begins here                %%
+%%                                          %%
+%% Please refer to the instructions for     %%
+%% authors on:                              %%
+%% http://www.biomedcentral.com/info/authors%%
+%% and include the section headings         %%
+%% accordingly for your article type.       %% 
+%%                                          %%
+%% See the Results and Discussion section   %%
+%% for details on how to create sub-sections%%
+%%                                          %%
+%% use \cite{...} to cite references        %%
+%%  \cite{koon} and                         %%
+%%  \cite{oreg,khar,zvai,xjon,schn,pond}    %%
+%%  \nocite{smith,marg,hunn,advi,koha,mouse}%%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The idea of using a Bloom filter to store the solid k-mers is not new; CUDA-EC does this
+% What's our story w/r/t choosing k-mer length?
+
+\section*{Supplementary Note 1: Blocked Bloom filter}
+
+For a standard Bloom filter, each of the $h$ hash functions could map item $o$ to any element of the bit array. The bit array will often be very large, much larger than the processor cache.  Thus, each probe into the bit array is likely to cause a cache miss. Putze \emph{et al} \cite{Putze:2010:CHS:1498698.1594230} propose a \emph{blocked} Bloom filter. Given a block size $b$, the first hash function $H_0(o)$ is used to select a size-$b$ block of consecutive positions in the bit array.  Then, $H_1(o),...,H_{h-1}(o)$ map $o$ onto elements of that block. When $b$ is less than or equal to the size of a cache line, the $h$ accesses will tend to cause only one or two cache misses, rather than approximately $h$ cache misses.
+
+The drawback is that $h$ and $m$ must be somewhat larger to achieve the same false positive rate (FPR) as a corresponding standard Bloom filter.  To estimate the FPR of the blocked Bloom filter, we can consider each of the possible $m-b+1$ blocks. For the $i$-th block, the FPR within the block is $(b'_i/b)^h$, where $b'_i$ is the number of bits set to 1 in block $i$. So the overall FPR is:
+
+$$\frac{\sum_i (b'_i/b)^h}{m-b+1}$$
+
+\section*{Supplementary Note 2: Scaling with depth of sequencing}
+
+\subsection*{Scaling with coverage}
+\tool's accuracy is near-constant as the depth of sequencing $K$ increases and its memory footprint is held constant.  The basic idea is that as $K$ increases, we adjust $\alpha$ in inverse proportion.  That is, we hold $\alpha K$ constant.  For concreteness, consider two scenarios: scenario I, where the total number of \kmers is $K_1$ and subsampling fraction is $\alpha_1$, and scenario II where the number is $K_2=z K_1$ and subsampling fraction is $\alpha_2 = \alpha_1 / z$.
+
+\paragraph{Contents of Bloom filter A.} The occupancy of Bloom filter $A$, as well as the fraction of correct \kmers in $A$, are approximately the same in both scenarios.  This follows from the fact that $\kappa'_c ~ \sim Pois(\alpha K (1 - \epsilon) / G)$, $\kappa'_e \sim Pois(\alpha K \epsilon / H)$, and $\alpha K$, $\epsilon$, $G$, and $H$ are constant across scenarios.  This is also supported by our experiments, as seen in the main body of the manuscript.  Because the occupancy does not change, we can hold the Bloom filter's size constant while achieving the same false positive rate.
+
+% show that false positive of Bloom filter $A$ stays almost constant. Suppose we have two scenarios, in scenario I, the sequencer outputs $K_1$ \kmers and in scenario II, the sequencer outputs $zK_1$ \kmers. If we set $\alpha$ to be $\alpha_1$ in scenario I, then $\alpha_2=\alpha_1/z$ in scenario II. As a result, the distribution of $\kappa'_c$ and $\kappa'_e$ do not change in scenario II and are $Pois(\alpha_1(1-\epsilon)K_1)$ and $Pois(\alpha_1\epsilon K_1 / H)$ repsectively. The number of correct \kmer get stored in Bloom filter $A$ is $Gp(\kappa'_c\ge 1)$ and the number of incorrector \kmer stored in Bloom filter $A$ is $Hp(\kappa'_e\ge 1)$. These two numbers are the same in scenarios I and II, thus the occupancy rate and the false positive rate of Bloom filter $A$ stays almost the same.
+
+\paragraph{Accuracy of trusted / untrusted classifications.}
+Also, if a read position and its neighbors within $k-1$ positions on either side are error-free, then the probability it will be called trusted does not change between scenarios.  We mentioned that when $\alpha$ is small, $P(\alpha_1) \approx P(\alpha_1/z) = P(\alpha_2)$.  We also showed that the false positive rate of the bloom filter is approximately constant between scenarios, so $P^*(\alpha_1) \approx P^*(\alpha_1/z) = P^*(\alpha_2)$.  Thus, the thresholds $y_x$ will also remain unchanged.
+$p_c=(p(\kappa'_c\ge 1))/(p(\kappa_c\ge 1))$ is the probability a correct \kmer is in the subsample given that it was sequenced.
+$p_c=(1-e^{-\alpha(1-\epsilon) K/G})/(1-e^{-(1-\epsilon) K/G})\approx 1-e^{-\alpha(1-\epsilon)K/G}$, since $(1-\epsilon)K/G$ is large.
+$p_c$ is constant across scenarios since $\alpha K$, $\epsilon$, and $G$ are constant.
+Since $p_c$ is constant, the parameters of the $B_{e,x}$ distribution are constant and the probability a correct position will be called trusted is also constant.
+%If $B_c$ is a random variable for the number of correct \kmers out of $x$ covering a position that appear in Bloom filter $A$, then $B_c \sim Binom(x, p_1+\beta-\beta p_1)$.
+%Moreover, the number of different test cases does not change and the overall positions that get classified as trusted is almost the same when changing the coverage.
+
+Now we consider an incorrect read position.  We ignore false positives from Bloom filter $A$ for now.
+$p_e = p(\kappa'_e\ge 1)/p(\kappa_e\ge 1) = (1-e^{-\alpha\epsilon K/H})/(1-e^{-\epsilon K/H})$ is the probability an incorrect \kmer is in the subsample given that it was sequenced.
+Since $\epsilon K/H$ is close to 0, $e^{-\epsilon K/H}\approx 1-\epsilon K/H$ and $p_e \approx (\alpha \epsilon K/H)/(\epsilon K/H)=\alpha$.
+Say an incorrect read position is covered by $x$ \kmers; if $B_{e,x}$ is a random variable for the number of \kmers overlapping the position that appear in Bloom filter $A$, then $B_{e,x} \sim Binom(x, p_e) \approx Binom(x, \alpha)$.  The probability of falsely trusting a position is therefore: 
+$p(B_{e, x}\geq y_x)=\sum_{i=y_x}^x \binom{x}{i} p_e^i(1-p_e)^{x-i} \approx \sum_{i=y_x}^x \binom{x}{i} \alpha^i(1-\alpha)^{x-i}$.  If we omit the $(1-\alpha)^{x-i}$ term in the sum, what remains is an upper bound, \thatis $\sum_{i=y_x}^x \binom{x}{i} \alpha^i(1-\alpha)^{x-i} \leq \sum_{i=y_x}^x \binom{x}{i} \alpha^i$.  Since $\alpha_2 = \alpha_1/z$, the upper bound in scenario II is lower by a factor of at least $1/z$ relative to the upper bound in scenario I.  So an upper bound on the probability of labeling an incorrect position as trusted decreases by a factor of at least $z$.  When $K$ increases, the number of distinct test cases for incorrect positions increases by a factor of at most $z$.  Thus, we expect the total number incorrect positions labeled as trusted to remain approximately constant.
+
+When $\alpha$ is small, the false positive rate $\beta$ may dominate the probability $p_e$.  In practice, however, the false positive rate is usually small enough that the probability of a incorrect position being labeled as trusted due to false positives is extremely low.  For example, for many of the experiments reported in this study, the k-mer length $k=17$, the false positive rate of Bloom A $\approx 0.004$, the threshold $y_{2k-1} = 6$, and $\alpha = 0.05$.  In this situation, $p(B_{e, x}\geq y_x) \approx 5 \cdot 10^{-11}.$
+
+The above is not an exhaustive analysis, since we have not examined the case where a read position is error-free but not all of its neighbors within $k-1$ positions on either side are error-free.  In this case, whether the threshold is passed depends chiefly on the whereabouts of the nearby errors.
+
+\paragraph{Contents of Bloom filter B.}
+Given the analysis in the previous section, we expect that the collection of \kmers drawn from the stretches of trusted positions in the reads will not change much across scenarios and, therefore, the contents of Bloom filter $B$ will not change much.  This conclusion is also supported by our experiments, as seen in the main body of the manuscript.
+
+%Next we show that the number of positions that contain error and are falsely set as trusted position does not cause trouble. For simplicity, we ignore $\beta$, the affect of the false responses from the Bloom filter $A$, for now. Let $p_2=\frac{p(\kappa'_e\ge 1)}{p(\kappa_e\ge 1)}$. And the number of sampled \kmers covering this position is roughly a binomial distribution $B_2\sim Binom(x, p_2)$. In general, $p_2=\frac{1-e^{-\alpha\epsilon K/H}}{1-e^{-\epsilon K/H}}$. Since $\epsilon K/H$ is very close to 0, $e^{-\epsilon K/H}\approx 1-\epsilon K/H$. So $p_2\approx \frac{\alpha \epsilon K/H}{\epsilon K/H}=\alpha$. In sceanrio I, $p_2=\alpha_1$; and in scenario II, $p_2=\alpha_1/z$.
+
+%Another perspective to get is conclusion is that because the total number of weak kmers get stored in Bloom filter $A$ is constant and the number of different test cases increase, for each test case the number of \kmers we retrieved from Bloom filter $A$ will decrease.
+
+%When $\alpha$ gets too small, $\beta$ may dominant the probability. However, in that case, the probability of $B_2\ge y'$ is extremely small, so it does not cause trouble at that time. For example, in this paper, $\beta$ is less than $0.004$ and the threshold $y'$ is 6 when $\alpha\le 0.05$ and the \kmer size is $17$. Considering the binomial distribution $B'_2\sim Binom(x, 0.004)$, the probability $p(B'_2\ge 6)$ is about $5*10^{-11}$. 
+
+%Therefore, the number of \kmers coming from the consecutive trusted positions does not increase which means there is no need to increase the size of Bloom filter $B$ when increasing coverage. Also, the analysis showed that the ability of capturing solid kmers remains almost the same when we change $\alpha$ linearly. 
+
+
+\bibliographystyle{abbrv}
+\bibliography{lighter_paper_supp}
+
+\end{document}
+
+
+
+
+
+
+
