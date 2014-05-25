@@ -4,6 +4,7 @@ LINKFLAGS = -lpthread
 DEBUG=
 OBJECTS = ErrorCorrection.o KmerCode.o GetKmers.o
 
+# For Windows pthreads library: http://www.sourceware.org/pthreads-win32/
 ifneq (,$(findstring MINGW,$(shell uname)))
 	LINKFLAGS = -L. -lpthreadGC2
 endif
