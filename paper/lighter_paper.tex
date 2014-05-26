@@ -42,28 +42,27 @@
 %%                                                                 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%\documentclass[twocolumn]{bmcart}% uncomment this for twocolumn layout and comment line below
+\documentclass{bmcart}
 
-\documentclass[10pt]{article}    
-
+%%% Load packages
+%\usepackage{amsthm,amsmath}
+%\RequirePackage{natbib}
+%\RequirePackage{hyperref}
+\usepackage[utf8]{inputenc} %unicode support
+%\usepackage[applemac]{inputenc} %applemac support if unicode package fails
+%\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
 
 
 % Load packages
-\usepackage{cite} % Make references as [1-4], not [1,2,3,4]
 \usepackage{url}  % Formatting web addresses  
-\usepackage{ifthen}  % Conditional 
-\usepackage{multicol}   %Columns
 \usepackage{hhline}
-\usepackage[utf8]{inputenc} %unicode support
-\usepackage{graphicx}
-\usepackage{verbatim}
-\usepackage{amsmath}
 \usepackage{xspace}
-\usepackage{xcolor}
 \usepackage{authblk}
-%\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
-\urlstyle{rm}
- 
- 
+
+\newif\iffiginline
+\figinlinefalse
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 %%                                             %%
 %%  If you wish to display your graphics for   %%
@@ -105,7 +104,7 @@
  
 
 %Review style settings
-%\newenvironment{bmcformat}{\begin{raggedright}\baselineskip20pt\sloppy\setboolean{publ}{false}}{\end{raggedright}\baselineskip20pt\sloppy}
+\newenvironment{bmcformat}{\begin{raggedright}\baselineskip20pt\sloppy\setboolean{publ}{false}}{\end{raggedright}\baselineskip20pt\sloppy}
 
 %Publication style settings
 %\newenvironment{bmcformat}{\fussy\setboolean{publ}{true}}{\fussy}
@@ -213,9 +212,6 @@ It is parallelized, uses no secondary storage, and is both faster and more memor
 %%                                          %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% The idea of using a Bloom filter to store the solid k-mers is not new; CUDA-EC does this
-% What's our story w/r/t choosing k-mer length?
-
 \section*{Introduction}
 The cost and throughput of DNA sequencing have improved rapidly in the past several years \cite{glenn2011field}, with recent advances reducing the cost of sequencing a single human genome at 30-fold coverage to around \$1,000 \cite{1kgenomeforreal}.
 With these advances has come an explosion of new software for analyzing large sequencing datasets.
@@ -228,20 +224,6 @@ Several methods have been proposed, covering a wide tradeoff space between accur
 SHREC \cite{schroder2009shrec} and HiTEC \cite{ilie2011hitec} build a suffix index of the input reads and locate errors by finding instances where a substring is followed by a character less often than expected.
 Coral \cite{salmela2011correcting} and ECHO \cite{kao2011echo} find overlaps among reads and use the resulting multiple alignments to detect and correct errors.
 Reptile \cite{yang2010reptile} and Hammer \cite{medvedev2011error} detect and correct errors by examining each \kmer's neighborhood in the dataset's \kmer Hamming graph.
-
-% Citations
-% Quake: 149, used in GAGE, assemblathon, 
-% SHREC: 68, none seem to be users
-% Reptile: 52, no obvious users
-% HiTEC: 46, none seem to be users
-% ECHO: 37, a handful seem to be users
-% Hammer: 35, 
-% Coral: 34, no obvious users
-% CUDA-EC: 33, no obvious users
-% DecGPU: 15
-% Musket: 8
-% BLESS: 0
-% Turtle: 1
 
 The most practical and widely used error correction methods descend from the spectral alignment approach introduced in the earliest De Bruijn graph based assemblers \cite{pevzner2001eulerian, chaisson2004fragment}.
 These methods count the number of times each \kmer occurs (its \emph{multiplicity}) in the input reads, then apply a threshold such that reads with multiplicity exceeding the threshold are considered \emph{solid}.
@@ -265,25 +247,17 @@ This is in contrast to BLESS and Quake/Jellyfish, which use secondary memory to 
 \tool is also very simple and fast, faster than all other tools tried in our experiments.
 These advantages make \tool quite practical compared to previous counting-based approaches, all of which require an amount of memory or secondary storage that increases with depth of coverage.
 
-
-
-%\tool makes a series of three passes over the input reads.  The first pass obtains a sample of the k-mers present in the input reads, storing the sample in a Bloom filter A.  The second pass uses Bloom filter A to identify ``solid'' k-mers and stores these in Bloom filter B.  The third pass uses Bloom filter B to detect and correct errors in the input reads.
-
-%One important way to study a species is to sequence its genome and analyze its DNA. The need to understand the genome stimulates the rapid development of DNA sequencing technologies. The output of the DNA sequencing is usually an enormous volume of short fragments from the genome. With these small fragments, computational biologists are able to design complicated methods to reconstruct the original genome by assembling or to detect the mutations from the known reference genome by aligning.
-
-%The volume of the data is so huge that if we align them to the genome, each position is covered by a bunch of reads which is called the coverage. However, the short fragments are not perfect and usually contain a small number of sequecing errors. This affects one of the most important preprocessing stages for the data --- kmer counting, where a kmer is a nucleutide sequence of size k. If there is no sequencing error, all the kmers are from the genome, which are called solid kmers, and its quantity are bounded by the genome size instead of the coverage. This is not true in practice due to the sequecing errors and if the coverage is high enough, like what the sequecing technology gives us nowadays, the kmers containing sequencing errors will dominate the space consumption. To alleviate the impact from those non-solid kmers, various methods have been proposed, like BFcounter[cite]. These methods still suffer from the problem that the space consumption scales up with the coverage. In this paper, we propose a probablitic methods of obtaining solid kmers whose space complexity does not depend on the coverage.
-
-%One immediate applicaiton using the information of solid kmers is error correction. Error correction is very important for the De Brujin graph based genome assemblers to save the memory usage. There are mainly three categories methods for error correction[cite], and converting all the kmers to solid kmers is one of them and is particularly successful for Illumina reads where the read errors are mainly substitutions. There are currently many programs for error corrections, and some of them are highlighted for their low memory usage, like Musket[cite] and Bless[cite]. With the help of our method of obtainig solid kmers and the bloom filters which is a compact probabilitc data structure, we also propose the program Lighter(LIGHT-weight ERror correction) that can do error correction with very small memory footprint and no extra disk consumption.
-
 \section*{Method}
 Lighter's workflow is illustrated in Figure \ref{fig:lighter_framework}. Lighter makes three passes over the input reads.  The first pass obtains a sample of the \kmers present in the input reads, storing the sample in Bloom filter A.  The second pass uses Bloom filter A to identify solid \kmers, which it stores in Bloom filter B.  The third pass uses Bloom filter B and a greedy procedure to correct errors in the input reads.
 
+\iffiginline
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.75\textwidth]{lighter_framework.eps}
 \caption{The framework of Lighter\label{fig:lighter_framework}}
 \end{center}
 \end{figure}
+\fi
 
 \subsection*{Bloom filter}
 A Bloom filter \cite{bloom1970space} is a compact probabilistic data structure representing a set.  It consists of an array of $m$ bits, each initialized to 0.  To add an item $o$, $h$ independent hash functions $H_0(o), H_1(o),...,H_{h-1}(o)$ are calculated.  Each maps $o$ to an integer in $[0, m)$ and the corresponding $h$ array bits are set to 1. To test if item $q$ is a member, the same hash functions are applied to $q$.  $q$ is a member if all corresponding bits are set to 1.  A false positive occurs when the corresponding bits are set to 1 ``by coincidence,'' that is, because of items besides $q$ that were added previously.  Assuming the hash functions map items to bit array elements with equal probability, the Bloom filter's false positive rate is approximately $(1-e^{-h\frac{n}{m}})^h$, where $n$ is the number of distinct items added, which we call the \emph{cardinality}.  Given $n$, which is usually determined by the dataset, $m$ and $h$ can be adjusted to achieve a desired false positive rate.  Lower false positive rates can come at a cost, since greater values of $m$ require more memory and greater values of $k$ require more hash function calculations.  Many variations on Bloom filters have been proposed that additionally permit compression of the filter, storage of count data, representation of maps in addition to sets, etc \cite{tarkoma2012theory}.  Bloom filters and variants thereon have been applied in various bioinformatics settings, including assembly \cite{pell2012scaling}, compression \cite{jones2012compression}, \kmer counting \cite{melsted2011efficient}, and error correction \cite{shi2010parallel}.
@@ -293,8 +267,6 @@ By way of contrast, another way to represent a set is with a hash table.  Hash t
 \tool's efficiency depends on the efficiency of the Bloom filter implementation.  Specifically \tool uses a ``blocked'' Bloom filter to decrease overall number of cache misses and improve efficiency.  This comes at the expense of needing a slightly larger filter to achieve a comparable false positive rate to a non-blocked filter, as discussed in Supplementary Note 1.
 
 In our method, the items to be stored in the Bloom filters are \kmers.  Because we would like to treat genome strands equivalently for counting purposes, we will always \emph{canonicalize} a \kmer before adding it to, or using it to query a Bloom filter.  A canonicalized \kmer is either the \kmer itself or its reverse complement, whichever is lexicographically prior.
-
-% What do we do with k-mers with ambiguous nucleotides?
 
 \subsection*{Sequencing model}
 We use a simple model to describe the sequencing process and \tool's subsampling.  The model resembles one suggested previously \cite{melsted2014kmerstream}.  Let $K$ be the total number of \kmers obtained by the sequencer.  We say a \kmer is \emph{incorrect} if its sequence has been altered by one or more sequencing errors.  Otherwise it is \emph{correct}.  Let $\epsilon$ be the fraction of \kmers that are incorrect.  We assume $\epsilon$ does not vary with the depth of sequencing.  The sequencer obtains correct \kmers by sampling independently and uniformly from \kmers in the genome.  Let the number of \kmers in the genome be $G$, and assume all are distinct.  If $\kappa_c$ is a random variable for the multiplicity of a correct \kmer in the input, $\kappa_c$ is binomial with success probability $1/G$ and number of trials $(1-\epsilon)K$: $\kappa_c \sim Binom((1-\epsilon)K, 1/G)$.  Since the number of trials is large and the success probability is small, the binomial is well approximated by a Poisson: $\kappa_c \sim Pois(K(1-\epsilon)/G)$
@@ -320,17 +292,15 @@ Otherwise we say it is \emph{trusted}.
 Each instance where the threshold is applied is called a \emph{test case}.
 When one or more of the $x$ \kmers involved in two test cases differ, we say the test cases are distinct.
 
-Let $P^*(\alpha)$ be the probability an incorrect \kmer appears in $A$, taking the Bloom filter's false positive rate into account.  If random variable $B_{e,x}$ represents the number of \kmers appearing in $A$ for an untrusted position overlapped by $x$ \kmers, $B_{e,x} \sim Binom(x,P^*(\alpha))$.  We define thresholds $y_x$ in those test cases, for each possible value of $x$ in $[1, k]$.  Each $y_x$ is the minimum integer such that $p(B_{0,x}\le y_x - 1)\ge 0.995$.
+Let $P^*(\alpha)$ be the probability an incorrect \kmer appears in $A$, taking the Bloom filter's false positive rate into account.  If random variable $B_{e,x}$ represents the number of \kmers appearing in $A$ for an untrusted position overlapped by $x$ \kmers, $B_{e,x} \sim Binom(x,P^*(\alpha))$.  We define thresholds $y_x$, for each $x$ in $[1, k]$.  $y_x$ is the minimum integer such that $p(B_{e,x}\le y_x - 1)\ge 0.995$.
 
-Ignoring false positives for now, we model the probability of a sequenced a \kmer having been added to $A$ as $P(\alpha)=1-(1-\alpha)^{f(\alpha)}$.  We define $f(\alpha)=max\{2,0.1/\alpha\}$.  That is, we assume the multiplicity of a weak \kmer is at most $f(\alpha)$, which will often be a conservative assumption, especially for small $\alpha$.  It is also possible to define $P(\alpha)$ in terms of random variables $\kappa_e$ and $\kappa'_e$, but we avoid this for simplicity.
+Ignoring false positives for now, we model the probability of a sequenced a \kmer having been added to $A$ as $P(\alpha)=1-(1-\alpha)^{f(\alpha)}$.  We define $f(\alpha)=max\{2,0.1/\alpha\}$.  That is, we assume the multiplicity of a weak \kmer is at most $f(\alpha)$, which will often be a conservative assumption, especially for small $\alpha$.  It is also possible to define $P(\alpha)$ in terms of random variables $\kappa_e$ and $\kappa'_e$, but we avoid this here for simplicity.
 
 A property of this threshold is that when $\alpha$ is small, $P(\alpha/z)=1-(1-\alpha/z)^{0.1z/\alpha}\approx 1-(1-\alpha)^{0.1/\alpha}=P(\alpha)$, where $z$ is a constant greater than 1 and we use the fact that $(1-\alpha/z)^z\approx 1-\alpha$.
 
 For $P^*(\alpha)$, we additionally take $A$'s false positive rate into account.  If the false positive rate is $\beta$, then $P^*(\alpha)=P(\alpha)+\beta-\beta P(\alpha)$.
 
 Once all positions in a read have been marked \emph{trusted} or \emph{untrusted} using the threshold, we find all instances where $k$ trusted positions appear consecutively.  The \kmer made up by those positions is added to Bloom filter $B$.
-
-%After marking each positions, if there are consecutive k trusted positions, we store the corresponding kmer, which is likely a solid \kmer, in another bloom filter $B$. Because these kmers are likely from the real genome, the size of $B$ also only depends on the genome size. 
 
 \paragraph{Third pass.} 
 In the third pass, \tool applies a simple, greedy error correction procedure similar to that used in BLESS \cite{heo2014bless}.
@@ -341,50 +311,40 @@ Let $k_b$ and $k_e$ be the \kmers at the left and right extremes of the stretch.
 If $e < |r|-k+1$, we examine successive \kmers to the right starting at $k_e+1$.
 For a \kmer $k_i$ that does not appear in $B$, we assume the nucleotide at offset $i+k-1$ is incorrect.
 We consider all possible ways of substituting for the incorrect nucleotide.
-We try each possible substitution, then count how many consecutive \kmers starting with $k_i$ appear in Bloom filter $B$.
-We choose the substitution that creates the longest stretch of consecutive \kmers in $B$.
+For each substitution, we count how many consecutive \kmers starting with $k_i$ appear in Bloom filter $B$ after making the substitution.
+We pick the substitution that creates the longest stretch of consecutive \kmers in $B$.
 If more than one candidate substitution is equally good, we call position $i+k-1$ ambiguous and resume the rightward scan at \kmer $k_i+k$.
-The procedure is illustrated in Figure \ref{fig:error_correction}.  If $k_b$ is not the leftmost \kmer in the read, we apply a similar procedure moving leftward.
+The procedure is illustrated in Figure \ref{fig:error_correction}.  If $k_b$ is not the leftmost \kmer in the read, we apply a similar procedure but moving leftward.
 
+\iffiginline
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.75\textwidth]{ErrorCorrection.eps}
 \caption{An example of the greedy error correction procedure.  \kmer CCGATTC does not appear in Bloom filter $B$, so we attempt to substitute a different nucleotide for the C shown in red.  We select A since it yields the longest stretch of consecutive \kmers that appear in Bloom filter $B$.  \label{fig:error_correction}}
 \end{center}
 \end{figure}
+\fi
 
-If the error is located near the end of the read, for each candidate substitution, we will extend reads using the kmer reported in Bloom filter $A$ by one path that has the least lexicographical order. Thus we can solve some ties that are more likely to happend near the end of a read due to insufficient extension. 
+If the error is located near the end of the read, for each candidate substitution, we will extend reads using the \kmer reported in Bloom filter $A$ by one path that has the least lexicographical order. Thus we can solve some ties that are more likely to happend near the end of a read due to insufficient extension. 
 
 \subsection*{Scaling with depth of sequencing}
-\tool's accuracy can be made near-constant as the depth of sequencing $K$ increases and its memory footprint is held constant.  This is accomplished by holding $\alpha K$ constant, \thatis, by adjusting $\alpha$ in inverse proportion to $K$.  For concreteness, consider two scenarios: scenario I, where the total number of \kmers is $K_1$ and subsampling fraction is $\alpha_1$, and scenario II where the number is $K_2=z K_1$ and subsampling fraction is $\alpha_2 = \alpha_1 / z$.  This is illustrated in Tables \ref{table:bloom_occupancy_coverage} and \ref{table:chr14_assembly}.  We argue this formally in Supplementary Note 2.
-
-%Next we show that the number of positions that contain error and are falsely set as trusted position does not cause trouble. For simplicity, we ignore $\beta$, the affect of the false responses from the Bloom filter $A$, for now. Let $p_2=\frac{p(\kappa'_e\ge 1)}{p(\kappa_e\ge 1)}$. And the number of sampled \kmers covering this position is roughly a binomial distribution $B_2\sim Binom(x, p_2)$. In general, $p_2=\frac{1-e^{-\alpha\epsilon K/H}}{1-e^{-\epsilon K/H}}$. Since $\epsilon K/H$ is very close to 0, $e^{-\epsilon K/H}\approx 1-\epsilon K/H$. So $p_2\approx \frac{\alpha \epsilon K/H}{\epsilon K/H}=\alpha$. In sceanrio I, $p_2=\alpha_1$; and in scenario II, $p_2=\alpha_1/z$.
-
-%Another perspective to get is conclusion is that because the total number of weak kmers get stored in Bloom filter $A$ is constant and the number of different test cases increase, for each test case the number of \kmers we retrieved from Bloom filter $A$ will decrease.
-
-%When $\alpha$ gets too small, $\beta$ may dominant the probability. However, in that case, the probability of $B_2\ge y'$ is extremely small, so it does not cause trouble at that time. For example, in this paper, $\beta$ is less than $0.004$ and the threshold $y'$ is 6 when $\alpha\le 0.05$ and the \kmer size is $17$. Considering the binomial distribution $B'_2\sim Binom(x, 0.004)$, the probability $p(B'_2\ge 6)$ is about $5*10^{-11}$. 
-
-%Therefore, the number of \kmers coming from the consecutive trusted positions does not increase which means there is no need to increase the size of Bloom filter $B$ when increasing coverage. Also, the analysis showed that the ability of capturing solid kmers remains almost the same when we change $\alpha$ linearly. 
+\tool's accuracy can be made near-constant as the depth of sequencing $K$ increases and its memory footprint is held constant.  This is accomplished by holding $\alpha K$ constant, \thatis, by adjusting $\alpha$ in inverse proportion to $K$.  This is illustrated in Tables \ref{table:bloom_occupancy_coverage} and \ref{table:chr14_assembly}.  We also argue this more formally in Supplementary Note 2.
 
 \subsection*{Quality score}
 A low base quality value at a certain position can force \tool to treat that position as untrusted even if the overlapping \kmers indicate it is trusted.  First, \tool scans the first 1 million reads in the input, recording the quality value at the last position in each read.  \tool then chooses the 5th-percentile quality value; that is, the value such that 5\% of the values are less than or equal to it say $t_1$. Use the same idea, we get another 5th-percentile quality, say $t_2$ value for the first 1 million reads' first base. When Lighter decides whether a position is trusted or not, if its quality score is less or equal to $min\{t_1, t_2 - 1\}$, then call it untrusted regardless of how many of the overlapping \kmers appear in Bloom filter $A$. 
 
-\subsection*{Parallization} 
+\subsection*{Parallelization} 
 As shown in Figure \ref{fig:lighter_framework}, Lighter works in three passes: (1) populating Bloom filter $A$ with a \kmer subsample, (2) applying the per-position test and populating Bloom filter $B$ with likely-correct \kmers, and (3) error correction.  For pass 1, because $\alpha$ is usually small, most time is spent scanning the input reads.  Consequently, we found little benefit to parallelizing pass 1.  Pass 2 is parallelized by using concurrent threads handle subsets of input reads.  Because Bloom filter $A$ is only being queried (not added to), we need not synchronize accesses to $A$.  Accesses to $B$ are synchronized so that additions of \kmers to $B$ by different threads do not interfere.  Since it is typical for the same correct \kmer to be added repeatedly to $B$, we can save synchronization effort by first checking whether the \kmer is already present and adding it (synchronously) only if necessary.  Pass 3 is parallelized by using concurrent threads to handle subsets of the reads; since Bloom filter $B$ is only being queried, we need not synchronize accesses.
 
 \section*{Evaluation}
 \subsection*{Simulated data set}
-% TODO: add version numbers for all the tools
 
-\paragraph{Accuracy on simulated data.} We compared \tool's performance with Quake v0.3\cite{kelley2010quake}, Musket v1.1\cite{liu2013musket} and Bless v0.12 \cite{heo2014bless}.  We generated collection of reads simulated from the reference genome for the K12 strain of \ecoli (NC\_000913.2) using Mason v0.1.2 \cite{holtgrewe2010mason}.  We let \kmer size $k=17$ for all programs unless otherwise noted.
-%\myworries{Li: (done)please fill in the proper Mason version number as well as version numbers for the three error correctors.  Also, please specify full set of Mason parameters somewhere and mention at least the read length in the main text.}
+\paragraph{Accuracy on simulated data.} We compared \tool's performance with Quake v0.3\cite{kelley2010quake}, Musket v1.1\cite{liu2013musket} and BLESS v0p12 \cite{heo2014bless}.  We generated collection of reads simulated from the reference genome for the K12 strain of \ecoli (NC\_000913.2) using Mason v0.1.2 \cite{holtgrewe2010mason}.  We let \kmer size $k=17$ for all programs unless otherwise noted.
 
 We simulated six distinct datasets with 101bp single-end reads, varying average coverage ($35$x, $75$x $140$x) and average error rate ($1\%$ and $3\%$).  For a given error rate $e$ we specify Mason parameters \verb+-qmb+ $e/2$ \verb+-qme+ $3e$, so that the average error rate is $e$ but errors are more common toward the 3' end, as in real datasets.
-%\myworries{(done)Li: please correct what I say here, which I don't think is quite what you do}
 
-We then ran all three tools on all six datasets, with results presented in Table \ref{table:accuracy}.  In these comparisons, a true positive (TP) is an instance where an error is successfully corrected, \thatis with the correct base substituted.  A false positive (FP) is an instance where a spurious substitution is made at an error-free position.  A false negative (FN) is an instance where we either fail to detect an error or an incorrect base is substituted.  As in previous studies, we report the following summaries: recall = TP/(TP$+$NP), precision = TP/(TP$+$FP), F-score = 2$\times$recall$\times$precision/(recall$+$precision) and gain = (TP-FP)/(TP+FN). These four values are nice measures to evaluate the accuracy of error correction tools, which are also used \cite{liu2013musket}.
+We then ran all three tools on all six datasets, with results presented in Table \ref{table:accuracy}.  In these comparisons, a true positive (TP) is an instance where an error is successfully corrected, \thatis with the correct base substituted.  A false positive (FP) is an instance where a spurious substitution is made at an error-free position.  A false negative (FN) is an instance where we either fail to detect an error or an incorrect base is substituted.  As done in previous studies \cite{liu2013musket}, we report the following summaries: recall = TP/(TP$+$NP), precision = TP/(TP$+$FP), F-score = 2$\times$recall$\times$precision/(recall$+$precision) and gain = (TP-FP)/(TP+FN).
 
-% Insert the table here.
 \begin{table}
 \centering
 \mbox{
@@ -448,12 +408,14 @@ Of the 159,098 simulated \kmers overlapping a position with a heterozygous SNP, 
 
 %The sampling rate $\alpha$ is the key in Lighter which ensures the near constant space complexity. We did an evaluation on the simulated data set with $35\times$ coverage and $1\%$ error rate. The result is shown in Figure \ref{fig:alpha}.
 
+\iffiginline
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.5\textwidth]{alpha.eps}
 \caption{The effect of $\alpha$ on the accuracy using the simulated $35\times$ dataset.\label{fig:alpha}}
 \end{center}
 \end{figure}
+\fi
 
 As shown in Figures \ref{fig:alpha} and \ref{fig:bloom_occupancy_alpha}, only a fraction of the correct \kmers are added to $A$ when $\alpha$ is very small, causing many correct read positions to fail the threshold test.  \tool attempts to ``correct'' these error-free positions, decreasing accuracy.  This also has the effect of reducing the number of consecutive stretches of $k$ trusted positions in the reads, leading to a smaller fraction of correct \kmers added to $B$, and ultimately to lower accuracy.  When $\alpha$ grows too large, the $y_x$ thresholds grow to be greater than $k$, causing all positions to fail the threshold test, as seen in Figure \ref{fig:bloom_occupancy_alpha}'s right-hand side.  This also leads to a dramatic drop in accuracy as seen in Figure \ref{fig:alpha}.  Between the two extremes, we find a broad range of values for $\alpha$ (from 0.06 to 0.45) that yield high accuracy.
 %\myworries{Li: Figure 3 is too hard to read.  We might either supplement with a table, or make a second plot zoomed in on y = [95, 100] or something. (Replaced by a figure from [85-100])}
@@ -464,35 +426,43 @@ As shown in Figures \ref{fig:alpha} and \ref{fig:bloom_occupancy_alpha}, only a 
 
 %This explanation can also be verified by looking at the occupancy rate of table A and B from the simulated data sets with 3 different coverage and $1\%$ error rate when changing $\alpha$ shown in Figure \ref{fig:bloom_occupancy_alpha}. Also, we can see the occupancy rate of table A is almost the same given the same $\alpha\times\mbox{coverage}$ across the 3 data sets. And the occupancy rate of table B is very steady because the solid kmers from the genome are the same for the 3 data sets. 
 
+\iffiginline
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.5\textwidth]{bloom_occupancy_alpha.eps}
 \caption{The effect of $\alpha$ on occupancy of Bloom filters $A$ and $B$ using simulated $35\times$, $70\times$ and $140\times$ datasets.\label{fig:bloom_occupancy_alpha}}
 \end{center}
 \end{figure}
+\fi
 
 \paragraph{Effect of varying $k$.}  
-A key parameter of \tool is the \kmer length $k$.  When $k$ is smalls, there is a higher probability that a \kmer affected by a sequencing error also appears elsewhere in the genome.  When $k$ is too large, there may be relatively few error-free \kmers, making Bloom filter $A$ incomplete.  We measured how different settings for $k$ affect accuracy.  Results are shown in Figure \ref{fig:kmerLength}. 
+A key parameter of \tool is the \kmer length $k$.  Smaller $k$ yields higher probability that a \kmer affected by a sequencing error also appears elsewhere in the genome.  For larger $k$, the fraction of \kmers that are correct decreases, which could lead to fewer correct \kmer in Bloom filter $A$.  We measured how different settings for $k$ affect accuracy using the \myworries{Li: please say which dataset we used}.  Results are shown in Figure \ref{fig:kmerLength}.  Accuracy is high for \kmer lengths ranging from about 18 to 30.
+
+
 
 %From the perspective of efficiency, when $k$ is large, we need more time to process a \kmer. And for the programs which requires storing the \kmer information, like using a hash table to store the counts, larger $k$ causes more memory consumption. Since Lighter does not store the \kmers' information explicitly, larger $k$ will only make Lighter slower but does not affect the memory usage.  In \cite{kelley2010quake}, the authors suggested that we can select $4^k$ around two hundred times the genome size. 
 
-
+\iffiginline
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.5\textwidth]{kmerLength.eps}
-\caption{The effect of \kmer length $k$ on the accuracy.\label{fig:kmerLength}}
+\caption{The effect of \kmer length $k$ on accuracy.\label{fig:kmerLength}}
 \end{center}
 \end{figure}
-
+\fi
 
 \subsection*{Real datasets}
-\paragraph{\ecoli.}  Here we analyze ERR022075, a real sequencing dataset containing very deep coverage of the K-12 strain of the \ecoli genome.  We again used Quake, Musket, Bless and Lighter to correct errors in the dataset.
-To obtain a level of coverage more reflective of other projects, we randomly subsampled the reads in the dataset to obtain roughly 75x coverage (~3.5M reads).  The reads are paired-end with the ends having lengths 100 nt and 102 nt.  Because Bless cannot handle paired-end reads with different length, we truncate the last 2 bases from the 102 nt end.
+\paragraph{\ecoli.}  Next we benchmarked the same error correction tools using a real sequencing dataset, ERR022075.
+This is a deep DNA sequencing dataset of the the K-12 strain of the \ecoli genome.
+We again used Quake, Musket, BLESS and Lighter to correct errors in the dataset.
+To obtain a level of coverage more reflective of other projects, we randomly subsampled the reads in the dataset to obtain roughly 75x coverage (~3.5M reads) of the \ecoli K-12 reference genome.
+The reads are 100 $\times$ 102 bp paired-end reads.
+Because BLESS cannot handle paired-end reads where the ends have different lengths, we truncated the last 2 bases from the 102 bp end before running our experiments.
 
-We measured that out of 4,553,699 distinct \kmers in the \ecoli K12 reference genome, 4,519,538 (99.250\%) appear in table $B$. 
+% We measured that out of 4,553,699 distinct \kmers in the \ecoli K12 reference genome, 4,519,538 (99.250\%) appear in table $B$. 
  
 % Result of bowtie2
-Since these data are not simulated, we cannot measure accuracy directly.  We can measure it indirectly, as other have done \cite{heo2014bless}, by measuring how error correction affects read alignment statistics.  We use Bowtie2 \cite{langmead2012fast} to align the original reads and the corrected reads to the reference genome, then count the total number of the matched positions in the alignments in both cases.  The results are shown in Table \ref{table:ecoli_alignment}.  \tool yields the greatest improvement in number of reads aligned and in average matched positions per aligned reads.  As before, Quake is hard to compare to the other tools because it trims reads.  This leads to negative values in the ``Increase'' columns.
+These data are not simulated, so we cannot measure accuracy directly.  But we can measure it indirectly, as other have done \cite{heo2014bless}, by measuring read alignment statistics before and after error correction.  We use Bowtie2 \cite{langmead2012fast} with default parameters to align the original reads and the corrected reads to the \ecoli K-12 reference genome.  We then count the total number of the matched positions in all the alignments.  Results are shown in Table \ref{table:ecoli_alignment}.  \tool yields the greatest improvement in number of reads aligned and in average matched positions per aligned reads.  As before, Quake is hard to compare to the other tools because it trims and discards reads.  This leads to negative values in the ``Increase'' columns.
 
 \begin{table}
 \centering
@@ -502,32 +472,28 @@ Since these data are not simulated, we cannot measure accuracy directly.  We can
 Original & 	3,464,137	 & - & 99.038	& - \\ \hline
 Quake	& 3,475,689	& 0.33	& 97.982	& -1.97  \\ \hline
 Musket	& 3,467,875	& 0.11	& 99.601	& 0.57  \\ \hline
-Bless	& 3,472,976	& 0.26	& 99.611	& 0.58  \\ \hline
+BLESS	& 3,472,976	& 0.26	& 99.611	& 0.58  \\ \hline
 Lighter	&  3,476,422	& 0.35	& 99.611	& 0.58  \\ \hline
 \end{tabular}
-\caption{Alignment statistics for the $75\times$ \ecoli data set, before error correction (Original row) and after error correction (Quake, Musket, Bless and \tool rows).  The first ``Increase'' column shows percent increase in reads aligned.  The second ``Increase'' column shows percent increase in average number of matching positions per aligned read.\label{table:ecoli_alignment}}
+\caption{Alignment statistics for the $75\times$ \ecoli data set, before error correction (Original row) and after error correction (Quake, Musket, BLESS and \tool rows).  The first ``Increase'' column shows percent increase in reads aligned.  The second ``Increase'' column shows percent increase in average number of matching positions per aligned read.\label{table:ecoli_alignment}}
 \end{table}
 
 %The, "Gain" means how much improvement for its previous column comparing with the original data set. Match/Read represents the average matched position against the reference genome for the mapped reads.
 
 %For Quake, the gain is negative mainly due to unreported reads and trimmed 3' end. It turns out Lighter gives the most improvement for both read level and base level.
 
-Also, for each tool we took the left-mate reads that aligned without either indels or trimming and calculated the fraction of matching bases at each read position.  These fractions are plotted in Figure \ref{fig:ecoli_perbase}. ``Position'' on the x axis is the offset from the 5' end.  Note that an unusual feature of this dataset is that many reads begin with an ``N'' indicating that the sequencer was unable to make a base call at that position. Nevertheless, error correction signifcantly improved the accuracy of bases, especially at the ends of the reads.
+Also, for each tool we examined the alignments for the first read in the pair.  We filtered out the alignments with indels or trimmed bases (in the case of Quake), then calculated the fraction of nucleotides at each alignment position that match the reference genome.  These are plotted in Figure \ref{fig:ecoli_perbase}. ``Position'' on the x axis is the offset from the 5' end of the read.  An unusual feature of this dataset is that many reads begin with an ``N'' indicating that the sequencer was unable to make a base call at that position. Nevertheless, error correction significantly improved the fraction of nucleotides matching the reference genome, especially at the ends of the reads.
 
-%\myworries{Given that we're plotting both ends, I want to make sure that the left-hand side of the plot is the 5' end for both mates, \thatis the left end of mate 1 and the right end of mate 2.  This makes more sense to me than making the x axis be offset from the left-hand side of the mate.  Maybe that's how you've done it already.}
-
-%For those reads not got trimmed and aligned to the genome without indels (cigar field like 100M in the SAM file), we measure the matched ratio for each position shown in Figure \ref{fig:ecoli_perbase}. Since many of the reads in this data set start with N, the first base's matching ratio of the original data set is very low. 
-
+\iffiginline
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.5\textwidth]{per_base.eps}
 \caption{The matching ratio for each base in \ecoli data set\label{fig:ecoli_perbase}}
 \end{center}
 \end{figure}
+\fi
 
-% Result of Velvet
-To further assess accuracy, we assembled the reads before and after error correction and measured relevant assembly statistics.  For assembly we used Velvet 1.2.10\cite{zerbino2008velvet}, a De Bruijn graph-based assembler designed for second-generation sequencing reads.  A key parameter of Velvet is the graph's \kmer length.  To avoid being overly influenced by choice of \kmer length, for each dataset we ran Velvet with several \kmer lengths and reported statistics for the assembly with the best N50 contig size.  For each assembly, we then evaluated the assembly's quality using Quast \cite{gurevich2013quast}.  Quast was configured to discard contigs shorter than 100 bp before calculating statistics.
-%\myworries{Li: I'm unclear on what exactly we aren't doing with the contigs less than 100 bp(By default, Quast will throw away all the contigs less than 500. I think it is too harsh, so I choose 100bp which is the default threshold used by SOAPdenovo2.).  Please fill in the version of Velvet used.(done)}
+To further assess accuracy, we assembled the reads before and after error correction and measured relevant assembly statistics using Quast \cite{gurevich2013quast}.  We used Velvet 1.2.10\cite{zerbino2008velvet} to assemble.  Velvet is a De Bruijn graph-based assembler designed for second-generation sequencing reads.  A key parameter of Velvet is the De Bruijn graph's \kmer length.  To avoid being overly influenced by choice of \kmer length, for each dataset we ran Velvet with several \kmer lengths and reported statistics for the assembly with the best N50 contig size.  For each assembly, we then evaluated the assembly's quality using Quast, which was configured to discard contigs shorter than 100 bp before calculating statistics.
 
 \begin{table}
 \centering
@@ -536,25 +502,21 @@ To further assess accuracy, we assembled the reads before and after error correc
 Original &	94,879 &	87,008	& 3.41	& 0	& 97.496  \\ \hline
 Quake	& 100,379 &	91,194	& 5.6	& 2	 & 97.515  \\ \hline
 Musket	& 86,419  &	79,481	& 7.25	& 1	 & 97.504  \\ \hline
-Bless	& 94,879  &	90,126	& 4.72	& 1	& 97.419  \\ \hline
+BLESS	& 94,879  &	90,126	& 4.72	& 1	& 97.419  \\ \hline
 Lighter	& 98,555  &	94,875	& 4.84	& 2	& 97.510  \\ \hline
 
 \end{tabular}
-\caption{De novo assembly of E.Coli data set\label{table:ecoli_assembly}}
+\caption{De novo assembly of \ecoli data set\label{table:ecoli_assembly}}
 \end{table}
 
 N50 is the length such that the total length of the contigs no shorter than the N50 cover at least half the assembled genome.  NG50 is similar, but with the requirement that contigs cover half the reference genome rather than half the assembled genome. Edits per 100kbps is the number of mismatches or indels per 100kbps when aligning the contigs to the reference genome. A misassembly is an instance where two adjacent stretches of bases in the assembly align either to two very distant or to two highly overlapping stretches of the reference genome.  The Quast study defines these metrics in more detail \cite{gurevich2013quast}.
 
-Assemblies produced from reads corrected with the four programs are very similar by all measures, with Quake and Lighter yielding the longest contigs and the best genome coverage. Surprisingly, all ‘corrected’ assemblies have more differences at nucleotide level compared to the uncorrected data, due in part to over-correction.
-
-%a position of a contig that its left sequence and right sequence are mapped far away on the genome or overlap too much. The coverage are the portion of the reference genome that are covered by contigs.
-%\myworries{Li: I'm unclear on the meaning of misassembly here.}
+Assemblies produced from reads corrected with the four programs are very similar according to these measures, with Quake and Lighter yielding the longest contigs and the best genome coverage. Surprisingly, the post-correction assemblies have more differences at nucleotide level compared to the pre-correction assemblies, perhaps due to spurious corrections.
 
 \subsubsection*{Human Chr14}
-We also evaluated \tool's effect on alignment and assembly using a dataset from the GAGE project \cite{salzberg2012gage}.  The dataset consists of real 101 $\times$ 101 bp paired-end reads covering human chromosome 14 to $35\times$ average coverage (~36.5M reads).  We specified a \kmer length of 19 for all the error correctors.
-%\myworries{Li: We specified \kmer length 19 for all tools including both error correctors and assemblers?(done)}
+We also evaluated \tool's effect on alignment and assembly using a dataset from the GAGE project \cite{salzberg2012gage}.  The dataset consists of real 101 $\times$ 101 bp paired-end reads covering human chromosome 14 to $35\times$ average coverage (~36.5M reads).  We set the \kmer length to 19 for all error correctors for these experiments.
 
-Error correction's effect on Bowtie 2 alignment statistics are shown in Table \ref{table:chr14_alignment}.  We used Bowtie 2 to align the reads to an index consisting of just the human chromosome 14 sequence of the hg19 build of the human genome. Programs had similar performance, adding between 171,000–323,000 alignable reads and increasing the base-level accuracy of mapped reads by 0.61-0.70 bases. As before, Quake produced fewer correct bases per mapped read on average due to trimming.   
+Error correction's effect on Bowtie 2 alignment statistics are shown in Table \ref{table:chr14_alignment}.  We used Bowtie 2 with default parameters to align the reads to an index of the human chromosome 14 sequence of the hg19 build of the human genome.  Programs had comparable performance, adding between 171,000 - 323,000 aligned reads and increasing the average number of matching bases per read by 0.61 - 0.70 bases. As before, Quake produced fewer correct bases per mapped read on average due to trimming.   
 
 \begin{table}
 \centering
@@ -564,16 +526,13 @@ Error correction's effect on Bowtie 2 alignment statistics are shown in Table \r
 Original & 35,993,146	&- 		&	99.492	& - \\ \hline
 Quake 	& 36,164,028	& 0.47 &	92.622	& -6.90 \\ \hline
 Musket 	&	36,316,697	& 0.90	& 100.100	& 0.61 \\ \hline
-Bless 	&36,297,285	& 0.84	& 100.192	&	0.70 \\ \hline
+BLESS 	&36,297,285	& 0.84	& 100.192	&	0.70 \\ \hline
 Lighter	&36,280,347	& 0.80	& 100.109	& 0.62 \\ \hline
 \end{tabular}
 \caption{Alignment of chr14 data set\label{table:chr14_alignment}}
 \end{table}
 
-% Result of Velvet
-We also tested error correction's effect on de novo assembly using Velvet for assembly and Quast to evaluate the quality of the assembly.  Results are shown in Table \ref{table:chr14_assembly}.
-
-Overall, \tool's accuracy on real data is comparable with other error correction tools, producing the longest contigs and covering the largest portion of the genome with the smallest number of assembly errors.   
+We also tested error correction's effect on de novo assembly using Velvet for assembly and Quast to evaluate the quality of the assembly.  Results are shown in Table \ref{table:chr14_assembly}.  Overall, \tool's accuracy on real data is comparable with other error correction tools, producing the longest contigs and covering the largest portion of the genome with the smallest number of assembly errors.   
 
 \begin{table}
 \centering
@@ -582,7 +541,7 @@ Overall, \tool's accuracy on real data is comparable with other error correction
 Original &	5277	&3847	&139.16	&1257	&78.777 \\ \hline
 Quake	&	4704	&3427	&131.98	&965	&78.55 \\ \hline
 Musket	&	5583	&4103	&131.04	&556	&79.175 \\ \hline
-Bless	&	5620	&4114	&128.42	&583	&79.204 \\ \hline
+BLESS	&	5620	&4114	&128.42	&583	&79.204 \\ \hline
 Lighter	&	5712	&4195	&128.92	&544	&79.251 \\ \hline
 
 \end{tabular}
@@ -590,11 +549,9 @@ Lighter	&	5712	&4195	&128.92	&544	&79.251 \\ \hline
 \end{table}
 
 \subsection*{Speed, space usage, and scalability}
-%describe the machine
-We compared \tool's memory usage, disk usage, and running time with Quake, Musket and Bless.  These experiments were run on a computer running Red Hat Linux 4.1.2-52 with 48 2.1GHz AMD Opteron processors and 512G memory.
-%\myworries{Li: Please also give OS with version, and give CPU version.(done)}
-%The memory or disk usage from different programs 
-The input datasets are the same simulated \ecoli datasetes with $1\%$ error rate discussed previously, plus the human chromosome 14 data from Gage.  %\myworries{Li: The simulated data is simulated from \ecoli?(yes)  How do you measure peak memory usage?  Is it peak virtual memory usage?(the resident memory)}
+
+We compared \tool's peak memory usage, disk usage, and running time with Quake, Musket and BLESS.  These experiments were run on a computer running Red Hat Linux 4.1.2-52 with 48 2.1GHz AMD Opteron processors and 512G memory.
+The input datasets are the same simulated \ecoli datasets with $1\%$ error rate discussed previously, plus the human chromosome 14 data from Gage.
 
 \begin{table}
 \centering
@@ -603,29 +560,30 @@ The input datasets are the same simulated \ecoli datasetes with $1\%$ error rate
 		& memory & disk & memory & disk & memory & disk & memory & disk \\ \hline
 Quake   & 2.8G	& 3.3G & 7.1G & 6.0G & 14G & 12G & 48G & 57G \\ \hline		
 Musket	& 139M	& 0 & 160M & 0 & 241M & 0 & 1.4G & 0 \\ \hline
-Bless	& 10M	& 661M & 11M & 1.3G & 13M & 2.6G & 600M & 15G \\ \hline
+BLESS	& 10M	& 661M & 11M & 1.3G & 13M & 2.6G & 600M & 15G \\ \hline
 Lighter	& 31M	& 0 & 31M & 0 & 31M & 0 & 510M & 0 \\ \hline
 \end{tabular}
-\caption{Comparison of four error correction tools based on their memory usage (peak resident memory) and disk usage.\label{table:chr14_assembly}}
+\caption{Comparison of four error correction tools based on their memory usage (peak resident memory) and disk usage.\label{table:memory_usage}}
 \end{table}
 
-Bless and \tool achieve constant memory footprint across sequencing depths.  While Musket uses less memory than Quake, it uses more than either Bless or \tool.  Bless achieves constant memory footprint across sequencing depths, this comes at the cost of disk consumption.  Note that Bless can be configured to trade off between peak memory footprint and the number of temporary files it creates.
+BLESS and \tool achieve constant memory footprint across sequencing depths.  While Musket uses less memory than Quake, it uses more than either BLESS or \tool.  BLESS achieves constant memory footprint across sequencing depths, but consumes more disk space for datasets with deeper sequencing.  Note that BLESS can be configured to trade off between peak memory footprint and the number of temporary files it creates.  \tool's algorithm uses no disk space.  \tool's only sizable data structures are the two Bloom filters, which reside in memory.
 
-%runtime on simulated_70_1
-To assess scalability, we also compared running time for Quake, Musket and \tool using different number of threads.  For these experiments we used the simulated \ecoli data set with $70\times$ coverage and $1\%$ error.  Results are shown in Figure \ref{fig:runtime}.  Note that Musket requires at least 2 threads due to its master-slave design.  Bless can only be run with one thread and its running time is 1475s, which is slower than Quake.
+To assess scalability, we also compared running time for Quake, Musket and \tool using different number of threads.  For these experiments we used the simulated \ecoli data set with $70\times$ coverage and $1\%$ error.  Results are shown in Figure \ref{fig:runtime}.  Note that Musket requires at least 2 threads due to its master-slave design.  BLESS can only be run with one thread and its running time is 1475s, which is slower than Quake.
 
+\iffiginline
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.5\textwidth]{runtime.eps}
 \end{center}
 \caption{Running times of Quake, Musket and \tool on $70\times$ simulated data set with increasing number of threads\label{fig:runtime}}
 \end{figure}
+\fi
 
 \section*{Discussion}
 At \tool's core is a method for obtaining a set of correct \kmers from a large collection of sequencing reads.
 Unlike previous methods, \tool does this without counting \kmers.
-By setting its parameters appropriately, its memory usage and accuracy can be held almost constant with respect to depth of coverage.
-It is also quite fast and memory-efficient, and requires no temporary disk space to operate.
+By setting its parameters appropriately, its memory usage and accuracy can be held almost constant with respect to depth of sequencing.
+It is also quite fast and memory-efficient, and requires no temporary disk space.
 
 Though we demonstrate \tool in the context of sequencing error correction, \tool's counting-free approach could be applied in other situation where a collection of solid \kmers is desired.
 For example, one tool for scaling metagenome sequence assembly uses of a Bloom filter populated with solid \kmers as a memory-efficient, probabilistic representation of a De Bruijn graph \cite{pell2012scaling}.
@@ -637,15 +595,7 @@ While the performance of \tool seems not to be overly sensitive to these paramet
 In the future, we plan to extend \tool to estimate $G$, along with appropriate values for $k$, and $\alpha$, from the input reads.
 This could be accomplished with methods proposed in the KmerGenie \cite{chikhi2014informed} and KmerStream \cite{melsted2014kmerstream} studies.
 
-%We use this method to implement an error correction program Lighter for DNA-seq reads. As we expect, Light is space-efficient . Moreover, it is very fast and gives performance is comparable with other programs. This shows that our method of finding solid kmer is quite reliable. 
-
-%Another immediate application of our method is getting solid kmers' count, which can be done by scanning the reads again to get the real count for the solid kmers stored in table $B$. 
-
-%Since our method is probabilitic, we may miss few important information. Nevertheless, our method is extremely useful for programs like Quip[cite], where the accurate error correction is not critical. Even more, programs like Quip may directly use the solid kmers get by our method to do the assembly.
-
-%In this paper, we did not analyze the effect of $\alpha$ analytically and it is a difficult problem. So far, the size of table $A$ and $B$ are setting by considering unpractical pessimestic scenarios. If we know the effect in some compact form, we can optimize the performance of obtaining solid kmers by setting the best $\alpha$ and also use less space.
-
-\tool is free open source software released under the GNU GPL license.  The software and its source are available from \url{https://github.com/mourisl/Lighter/}.
+\tool is free open source software released under the GNU GPL license, and has been compiled and tested on Linux, Mac OS X and Windows computers.  The software and its source are available from \url{https://github.com/mourisl/Lighter/}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgements}
@@ -659,7 +609,6 @@ The authors thank Jeff Leek for helpful discussions.
 \bibliography{lighter_paper}
 
 \end{document}
-
 
 
 
