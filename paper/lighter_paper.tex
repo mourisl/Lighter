@@ -357,10 +357,11 @@ If $e < |r|-k+1$, we examine successive \kmers to the right starting at $k_e+1$.
 For a \kmer $k_i$ that does not appear in $B$, we assume the nucleotide at offset $i+k-1$ is incorrect.
 We consider all possible ways of substituting for the incorrect nucleotide.
 For each substitution, we count how many consecutive \kmers starting with $k_i$ appear in Bloom filter $B$ after making the substitution.
-We pick the substitution that creates the longest stretch of consecutive \kmers in $B$.
-If more than one candidate substitution is equally good, we call position $i+k-1$ ambiguous and resume the rightward scan at \kmer $k_i+k$.
+We pick the substitution that creates the longest stretch of consecutive \kmers in $B$. The procedure is illustrated in Figure 2.  
+
+If more than one candidate substitution is equally good, we call position $i+k-1$ ambiguous and just ignore it. if $i+1$ is not close to the end of the read, we will apply the correction procedure on the part from $i+1$ to the end of the read from scratch. Otherwise, Lighter gives up correcting this read. Moreover, the correction on the substring will not call the correction procedure recursively. In other words, if there is another amiguous position between $i+1$ and $|r|$, Lighter will give up correction no matter what.
 \myworries{Li: when you say we call the position ambiguous, does that mean we don't edit it? Right, Lighter just skips this position.}
-The procedure is illustrated in Figure 2.  If $k_b$ is not the leftmost \kmer in the read, we apply a similar procedure but moving leftward.
+If $k_b$ is not the leftmost \kmer in the read, we apply a similar procedure but moving leftward.
 
 
 
