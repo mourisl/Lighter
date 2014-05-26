@@ -197,7 +197,16 @@ The drawback is that $h$ and $m$ must be somewhat larger to achieve the same fal
 
 $$\frac{\sum_i (b'_i/b)^h}{m-b+1}$$
 
-\section*{Supplementary Note 2: Scaling with depth of sequencing}
+\section*{Supplementary Note 2: Correcting positions at the ends of reads}
+
+If the error is located near the end of the read and some candidate substitutions are equally good, we will extend reads using the \kmer reported in Bloom filter $A$ for each candidates.
+\tool extends the read base by base.
+For the new base beyond the read, \tool tries all the four nucleotides in the order of ``A'',``C'', ``G'', ``T'', and uses the first nucleotide creating a \kmer that can be found in Bloom filter $A$.
+This procedure is terminated until all the nucleotides fails or the distance to the candidate substitution's position is larger than $k$ - 1.
+Then we choose the candidate substitution with the longest extension based on this greedy procedure.
+As a result, we can solve some ties that are more likely to happened near the end of a read due to insufficient extension. 
+
+\section*{Supplementary Note 3: Scaling with depth of sequencing}
 
 \subsection*{Scaling with coverage}
 \tool's accuracy is near-constant as the depth of sequencing $K$ increases and its memory footprint is held constant.  The basic idea is that as $K$ increases, we adjust $\alpha$ in inverse proportion.  That is, we hold $\alpha K$ constant.  For concreteness, consider two scenarios: scenario I, where the total number of \kmers is $K_1$ and subsampling fraction is $\alpha_1$, and scenario II where the number is $K_2=z K_1$ and subsampling fraction is $\alpha_2 = \alpha_1 / z$.

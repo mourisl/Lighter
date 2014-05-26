@@ -314,6 +314,7 @@ We consider all possible ways of substituting for the incorrect nucleotide.
 For each substitution, we count how many consecutive \kmers starting with $k_i$ appear in Bloom filter $B$ after making the substitution.
 We pick the substitution that creates the longest stretch of consecutive \kmers in $B$.
 If more than one candidate substitution is equally good, we call position $i+k-1$ ambiguous and resume the rightward scan at \kmer $k_i+k$.
+\myworries{Li: when you say we call the position ambiguous, does that mean we don't edit it?}
 The procedure is illustrated in Figure \ref{fig:error_correction}.  If $k_b$ is not the leftmost \kmer in the read, we apply a similar procedure but moving leftward.
 
 \iffiginline
@@ -325,10 +326,10 @@ The procedure is illustrated in Figure \ref{fig:error_correction}.  If $k_b$ is 
 \end{figure}
 \fi
 
-If the error is located near the end of the read, for each candidate substitution, we will extend reads using the \kmer reported in Bloom filter $A$ by one path that has the least lexicographical order. Thus we can solve some ties that are more likely to happend near the end of a read due to insufficient extension. 
+When errors are located near to end of a read, the stretches of consecutive \kmers used to prioritize substitutions become very short.  For instance, if the error is at the very last position of the read, we must choose a substation on the basis of just one \kmer: the rightmost \kmer.  This very often results in a tie, and no correction.  \tool attempts to avoid ties by considering \kmers extending beyond the end of the read, as discussed in Supplementary Note 2.
 
 \subsection*{Scaling with depth of sequencing}
-\tool's accuracy can be made near-constant as the depth of sequencing $K$ increases and its memory footprint is held constant.  This is accomplished by holding $\alpha K$ constant, \thatis, by adjusting $\alpha$ in inverse proportion to $K$.  This is illustrated in Tables \ref{table:bloom_occupancy_coverage} and \ref{table:chr14_assembly}.  We also argue this more formally in Supplementary Note 2.
+\tool's accuracy can be made near-constant as the depth of sequencing $K$ increases and its memory footprint is held constant.  This is accomplished by holding $\alpha K$ constant, \thatis, by adjusting $\alpha$ in inverse proportion to $K$.  This is illustrated in Tables \ref{table:bloom_occupancy_coverage} and \ref{table:chr14_assembly}.  We also argue this more formally in Supplementary Note 3.
 
 \subsection*{Quality score}
 A low base quality value at a certain position can force \tool to treat that position as untrusted even if the overlapping \kmers indicate it is trusted.  First, \tool scans the first 1 million reads in the input, recording the quality value at the last position in each read.  \tool then chooses the 5th-percentile quality value; that is, the value such that 5\% of the values are less than or equal to it say $t_1$. Use the same idea, we get another 5th-percentile quality, say $t_2$ value for the first 1 million reads' first base. When Lighter decides whether a position is trusted or not, if its quality score is less or equal to $min\{t_1, t_2 - 1\}$, then call it untrusted regardless of how many of the overlapping \kmers appear in Bloom filter $A$. 
