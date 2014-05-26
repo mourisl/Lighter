@@ -290,7 +290,7 @@ Rather than count \kmers, \tool samples \kmers randomly, storing the sample in a
 \tool then uses a simple test applied to each position of each read to compile a set of solid \kmers, stored in a second Bloom filter.
 These two Bloom filters are the only sizable data structures used by \tool.
 
-A crucial advantage is that \tool's parameters can be set such that the memory footprint and the accuracy of the approach are near-constant with respect to depth of sequencing.
+A crucial advantage is that \tool's parameters can be set such that memory footprint and accuracy are near-constant with respect to depth of sequencing.
 That is, no matter how deep the coverage, \tool can allocate the same sized Bloom filters and achieve nearly the same (a) Bloom filter occupancy, (b) Bloom filter false positive rate, and (c) error correction accuracy.
 \tool does this without using any disk space or other secondary memory.
 This is in contrast to BLESS and Quake/Jellyfish, which use secondary memory to store some or all of the \kmer counts.
@@ -359,13 +359,12 @@ We consider all possible ways of substituting for the incorrect nucleotide.
 For each substitution, we count how many consecutive \kmers starting with $k_i$ appear in Bloom filter $B$ after making the substitution.
 We pick the substitution that creates the longest stretch of consecutive \kmers in $B$. The procedure is illustrated in Figure 2.  
 
-If more than one candidate substitution is equally good, we call position $i+k-1$ ambiguous and just ignore it. if $i+1$ is not close to the end of the read, we will apply the correction procedure on the part from $i+1$ to the end of the read from scratch. Otherwise, Lighter gives up correcting this read. Moreover, the correction on the substring will not call the correction procedure recursively. In other words, if there is another amiguous position between $i+1$ and $|r|$, Lighter will give up correction no matter what.
-\myworries{Li: when you say we call the position ambiguous, does that mean we don't edit it? Right, Lighter just skips this position.}
-If $k_b$ is not the leftmost \kmer in the read, we apply a similar procedure but moving leftward.
+If more than one candidate substitution is equally good (\thatis results in the same number of consecutive \kmers from $B$), we call position $i+k-1$ ambiguous and make no attempt to correct it.
+The procedure then resumes starting at $k_{i+k}$, or the procedure ends if the read is too short to contain \kmer $k_{i+k}$.
 
 
 
-When errors are located near to end of a read, the stretches of consecutive \kmers used to prioritize substitutions become very short.  For instance, if the error is at the very last position of the read, we must choose a substation on the basis of just one \kmer: the rightmost \kmer.  This very often results in a tie, and no correction.  \tool attempts to avoid ties by considering \kmers extending beyond the end of the read, as discussed in Supplementary Note 2.
+When errors are located near to end of a read, the stretches of consecutive \kmers used to prioritize substitutions are short.  E.g. if the error is at the very last position of the read, we must choose a substation on the basis of just one \kmer: the rightmost \kmer.  This very often results in a tie, and no correction.  \tool avoid many of these ties by considering \kmers that extend beyond the end of the read, as discussed in Supplementary Note 2.
 
 \subsection*{Scaling with depth of sequencing}
 \tool's accuracy can be made near-constant as the depth of sequencing $K$ increases and its memory footprint is held constant.  This is accomplished by holding $\alpha K$ constant, \thatis, by adjusting $\alpha$ in inverse proportion to $K$.  This is illustrated in Tables 1 and 2.  We also argue this more formally in Supplementary Note 3.
@@ -418,7 +417,7 @@ As shown in Figures 3 and 4, only a fraction of the correct \kmers are added to 
 
 
 \paragraph{Effect of varying $k$.}  
-A key parameter of \tool is the \kmer length $k$.  Smaller $k$ yields higher probability that a \kmer affected by a sequencing error also appears elsewhere in the genome.  For larger $k$, the fraction of \kmers that are correct decreases, which could lead to fewer correct \kmer in Bloom filter $A$.  We measured how different settings for $k$ affect accuracy using the simulated data with $35\times$ coverage and $1\%$ error rate\myworries{Li: please say which dataset we used. Done}.  Results are shown in Figure 5.  Accuracy is high for \kmer lengths ranging from about 18 to 30.
+A key parameter of \tool is the \kmer length $k$.  Smaller $k$ yields higher probability that a \kmer affected by a sequencing error also appears elsewhere in the genome.  For larger $k$, the fraction of \kmers that are correct decreases, which could lead to fewer correct \kmer in Bloom filter $A$.  We measured how different settings for $k$ affect accuracy using the simulated data with $35\times$ coverage and $1\%$ error rate.  Results are shown in Figure 5.  Accuracy is high for \kmer lengths ranging from about 18 to 30.
 
 
 
