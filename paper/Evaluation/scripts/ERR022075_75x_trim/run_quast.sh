@@ -1,1 +1,0 @@
-~/Softwares/quast-2.3/quast.py -o quast_M100 -T 10 -M 100 -R ~/data/Lighter/e_coli_k12.fa orig/velvet_53/contigs.fa quake/velvet_43/contigs.fa musket/velvet_53/contigs.fa bless/velvet_53/contigs.fa lighter/velvet_51/contigs.fa

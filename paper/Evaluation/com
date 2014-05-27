@@ -1,1 +1,0 @@
-convert -geometry 800x800 -density 800 runtime.eps -flatten runtime.png
