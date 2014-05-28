@@ -12,7 +12,7 @@ endif
 all: lighter
 
 lighter: main.o $(OBJECTS)
-	$(CXX) -o $@ $(CXXFLAGS) $(LINKFLAGS) $(OBJECTS) main.o 
+	$(CXX) -o $@ $(CXXFLAGS) $(OBJECTS) main.o $(LINKFLAGS)
 
 main.o: main.cpp utils.h Reads.h Store.h bloom_filter.hpp
 ErrorCorrection.o: ErrorCorrection.cpp ErrorCorrection.h utils.h
