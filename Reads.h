@@ -27,6 +27,7 @@ class Reads
 		int fpUsed ;
 		int currentFpInd ;
 		char outputDirectory[256] ;
+		bool discard ;
 
 		void GetFileName( char *in, char *out ) 
 		{
@@ -67,6 +68,11 @@ class Reads
 				fclose( outputFp[i] ) ;
 			}
 		}
+
+		void SetDiscard( bool d )
+		{
+			discard = d ;
+		} 
 
 		void AddReadFile( char *file )
 		{
@@ -227,6 +233,9 @@ class Reads
 				  {
 				  printf( "%s\n%s\n", readId, read ) ;
 				  }*/
+
+				if ( discard )
+					return ;
 				fprintf( outputFp[ currentFpInd], "%s unfixable_error\n%s\n", id, seq ) ;
 				if ( FILE_TYPE[ currentFpInd ] != 0 )
 					fprintf( outputFp[ currentFpInd ], "+\n%s\n", qual ) ;
@@ -319,6 +328,8 @@ class Reads
 					  {
 					  printf( "%s\n%s\n", readId, read ) ;
 					  }*/
+					if ( discard )
+						continue ;
 					fprintf( outputFp[ currentFpInd], "%s unfixable_error\n%s\n", id, seq ) ;
 					if ( FILE_TYPE[ currentFpInd ] != 0 )
 						fprintf( outputFp[ currentFpInd ], "+\n%s\n", qual ) ;

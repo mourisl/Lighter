@@ -34,7 +34,7 @@ void PrintHelp()
 		"\t-od output_file_directory (default: ./)\n"
 		"\t-t number of threads to use (default: 1)\n"
 		"\t-trim allow trimming (default: false)\n"
-		"\t-all: output all the reads including those unfixable (default: false)\n"
+		"\t-discard: discard unfixable reads. Will LOSE paired-end matching when discarding (default: false)\n"
 		"\t-maxcor: the maximum number of correction for a read (default: 10)\n" ) ;
 }
 
@@ -171,7 +171,7 @@ int main( int argc, char *argv[] )
 	int threshold[100] ;
 	char goodQuality = '\0', badQuality = '\0' ;
 	int badPrefix, badSuffix ;
-	bool paraOutputAllReads ;
+	bool paraDiscard ;
 	//double bloomFilterFP = 0.0005 ;
 	int i, j ;
 	//uint64_t kmerCode ;
@@ -196,7 +196,7 @@ int main( int argc, char *argv[] )
 	genomeSize = StringToUint64( argv[3] ) ;
 	alpha = (double)atof( argv[4] ) ;*/
 
-	paraOutputAllReads = false ; 
+	paraDiscard = false ; 
 	MAX_CORRECTION = 10 ;
 	ALLOW_TRIMMING = false ;
 	kmerLength = -1 ;
@@ -204,9 +204,9 @@ int main( int argc, char *argv[] )
 	// Parse the arguments
 	for ( i = 1 ; i < argc ; ++i )
 	{
-		if ( !strcmp( "-all", argv[i] ) )
+		if ( !strcmp( "-discard", argv[i] ) )
 		{
-			paraOutputAllReads = true ;
+			paraDiscard = true ;
 		}
 		else if ( !strcmp( "-maxcor", argv[i] ) )
 		{
@@ -275,7 +275,8 @@ int main( int argc, char *argv[] )
 	}
 
 	KmerCode kmerCode( kmerLength ) ;
-	
+	reads.SetDiscard( paraDiscard ) ;	
+
 	// Prepare data structures and other data.
 	//Store kmers(1000000000ull) ;
 	//Store trustedKmers(1000000000ull) ;
