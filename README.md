@@ -35,7 +35,7 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
 	    -discard: discard unfixable reads (default: false)
 	    -maxcor: the maximum number of correction for a read (default: 10)
     
-    NOTICE: genome_size does not be accurate, but it should be at least as large as the size of the sequenced genome.
+    NOTICE: genome_size does not need to be accurate, but it should be at least as large as the size of the sequenced genome.
             alpha is decided by the user. A rule of thumb: alpha=(3.5/C), where C is the coverage of the data set.
 
 ### Example
