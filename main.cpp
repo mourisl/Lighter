@@ -5,6 +5,9 @@
 #include <pthread.h>
 #include <time.h>
 
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
+
 #include "utils.h"
 #include "Store.h"
 #include "ErrorCorrection.h"
@@ -12,6 +15,7 @@
 #include "KmerCode.h"
 #include "GetKmers.h"
 #include "pthread.h"
+
 
 char nucToNum[26] = { 0, -1, 1, -1, -1, -1, 2, 
 	-1, -1, -1, -1, -1, -1, -1,
@@ -22,6 +26,16 @@ char numToNuc[26] = {'A', 'C', 'G', 'T'} ;
 
 int MAX_CORRECTION ;
 bool ALLOW_TRIMMING ;
+
+struct _summary
+{
+	uint64_t corrCnt ;
+	uint64_t trimReadsCnt ;
+	uint64_t trimBaseCnt ;
+	uint64_t discardReadsCnt ;
+	uint64_t totalReads ;
+	uint64_t errorFreeReadsCnt ;
+} ;
 
 void PrintHelp()
 {
@@ -149,15 +163,48 @@ void PrintLog( const char *log )
 	time_t rawtime ;
 	struct tm *timeInfo ;
 	char buffer[128] ;
-	FILE *fp = fopen( "EC.log", "a" ) ;
+	//FILE *fp = fopen( "lighter.log", "a" ) ;
 	
 	time( &rawtime ) ;
 	timeInfo = localtime( &rawtime ) ;
 	strftime( buffer, sizeof( buffer ), "%F %H:%M:%S", timeInfo ) ;
 
-	fprintf( fp, "[%s] %s\n", buffer, log ) ;
+	printf( "[%s] %s\n", buffer, log ) ;
 
-	fclose( fp ) ;
+	//fclose( fp ) ;
+}
+
+void UpdateSummary( char *seq, int correction, int badSuffix, bool paraDiscard, struct _summary &summary ) 
+{
+	if ( correction == 0 )
+		++summary.errorFreeReadsCnt ;			
+	else if ( correction > 0 )
+		++summary.corrCnt ;	
+	else if ( paraDiscard ) // tmp < 0
+		++summary.discardReadsCnt ;
+
+	if ( ALLOW_TRIMMING && badSuffix > 0 )
+	{
+		++summary.trimReadsCnt ;
+		summary.trimBaseCnt += badSuffix ;
+	}
+	++summary.totalReads ;	
+}
+
+void PrintSummary( const struct _summary &summary )
+{
+	printf( "Processed %" PRIu64 " reads:\n"
+		"\t%" PRIu64 " are error-free\n"
+		"\tCorrected %" PRIu64 " bases(%lf corrections for reads with errors)\n"
+		"\tTrimmed %" PRIu64 " reads with average trimmed bases %lf\n"
+		"\tDiscard %" PRIu64 " reads\n",
+		summary.totalReads, summary.errorFreeReadsCnt,
+		summary.corrCnt, 
+		summary.totalReads == summary.errorFreeReadsCnt ? 0.0 : 
+					(double)summary.corrCnt / ( summary.totalReads - summary.errorFreeReadsCnt ),
+		summary.trimReadsCnt, 
+		summary.trimReadsCnt == 0 ? 0.0 : (double)summary.trimBaseCnt / summary.trimReadsCnt, 
+		summary.discardReadsCnt ) ;	
 }
 
 int main( int argc, char *argv[] )
@@ -177,6 +224,7 @@ int main( int argc, char *argv[] )
 	//uint64_t kmerCode ;
 	//uint64_t mask ;
 	uint64_t genomeSize = 0;
+	struct _summary summary ;
 
 	// variables for threads
 	int numOfThreads ;
@@ -201,6 +249,8 @@ int main( int argc, char *argv[] )
 	ALLOW_TRIMMING = false ;
 	kmerLength = -1 ;
 	numOfThreads = 1 ;
+	memset( &summary, 0, sizeof( summary ) ) ;
+
 	// Parse the arguments
 	for ( i = 1 ; i < argc ; ++i )
 	{
@@ -478,6 +528,7 @@ int main( int argc, char *argv[] )
 			//	
 			//else
 			//	readId[0] = '>' ;
+			UpdateSummary( reads.seq, tmp, badSuffix, paraDiscard, summary ) ;			
 
 			reads.Output( tmp, badPrefix, badSuffix, ALLOW_TRIMMING ) ;
 		}
@@ -511,12 +562,17 @@ int main( int argc, char *argv[] )
 
 			for ( i = 0 ; i < numOfThreads ; ++i )
 				pthread_join( threads[i], &pthreadStatus ) ;
-
+			
+			for ( i = 0 ; i < batchSize ; ++i )
+				UpdateSummary( readBatch[i].seq, readBatch[i].correction, readBatch[i].badSuffix, paraDiscard, summary ) ;			
 			reads.OutputBatch( readBatch, batchSize, ALLOW_TRIMMING ) ;
 		}
 
 		free( readBatch ) ;	
 	}
+	
+	PrintSummary( summary ) ;
+
 	PrintLog( "Finish error correction" ) ;
 
 	return 0 ;
