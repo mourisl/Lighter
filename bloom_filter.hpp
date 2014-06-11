@@ -30,8 +30,10 @@
 #include <stdlib.h>
 // Add by Li
 #include <pthread.h>
+#include <memory.h>
 
 #define BLOCK_SIZE 256ull 
+#define NUM_OF_PATTERN 65536ull 
 
 static const std::size_t bits_per_char = 0x08;    // 8 bits in 1 char(unsigned)
 static const unsigned char bit_mask[bits_per_char] = {
@@ -216,7 +218,32 @@ public:
       while ( blockSize <= raw_table_size_ )
       	blockSize *= 2 ;
 	blockSize /= 2 ;*/
-   }
+
+	// Add by Li
+	memset( patterns, 0, sizeof( patterns ) ) ;
+	int randomArray[BLOCK_SIZE] ;
+	std::size_t i, j ;
+	for ( i = 0 ; i < BLOCK_SIZE ; ++i )
+		randomArray[i] = i ;
+
+	for ( i = 0 ; i < NUM_OF_PATTERN ; ++i )
+	{
+		// Pick which bits to set
+		for ( j = 0 ; j < salt_count_ ; ++j )
+		{
+			int k = j + rand() % ( BLOCK_SIZE - j ) ;
+			int tmp = randomArray[k] ;
+			randomArray[k] = randomArray[j] ;
+			randomArray[j] = tmp ;
+		}
+		// Set the patterns
+		for ( j = 0 ; j < salt_count_ ; ++j )
+		{
+			int r =randomArray[j] ;
+			patterns[i][ r / 64 ] |= ( 1ull << (uint64_t)( r % 64 ) ) ;
+		}
+	}
+}
 
    bloom_filter(const bloom_filter& filter)
    {
@@ -308,8 +335,9 @@ public:
    double GetActualFP()
    {
    	//return pow( occupancy(), salt_.size() ) ;
-	   unsigned long long i, j, k, tagK ;
-	   unsigned long long used = 0 ;
+	   std::size_t i, j, k, tagK ;
+	   std::size_t used = 0 ;
+	   std::size_t denum = 0 ;
 	   double sum = 0 ;
 	   double blockFP[BLOCK_SIZE + 1] ;
 	   tagK = 0;
@@ -350,35 +378,61 @@ public:
 				}
 			}
 			//printf( "%u\n", (unsigned int)used ) ;
-			sum += blockFP[used] ; //pow( (double)used / BLOCK_SIZE, salt_.size() ) ;
+			if ( ( j & ( bits_per_char - 1 ) ) == 0 )
+			{
+				sum += blockFP[used] ; //pow( (double)used / BLOCK_SIZE, salt_.size() ) ;
+				++denum ;
+			}
 			tmp = tmp >> 1 ;
 			++t ;
 		}
 	   }
 	   //printf( "%llu %llu\n", used, total ) ;
-	   return (double)sum/( table_size_ - BLOCK_SIZE + 1 ) ;
+	   //return (double)sum/( table_size_ - BLOCK_SIZE + 1 ) ;
+	   //printf( "%lf\n", sum / denum ) ;
+	   return (double)sum/denum ;
    }
 
    inline void insert(const unsigned char* key_begin, const std::size_t& length)
    {
-      std::size_t bit_index = 0;
-      std::size_t bit = 0;
-      // Implementation of pattern block bloom filter
-      std::size_t start = 0 ;
-      start = ( hash_ap( key_begin, length, salt_[0] ) ) % ( table_size_ - BLOCK_SIZE + 1 );
-      for (std::size_t i = 0 ; i < salt_.size(); ++i)
-      {
-         compute_indices(hash_ap(key_begin,length,salt_[i]),bit_index,bit, start );
+	   //std::size_t bit_index = 0;
+	   //std::size_t bit = 0;
+	   // Implementation of pattern block bloom filter
+	   std::size_t start = 0 ;
+	   start = ( hash_ap( key_begin, length, salt_[0] ) ) % ( table_size_ - BLOCK_SIZE + 1 ) ;
+	   start = start / bits_per_char ; // Align the start position to char
+	   int pid = ( hash_ap( key_begin, length, salt_[1] ) ) & ( NUM_OF_PATTERN - 1 ) ; // Which pattern to use
+	   int lockId[2] = { -1, -1 } ; // The stride of lock is BLOCK_SIZE, so one block span at most two lock
+      //for (std::size_t i = 0 ; i < salt_.size(); ++i)
+	   if ( numOfThreads > 1 )
+	   {
+	   	lockId[0] = ( start / BLOCK_SIZE ) & lockMask ;
+		lockId[1] = ( ( ( start + BLOCK_SIZE - 1 ) / BLOCK_SIZE) ) & lockMask ;
+		if ( lockId[0] == lockId[1] )
+			lockId[1] = -1 ;
+		else if ( lockId[0] > lockId[1] )
+		{
+			int tmp = lockId[1] ;
+			lockId[1] = lockId[0] ;
+			lockId[0] = tmp ;
+		}
+		pthread_mutex_lock( &locks[ lockId[0] ] ) ;
+		if ( lockId[1] != -1 )
+			pthread_mutex_lock( &locks[ lockId[1] ] ) ;
+	   }
 
-	 // Add by Li
-	 if ( numOfThreads > 1 )
-	 	pthread_mutex_lock( &locks[ ( bit_index / bits_per_char )  & lockMask ] ) ;
-	 //printf( "%llu %llu\n", bit_index, lockMask ) ;
-         bit_table_[bit_index / bits_per_char] |= bit_mask[bit];
-	 if ( numOfThreads > 1 )
-	 	pthread_mutex_unlock( &locks[ ( bit_index / bits_per_char ) & lockMask ] ) ;
-      }
-      ++inserted_element_count_;
+	   for ( std::size_t j = 0 ; j < BLOCK_SIZE / 64 ; ++j )
+	   {
+	 	*( (uint64_t *)(  bit_table_ + start + 8 * j ) ) |= patterns[ pid ][ j ] ;
+	   }
+	   
+	   if ( numOfThreads > 1 )
+	   {
+		if ( lockId[1] != -1 )
+			pthread_mutex_unlock( &locks[ lockId[1] ] ) ;
+		pthread_mutex_unlock( &locks[ lockId[0]] ) ;
+	   }
+	   ++inserted_element_count_;
    }
 
    template<typename T>
@@ -410,18 +464,15 @@ public:
 
    inline virtual bool contains(const unsigned char* key_begin, const std::size_t length) const
    {
-      std::size_t bit_index = 0;
-      std::size_t bit = 0;
+      //std::size_t bit_index = 0;
+      //std::size_t bit = 0;
       std::size_t start = 0 ;
       start = ( hash_ap( key_begin, length, salt_[0] ) ) % ( table_size_ - BLOCK_SIZE + 1 );
-      for (std::size_t i = 0; i < salt_.size(); ++i)
-      {
-         compute_indices(hash_ap(key_begin,length,salt_[i]),bit_index,bit,start);
-         if ((bit_table_[bit_index / bits_per_char] & bit_mask[bit]) != bit_mask[bit])
-         {
-            return false;
-         }
-      }
+      start /= bits_per_char ;
+      int pid = ( hash_ap( key_begin, length, salt_[1] ) ) & ( NUM_OF_PATTERN - 1 ) ;
+      for ( std::size_t j = 0 ; j < BLOCK_SIZE / 64 ; ++j )
+	if ( ( *(uint64_t *)( &bit_table_[start + 8 * j ] ) & patterns[ pid ][ j ] ) != patterns[ pid ][j] )
+		return false ;
       return true;
    }
 
@@ -704,6 +755,7 @@ protected:
    pthread_mutex_t *locks ;
    std::size_t lockMask ;
    
+   uint64_t patterns[ NUM_OF_PATTERN ][ BLOCK_SIZE / 64 ] ;
 
 public:
 	void SetNumOfThreads( int in ) 
