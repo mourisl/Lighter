@@ -93,10 +93,16 @@ class Reads
 				FILE_TYPE[ fpUsed ] = 0 ;
 				qual[0] = '\0' ;
 			}
-			else
+			else if ( buffer[0] == '@' )
 			{
 				FILE_TYPE[ fpUsed ] = 1 ;
 			}
+			else
+			{
+				printf( "\"%s\"'s file type is unknown.\n", file ) ;
+				exit( 1 ) ;
+			}
+
 			fclose( fp[fpUsed] ) ;
 			fp[fpUsed] = fopen( file, "r" ) ;
 			if(fp[fpUsed] == NULL) {
