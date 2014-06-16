@@ -324,6 +324,7 @@ int main( int argc, char *argv[] )
 		exit( 1 ) ;
 	}
 
+	PrintLog( "=============Start====================" ) ;
 	KmerCode kmerCode( kmerLength ) ;
 	reads.SetDiscard( paraDiscard ) ;	
 
@@ -365,7 +366,6 @@ int main( int argc, char *argv[] )
 	//Store kmers((uint64_t)50000000 * 4, 0.001 ) ;
 	//Store trustedKmers((uint64_t)50000000 * 2, 0.001 ) ;
 		
-	PrintLog( "=============Start====================" ) ;
 
 	// Step 1: Sample the kmers 
 	//printf( "Begin step1. \n" ) ; fflush( stdout ) ;
@@ -571,9 +571,8 @@ int main( int argc, char *argv[] )
 		free( readBatch ) ;	
 	}
 	
-	PrintSummary( summary ) ;
 
 	PrintLog( "Finish error correction" ) ;
-
+	PrintSummary( summary ) ;
 	return 0 ;
 }

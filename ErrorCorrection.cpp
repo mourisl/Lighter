@@ -37,10 +37,11 @@ void *ErrorCorrection_Thread( void *arg )
 int ErrorCorrection( char *read, KmerCode& kmerCode, int maxCorrection, Store *kmers, int &badPrefix, int &badSuffix )
 {
 	int i, j, k ;	
-	bool storedKmer[1000] ;
+	bool storedKmer[MAX_READ_LENGTH] ;
 	int kmerCnt = 0 ;
 	int readLength = 0 ;
-	int fix[1000] ; // The fixed character for each untrusted position.
+	int fix[MAX_READ_LENGTH] ; // The fixed character for each untrusted position.
+	bool trusted[MAX_READ_LENGTH] ; // Do not correct these makred positions.
 	int tag ;
 	int from, to ;
 	int trimStart = -1 ;
@@ -74,6 +75,27 @@ int ErrorCorrection( char *read, KmerCode& kmerCode, int maxCorrection, Store *k
 	trimStart = readLength ;
 	for ( i = 0 ; i < readLength ; ++i )
 		fix[i] = -1 ;
+
+	for ( i = 0 ; i < readLength ; ++i )
+		trusted[i] = false ;
+	tag = -1 ;
+	for ( i = 0 ; i < kmerCnt ; ++i )
+	{
+		if ( storedKmer[i] )
+		{
+			if ( tag == -1 )
+				tag = i ;
+		}
+		else
+		{
+			if ( tag != -1 && i - tag >= 3 )
+			{
+				for ( j = tag ; j < i + kmerLength - 1 ; ++j )
+					trusted[j] = true ;
+			}
+			tag = -1 ;
+		}
+	}
 	//printf( "%d %d %d\n", kmerLength, kmerCnt, i ) ;	
 	
 	/*printf( "%s\n", read ) ;
@@ -95,7 +117,7 @@ int ErrorCorrection( char *read, KmerCode& kmerCode, int maxCorrection, Store *k
 	if ( i >= kmerCnt )
 		return 0 ;
 
-	// Find the xxfirst trusted kmer
+	// Find the first trusted kmer
 	int longestStoredKmerCnt = 0, storedKmerCnt = 0 ;
 	tag = -1 ;
 	for ( i = 0 ; i < kmerCnt ; ++i )
@@ -458,6 +480,8 @@ int ErrorCorrection( char *read, KmerCode& kmerCode, int maxCorrection, Store *k
 	//printf( "%s\n%d\n", read, ret ) ;
 	for ( i = badPrefix ; i < trimStart ; ++i )
 	{
+		if ( trusted[i] && fix[i] != -1 )
+			return -1 ;
 		if ( fix[i] == -1 || read[i] == numToNuc[ fix[i] ] || read[i] == 'N' )
 			continue ;
 		++correctCnt ;
