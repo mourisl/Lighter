@@ -478,7 +478,7 @@ int ErrorCorrection( char *read, KmerCode& kmerCode, int maxCorrection, Store *k
 	int ret = 0 ;
 	int correctCnt = 0 ;
 	//printf( "%s\n%d\n", read, ret ) ;
-	for ( i = badPrefix ; i < trimStart ; ++i )
+	/*for ( i = badPrefix ; i < trimStart ; ++i )
 	{
 		if ( trusted[i] && fix[i] != -1 )
 			return -1 ;
@@ -510,8 +510,17 @@ int ErrorCorrection( char *read, KmerCode& kmerCode, int maxCorrection, Store *k
 
 			break ;
 		}
-	}
+	}*/
 
+	for ( i = 0 ; i < readLength ; ++i )
+	{
+		if ( i >= kmerLength && ( fix[i - kmerLength] != -1 && read[i - kmerLength] != 'N' ) )
+			--correctCnt ;
+		if ( fix[i] != -1 && read[i] != 'N' )
+			++correctCnt ;
+		if ( correctCnt > maxCorrection )
+			return -1 ;
+	}
 	/*if ( correctCnt > MAX_CORRECTION )
 	{
 		// Find the point where the correct count become to increase rapidly.

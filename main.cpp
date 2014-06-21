@@ -49,7 +49,7 @@ void PrintHelp()
 		"\t-t number of threads to use (default: 1)\n"
 		"\t-trim allow trimming (default: false)\n"
 		"\t-discard: discard unfixable reads. Will LOSE paired-end matching when discarding (default: false)\n"
-		"\t-maxcor: the maximum number of correction for a read (default: 10)\n" ) ;
+		"\t-maxcor: the maximum number of correction for within a kmer_length window (default: 4)\n" ) ;
 }
 
 uint64_t StringToUint64( char *s )   
@@ -245,7 +245,7 @@ int main( int argc, char *argv[] )
 	alpha = (double)atof( argv[4] ) ;*/
 
 	paraDiscard = false ; 
-	MAX_CORRECTION = 10 ;
+	MAX_CORRECTION = 4 ;
 	ALLOW_TRIMMING = false ;
 	kmerLength = -1 ;
 	numOfThreads = 1 ;
