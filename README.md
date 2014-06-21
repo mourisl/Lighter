@@ -33,8 +33,8 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
 	    -t: number of threads to use (default: 1)
 	    -trim: allow trimming (default: false)
 	    -discard: discard unfixable reads (default: false)
-	    -maxcor: the maximum number of correction for a read (default: 10)
-    
+	    -maxcor: the maximum number of correction for within a kmer_length window (default: 4)
+
     NOTICE: genome_size does not need to be accurate, but it should be at least as large as the size of the sequenced genome.
             alpha is decided by the user. A rule of thumb: alpha=(3.5/C), where C is the coverage of the data set.
 
