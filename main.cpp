@@ -522,7 +522,7 @@ int main( int argc, char *argv[] )
 			}
 			}
 			continue ;*/
-			int tmp = ErrorCorrection_Wrapper( reads.seq, kmerCode, &trustedKmers, badPrefix, badSuffix ) ;
+			int tmp = ErrorCorrection_Wrapper( reads.seq, reads.qual, kmerCode, badQuality, &trustedKmers, badPrefix, badSuffix ) ;
 
 			//if ( reads.HasQuality() )
 			//	
@@ -548,7 +548,8 @@ int main( int argc, char *argv[] )
 		arg.trustedKmers = &trustedKmers ;
 		arg.readBatch = readBatch ;
 		arg.lock = &errorCorrectionLock ;
-		
+		arg.badQuality = badQuality ;
+
 		while ( 1 )
 		{
 			batchSize = reads.GetBatch( readBatch, maxBatchSize, true, true ) ;
