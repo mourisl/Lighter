@@ -44,11 +44,11 @@ Suppose the data sets' coverage is about 70x:
 
 Single-end data set:
 
-    ./lighter -r read.fq -k 17 5000000 0.05 -t 10
+    ./lighter -r read.fq -k 17 5000000 0.1 -t 10
 
 Paired-end data set:
 
-    ./lighter -r left.fq -r right.fq -k 17 5000000 0.05 -t 10
+    ./lighter -r left.fq -r right.fq -k 17 5000000 0.1 -t 10
 
 ### Terms of use
 
