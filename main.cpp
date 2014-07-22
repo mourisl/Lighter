@@ -407,7 +407,7 @@ int main( int argc, char *argv[] )
 	double tableAFP = kmers.GetFP() ;
 	for ( i = 1 ; i <= kmerLength ; ++i )
 	{
-		int d = (int)( 0.05 / alpha * 2 );
+		int d = (int)( 0.1 / alpha * 2 );
 		double p ;
 		if ( d < 2 )
 			d = 2 ;
