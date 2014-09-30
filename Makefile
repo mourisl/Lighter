@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS= -Wall -O
+CXXFLAGS= -Wall -O3
 LINKFLAGS = -lpthread
 DEBUG=
 OBJECTS = ErrorCorrection.o KmerCode.o GetKmers.o
