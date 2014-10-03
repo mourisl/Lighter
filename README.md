@@ -34,7 +34,7 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
 	    -noQual: ignore the quality socre (default: false)
 	    -stable: sequentialize the sampling stage, output the same result with different runs (default: false)
 	    -trim: allow trimming (default: false)
-	    -discard: discard unfixable reads (default: false)
+	    -discard: discard unfixable reads. Will LOSE paired-end mataching when discarding (default: false)
 	    -maxcor: the maximum number of correction for within a kmer_length window (default: 4)
 
     NOTICE: genome_size does not need to be accurate, but it should be at least as large as the size of the sequenced genome.
