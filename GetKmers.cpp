@@ -1,30 +1,80 @@
 #include "GetKmers.h"
 
+struct _SampleKmersPutThreadArg
+{
+	Store *kmers ;
+	KmerCode *kmerCodes ;
+	int kmerCodesCnt ;
+
+	//pthread_mutex_t *lockPut ;
+} ;
+
+void *SampleKmers_PutThread( void *arg )
+{
+	struct _SampleKmersPutThreadArg *myArg = ( struct _SampleKmersPutThreadArg * )arg ;
+	Store *kmers = myArg->kmers ;
+	int i ;
+	//pthread_mutex_lock( myArg->lockPut ) ;
+	for ( i = 0 ; i < myArg->kmerCodesCnt ; ++i )
+		kmers->Put( myArg->kmerCodes[i], true ) ;
+	//pthread_mutex_unlock( myArg->lockPut ) ;
+
+	pthread_exit( NULL ) ;
+	return NULL ;
+}
+
 void *SampleKmers_Thread( void *arg )
 {
 	struct _SampleKmersThreadArg *myArg = ( struct _SampleKmersThreadArg *)arg ; 	
 	//char read[MAX_READ_LENGTH], qual[MAX_READ_LENGTH], id[MAX_ID_LENGTH] ;
 	int i, tmp ;
-	struct _Read readBatch[128] ;
-	KmerCode kmerCode( myArg->kmerLength ) ;
+	struct _Read *readBatch = ( struct _Read *)malloc( sizeof( *readBatch ) * 128 ) ;
+	struct _SamplePattern *samplePatterns = myArg->samplePatterns ;
+	int kmerLength = myArg->kmerLength ;
+	KmerCode kmerCode( kmerLength ) ;
+
+	//double p ;
+	Store *kmers = myArg->kmers ;
+	//double factor = 1.0 ;
+	const int bufferSizeFactor = 9 ;
+	KmerCode *kmerCodeBuffer[2] ; //[ ( bufferSizeFactor + 1 )* MAX_READ_LENGTH] ;
+	int bufferTag ;
+	int kmerCodeBufferUsed = 0 ;
+	
+	for ( bufferTag = 0 ; bufferTag < 2 ; ++bufferTag )
+	{
+		kmerCodeBuffer[ bufferTag ] = ( KmerCode * )malloc( sizeof( KmerCode ) * ( bufferSizeFactor + 1 ) * MAX_READ_LENGTH ) ;
+		for ( i = 0 ; i < ( bufferSizeFactor + 1 ) * MAX_READ_LENGTH ; ++i )
+			kmerCodeBuffer[bufferTag][i] = kmerCode ;
+	}
+
+	void *pthreadStatus ;
+	pthread_t putThread ;
+	pthread_attr_t pthreadAttr ;
+	struct _SampleKmersPutThreadArg putArg ;
+	bool threadInit = false ;
+	pthread_attr_init( &pthreadAttr ) ;
+	pthread_attr_setdetachstate( &pthreadAttr, PTHREAD_CREATE_JOINABLE ) ;
+	bufferTag = 0 ;
 	while ( 1 )
 	{
 		pthread_mutex_lock( myArg->lock ) ;
 		//tmp = myArg->reads->NextWithBuffer( id, read, qual, false ) ;
 		tmp = myArg->reads->GetBatch( readBatch, 128, false, false ) ;
 		pthread_mutex_unlock( myArg->lock ) ;
-		
+		int k ;
 		if ( tmp != 0 )
 		{
-			for ( i = 0 ; i < tmp ; ++i )
+			for ( k = 0 ; k < tmp ; ++k )
 			{
 				int len ;
-				char *read = readBatch[i].seq ;
-				char *qual = readBatch[i].qual ;
+				char *read = readBatch[k].seq ;
+				char *qual = readBatch[k].qual ;
 				/*len = strlen( id ) ;		
 				  if ( id[len - 1] == '\n')
 				  id[len - 1] = '\0' ;*/
-				
+
+				int tag = rand() % SAMPLE_PATTERN_COUNT ; // Decide to use which pattern
 				len = (int)strlen( read ) ;
 				if ( read[len - 1] == '\n' )
 					read[len - 1] = '\0' ;
@@ -35,13 +85,75 @@ void *SampleKmers_Thread( void *arg )
 						qual[len - 1] = '\0' ;
 				}
 				//printf( "%s\n", read ) ;
-				SampleKmersInRead( read, qual, myArg->kmerLength, myArg->alpha, 
-						kmerCode, myArg->kmers ) ;
+				//SampleKmersInRead( read, qual, myArg->kmerLength, myArg->alpha, 
+				//		kmerCode, myArg->kmers ) ;
+				for ( i = 0 ; i < kmerLength ; ++i )
+				{
+					kmerCode.Append( read[i] ) ;
+				}
+				//printf( "%d %d %d\n", tag, (int)samplePatterns[tag].tag[2], (int)samplePatterns[tag].tag[3] ) ;	
+				if ( samplePatterns[tag].tag[ ( i - 1 ) / 8 ] & ( 1 << ( ( i - 1 ) % 8 ) ) )
+				{
+					//kmers->Put( kmerCode ) ;
+					kmerCodeBuffer[ bufferTag ][ kmerCodeBufferUsed ] = kmerCode ;
+					++kmerCodeBufferUsed ;
+				}
+
+				for ( ; read[i] ; ++i )
+				{
+					kmerCode.Append( read[i] ) ;
+
+					if ( samplePatterns[tag].tag[ i / 8 ] & ( 1 << ( i % 8 ) ) )
+					{
+						//kmers->Put( kmerCode ) ;
+						kmerCodeBuffer[bufferTag][ kmerCodeBufferUsed ] = kmerCode ;
+						++kmerCodeBufferUsed ;
+					}
+				}
+				
+				if ( kmerCodeBufferUsed >= bufferSizeFactor * MAX_READ_LENGTH )
+				{
+					if ( threadInit )
+						pthread_join( putThread, &pthreadStatus ) ;
+					
+					putArg.kmers = kmers ;
+					putArg.kmerCodes = ( KmerCode *)kmerCodeBuffer[ bufferTag ] ;
+					putArg.kmerCodesCnt = kmerCodeBufferUsed ;
+					//putArg.lockPut = myArg->lockPut ;
+					//printf( "%d %d\n", bufferTag, kmerCodeBufferUsed ) ;
+					pthread_create( &putThread, &pthreadAttr, SampleKmers_PutThread, ( void *)&putArg ) ;
+
+					kmerCodeBufferUsed = 0 ;
+					bufferTag = 1 - bufferTag ;
+
+					threadInit = true ;
+				}
 			}
 		}
 		else
 			break ;
 	}
+	
+	//TODO: put the remaining
+	if ( threadInit )
+		pthread_join( putThread, &pthreadStatus ) ;
+
+	putArg.kmers = kmers ;
+	putArg.kmerCodes = ( KmerCode *)kmerCodeBuffer[ bufferTag ] ;
+	putArg.kmerCodesCnt = kmerCodeBufferUsed ;
+	//putArg.lockPut = myArg->lockPut ;
+
+	pthread_create( &putThread, &pthreadAttr, SampleKmers_PutThread, ( void *)&putArg ) ;
+	kmerCodeBufferUsed = 0 ;
+	bufferTag = 1 - bufferTag ;
+	threadInit = true ;
+
+	pthread_join( putThread, &pthreadStatus ) ;
+
+	free( readBatch ) ;
+	for ( i = 0 ; i < 2 ; ++i )
+		free( kmerCodeBuffer[i] ) ;
+	pthread_attr_destroy( &pthreadAttr ) ;
 	pthread_exit( NULL ) ;
 	return NULL ;
 }
@@ -105,7 +217,6 @@ void SampleKmersInRead( char *read, char *qual, int kmerLength, double alpha, Km
 		}
 	}
 }
-
 void *StoreKmers_Thread( void *arg )
 {
 	struct _StoreKmersThreadArg *myArg = ( struct _StoreKmersThreadArg *)arg ; 	
@@ -177,9 +288,9 @@ void StoreTrustedKmers( char *read, char *qual, int kmerLength, char badQuality,
 	int zeroCnt = 0, oneCnt = 0 ;
 
 	/*printf( "%s\n", read ) ;
-	  for ( i = 0 ; i < occurCnt ; ++i )
+	for ( i = 0 ; i < occurCnt ; ++i )
 	  printf( "%d", occur[i] ) ;
-	  printf( "\n" ) ;*/
+	printf( "\n" ) ;*/
 
 	// Set the trusted positions
 	for ( i = 0 ; i < readLength ; ++i )
@@ -243,7 +354,7 @@ void StoreTrustedKmers( char *read, char *qual, int kmerLength, char badQuality,
 	//printf( "!! %s\n!! ", read ) ;
 	/*for ( i = 0 ; i < readLength ; ++i )
 	  printf( "%d", trustedPosition[i] ) ;
-	  printf( "\n" ) ;*/
+	 printf( "\n" ) ; */
 
 	for ( i = 0 ; i < readLength ; ++i )
 	{

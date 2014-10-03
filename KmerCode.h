@@ -11,7 +11,10 @@ class KmerCode
 		int invalidPos ; // The position contains characters other than A,C,G,T in the code
 		uint64_t code ;
 		uint64_t mask ;
-	public:
+	public: 
+		KmerCode() 
+		{
+		}
 		KmerCode( int kl ) 
 		{
 			int i ;

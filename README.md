@@ -31,6 +31,8 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
     Other parameters:
 	    -od: output_file_directory (default: ./)
 	    -t: number of threads to use (default: 1)
+	    -noQual: ignore the quality socre (default: false)
+	    -stable: sequentialize the sampling stage, output the same result with different runs (default: false)
 	    -trim: allow trimming (default: false)
 	    -discard: discard unfixable reads (default: false)
 	    -maxcor: the maximum number of correction for within a kmer_length window (default: 4)

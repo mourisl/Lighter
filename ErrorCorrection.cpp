@@ -142,6 +142,9 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		tag = i - storedKmerCnt ; 
 	}
 
+	if ( longestStoredKmerCnt == 0 )
+		return -1 ;
+
 	if ( longestStoredKmerCnt >= kmerCnt )
 	{
 		//printf( "0%s\n", read ) ;
@@ -613,6 +616,7 @@ int ErrorCorrection_Wrapper( char *read, char *qual, KmerCode& kmerCode, char ba
 	if ( badSuffix > len / 2 || badSuffix > kmerCode.GetKmerLength() * 2 )
 	{
 		int tmp ;
+
 		tmp = ErrorCorrection( read + len - badSuffix, qual + len - badSuffix, kmerCode, MAX_CORRECTION, badQuality, kmers, 
 				tmpBadPrefix, tmpBadSuffix ) ;	
 		if ( tmp != -1 )

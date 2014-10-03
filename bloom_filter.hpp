@@ -153,7 +153,6 @@ public:
       //printf( "%lf\n", curr_m ) ;
          k += 1.0;
       }
-      //printf( "%lf %lf\n", min_k, min_m ) ;
       //exit( 0 ) ;
       optimal_parameters_t& optp = optimal_parameters;
 
@@ -181,7 +180,7 @@ class bloom_filter
 {
 protected:
 
-   typedef unsigned int bloom_type;
+   typedef std::size_t bloom_type;
    typedef unsigned char cell_type;
 
 public:
@@ -220,6 +219,7 @@ public:
 	blockSize /= 2 ;*/
 
 	// Add by Li
+
 	memset( patterns, 0, sizeof( patterns ) ) ;
 	int randomArray[BLOCK_SIZE] ;
 	std::size_t i, j ;
@@ -335,9 +335,10 @@ public:
    double GetActualFP()
    {
    	//return pow( occupancy(), salt_.size() ) ;
-	   std::size_t i, j, k, tagK ;
+	   unsigned long long  i, j, k ;
+	   int tagK ;
 	   std::size_t used = 0 ;
-	   std::size_t denum = 0 ;
+	   unsigned long long denum = 0 ;
 	   double sum = 0 ;
 	   double blockFP[BLOCK_SIZE + 1] ;
 	   tagK = 0;
@@ -356,25 +357,30 @@ public:
 		//	printf( "(%llu)%llu %d\n", table_size_,i, tmp ) ;
 		while ( t < bits_per_char )
 		{
+			/*if ( used > BLOCK_SIZE || used < 0 )
+			{
+				printf( "BIG ERROR\n" ) ;
+				printf( "%llu %d %llu\n", i, (int)bit_table_[i], used ) ;
+			}*/
 			if ( j + t < table_size_ )
-				used += ( tmp & 1 ) ;
+				used += ( ( tmp >> ( bits_per_char - t - 1 ) ) & 1 ) ;
 			else
 				break ;
 
-			if ( j + t == BLOCK_SIZE )
+			if ( j + t == BLOCK_SIZE - 1 )
 			{
-				tagK = 0 ;
+				tagK = bits_per_char - 1 ;
 				k = 0 ;
 			}
-			else if ( j + t > BLOCK_SIZE )
+			else if ( j + t >= BLOCK_SIZE )
 			{
 				used -= ( bit_table_[k] >> tagK ) & 1 ;
 				//exit( 1 ) ;
-				++tagK ;		
-				if ( tagK >= bits_per_char )
+				--tagK ;		
+				if ( tagK < 0 )
 				{
 					++k ;
-					tagK = 0 ;
+					tagK = bits_per_char - 1 ;
 				}
 			}
 			//printf( "%u\n", (unsigned int)used ) ;
@@ -383,7 +389,7 @@ public:
 				sum += blockFP[used] ; //pow( (double)used / BLOCK_SIZE, salt_.size() ) ;
 				++denum ;
 			}
-			tmp = tmp >> 1 ;
+			//tmp = tmp >> 1 ;
 			++t ;
 		}
 	   }
@@ -400,6 +406,7 @@ public:
 	   // Implementation of pattern block bloom filter
 	   std::size_t start = 0 ;
 	   start = ( hash_ap( key_begin, length, salt_[0] ) ) % ( table_size_ - BLOCK_SIZE + 1 ) ;
+	   
 	   start = start / bits_per_char ; // Align the start position to char
 	   int pid = ( hash_ap( key_begin, length, salt_[1] ) ) & ( NUM_OF_PATTERN - 1 ) ; // Which pattern to use
 	   int lockId[2] = { -1, -1 } ; // The stride of lock is BLOCK_SIZE, so one block span at most two lock

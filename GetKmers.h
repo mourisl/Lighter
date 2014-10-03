@@ -13,6 +13,16 @@
 #include "KmerCode.h"
 #include "utils.h"
 
+// The pattern of sampling for each read. 
+// Marks the bits to indicate whether to sample the 
+// kmer end at that position.
+#define SAMPLE_PATTERN_COUNT 65536 
+
+struct _SamplePattern
+{
+	char tag[ MAX_READ_LENGTH / 8 ] ;	
+} ;
+
 // Strcture for handling multi-threads
 struct _SampleKmersThreadArg
 {
@@ -21,8 +31,11 @@ struct _SampleKmersThreadArg
 	//int batchSize ;
 	Store *kmers ; 
 	Reads *reads ;
+
+	struct _SamplePattern *samplePatterns ;
 	
 	pthread_mutex_t *lock ;
+	pthread_mutex_t *lockPut ;
 } ;
 
 struct _StoreKmersThreadArg

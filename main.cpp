@@ -16,6 +16,7 @@
 #include "GetKmers.h"
 #include "pthread.h"
 
+#define READ_BUFFER_PER_THREAD 1024
 
 char nucToNum[26] = { 0, -1, 1, -1, -1, -1, 2, 
 	-1, -1, -1, -1, -1, -1, -1,
@@ -45,10 +46,12 @@ void PrintHelp()
 		"\t-r seq_file: seq_file is the path to the sequence file. Can use multiple -r to specifiy multiple sequence files\n"
 		"\t-k kmer_length genome_size alpha\n"
 		"Other parameters:\n"
-		"\t-od output_file_directory (default: ./)\n"
-		"\t-t number of threads to use (default: 1)\n"
-		"\t-trim allow trimming (default: false)\n"
+		"\t-od: output_file_directory (default: ./)\n"
+		"\t-t: number of threads to use (default: 1)\n"
+		"\t-trim: allow trimming (default: false)\n"
 		"\t-discard: discard unfixable reads. Will LOSE paired-end matching when discarding (default: false)\n"
+		"\t-noQual: ignore the quality socre (default: false)\n"
+		"\t-stable: sequentialize the sampling stage, output the same result with different runs (default: false)\n"
 		"\t-maxcor: the maximum number of correction for within a kmer_length window (default: 4)\n" ) ;
 }
 
@@ -212,19 +215,22 @@ int main( int argc, char *argv[] )
 	int kmerLength ;
 	double alpha = 0.0 ;
 	char *readId/**, read, *qual*/ ;
-	//char buffer[1023] ;
+	char buffer[1023] ;
 	double untrustF[100][100] ;
 	//double trustF[100][100] ;
 	int threshold[100] ;
 	char goodQuality = '\0', badQuality = '\0' ;
 	int badPrefix, badSuffix ;
 	bool paraDiscard ;
+	bool ignoreQuality, stable ;
 	//double bloomFilterFP = 0.0005 ;
 	int i, j ;
 	//uint64_t kmerCode ;
 	//uint64_t mask ;
 	uint64_t genomeSize = 0;
 	struct _summary summary ;
+
+	struct _SamplePattern *samplePatterns = NULL ;
 
 	// variables for threads
 	int numOfThreads ;
@@ -249,8 +255,10 @@ int main( int argc, char *argv[] )
 	ALLOW_TRIMMING = false ;
 	kmerLength = -1 ;
 	numOfThreads = 1 ;
+	ignoreQuality = false ;
+	stable = false ;
 	memset( &summary, 0, sizeof( summary ) ) ;
-
+	
 	// Parse the arguments
 	for ( i = 1 ; i < argc ; ++i )
 	{
@@ -302,6 +310,14 @@ int main( int argc, char *argv[] )
 			numOfThreads = atoi( argv[i + 1] ) ;
 			++i ;
 		}
+		else if ( !strcmp( "-noQual", argv[i] ) )
+		{
+			ignoreQuality = true ;
+		}
+		else if ( !strcmp( "-stable", argv[i] ) )
+		{
+			stable = true ;
+		}
 		else
 		{
 			printf( "Unknown argument %s\n", argv[i] ) ;
@@ -334,6 +350,7 @@ int main( int argc, char *argv[] )
 	Store kmers((uint64_t)genomeSize * 1.5, 0.01 ) ;
 	Store trustedKmers((uint64_t)genomeSize * 1.5, 0.0005 ) ;
 
+
 	if ( numOfThreads > 1 )
 	{
 		// Initialized pthread variables
@@ -349,7 +366,17 @@ int main( int argc, char *argv[] )
 	
 	//goodQuality = GetGoodQuality( reads ) ;
 	//reads.Rewind() ;
-	badQuality = GetBadQuality( reads ) ;
+	if ( ignoreQuality == false )
+		badQuality = GetBadQuality( reads ) ;
+	if ( badQuality != '\0' )
+	{
+		sprintf( buffer, "Bad quality threshold is %c", badQuality ) ;
+		PrintLog( buffer ) ;
+	}
+	else
+	{
+		PrintLog( "No quality score used." ) ;
+	}
 	reads.Rewind() ;
 
 	//printf( "%c\n", badQuality ) ;
@@ -366,12 +393,32 @@ int main( int argc, char *argv[] )
 	//Store kmers((uint64_t)50000000 * 4, 0.001 ) ;
 	//Store trustedKmers((uint64_t)50000000 * 2, 0.001 ) ;
 		
-
+	
 	// Step 1: Sample the kmers 
 	//printf( "Begin step1. \n" ) ; fflush( stdout ) ;
 	srand( 17 ) ;
+	// Build the patterns for sampling
+	if ( numOfThreads > 1 && stable == false )
+	{
+		samplePatterns = ( struct _SamplePattern *)malloc( sizeof( *samplePatterns ) * SAMPLE_PATTERN_COUNT ) ;
+
+		for ( i = 0 ; i < SAMPLE_PATTERN_COUNT ; ++i )
+		{
+			int k ;
+			for ( k = 0 ; k < MAX_READ_LENGTH / 8 ; ++k )
+				samplePatterns[i].tag[k] = 0 ;
+			for ( k = 0 ; k < MAX_READ_LENGTH ; ++k )
+			{
+				double p = rand() / (double)RAND_MAX;
+				if ( p < alpha )
+				{
+					samplePatterns[i].tag[ k / 8 ] |= ( 1 << ( k % 8 ) ) ; // Notice within the small block, the order is reversed
+				}
+			}
+		}
+	}
 	// It seems serialization is faster than parallel
-	if ( 1 ) //numOfThreads == 1 )
+	if ( numOfThreads == 1 || stable == true )
 	{
 		while ( reads.Next() != 0 )
 		{
@@ -382,25 +429,31 @@ int main( int argc, char *argv[] )
 	{
 		struct _SampleKmersThreadArg arg ;
 		void *pthreadStatus ;
+		kmers.SetNumOfThreads( numOfThreads ) ;
 
 		arg.kmerLength = kmerLength ;
 		arg.alpha = alpha ;
 		arg.kmers = &kmers ;
+		arg.samplePatterns = samplePatterns ;
 		// Since there is no output, so we can just directly read in the
 		// sequence without considering the order.
 		arg.reads = &reads ;
 		arg.lock = &mutexSampleKmers ;
+		//arg.lockPut = &mutexSampleKmersPut ;
+
 		//numOfThreads = 1 ;
-		for ( i = 0 ; i < numOfThreads ; ++i )
+		for ( i = 0 ; i < numOfThreads / 2 ; ++i )
 		{
 			pthread_create( &threads[i], &pthreadAttr, SampleKmers_Thread, (void *)&arg ) ;	
 		}
 
-		for ( i = 0 ; i < numOfThreads ; ++i )
+		for ( i = 0 ; i < numOfThreads / 2 ; ++i )
 		{
 			pthread_join( threads[i], &pthreadStatus ) ;
 		}
 	}
+	if ( numOfThreads > 1 && stable == false )
+		free( samplePatterns ) ;
 
 	// Update the bloom filter's false positive rate.
 	// Compute the distribution of the # of sampled kmers from untrusted and trusted position
@@ -453,6 +506,9 @@ int main( int argc, char *argv[] )
 	}
 	exit( 1 ) ;*/
 	PrintLog( "Finish sampling kmers" ) ;
+	
+	sprintf( buffer, "Bloom filter A's error rate: %lf", tableAFP ) ;
+	PrintLog( buffer ) ;
 	// Step 2: Store the trusted kmers
 	//printf( "Begin step2.\n") ; fflush( stdout ) ;
 	reads.Rewind() ;
@@ -535,7 +591,7 @@ int main( int argc, char *argv[] )
 	}
 	else
 	{
-		int maxBatchSize = 128 * numOfThreads ;
+		int maxBatchSize = READ_BUFFER_PER_THREAD * numOfThreads ;
 		int batchSize ;
 		struct _ErrorCorrectionThreadArg arg ;
 		pthread_mutex_t errorCorrectionLock ;
