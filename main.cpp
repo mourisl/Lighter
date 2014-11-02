@@ -339,6 +339,11 @@ int main( int argc, char *argv[] )
 		printf( "Require -k parameter!\n" ) ;
 		exit( 1 ) ;
 	}
+	if ( kmerLength > 32 )
+	{
+		printf( "K-mer length must be no larger than 32.\n") ;
+		exit( 1 ) ;
+	}
 
 	PrintLog( "=============Start====================" ) ;
 	KmerCode kmerCode( kmerLength ) ;
@@ -370,7 +375,7 @@ int main( int argc, char *argv[] )
 		badQuality = GetBadQuality( reads ) ;
 	if ( badQuality != '\0' )
 	{
-		sprintf( buffer, "Bad quality threshold is %c", badQuality ) ;
+		sprintf( buffer, "Bad quality threshold is \"%c\"", badQuality ) ;
 		PrintLog( buffer ) ;
 	}
 	else
