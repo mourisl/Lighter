@@ -27,8 +27,8 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
     OPTIONS:
     Required parameters:
 	    -r seq_file: seq_file is the path to the sequence file. Can use multiple -r to specifiy multiple sequence files
-	   		 The file can be fasta and fastq, and can be gzip'ed with extension *.gz. 
-			 When the input file is *.gz, the corresponding output file will also be gzip'ed.
+                         The file can be fasta and fastq, and can be gzip'ed with extension *.gz. 
+                         When the input file is *.gz, the corresponding output file will also be gzip'ed.
 	    -k kmer_length genome_size alpha
     Other parameters:
 	    -od: output_file_directory (default: ./)
