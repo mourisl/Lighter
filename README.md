@@ -3,7 +3,7 @@ Lighter
 
 Described in: 
  
-Song, L., Florea, L. and Langmead, B (2014). Lighter: Fast and Memory-efficient Error Correction without Counting
+Song, L., Florea, L. and Langmead, B., Lighter: Fast and Memory-efficient Sequencing Error Correction without Counting. Genome Biol. 2014 Nov 15;15(11):509.
 
 Copyright (C) 2012-2013, and GNU GPL, by Li Song, Liliana Florea and Ben Langmead
 
@@ -19,7 +19,7 @@ containing sequence errors.
 1. Clone the [GitHub repo](https://github.com/mourisl/lighter), e.g. with `git clone https://github.com/mourisl/Lighter.git`
 2. Run `make` in the repo directory
 
-Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSIX_Threads) being the only library dependency.  We have successfully built it on Linux, Mac OS X, and Windows.  To build on Windows, you will need to download the `pthreadsGC2.dll` library from the [Pthreads Win32 library](http://www.sourceware.org/pthreads-win32/) and copy it to the repo directory with the Lighter sources.
+Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSIX_Threads) and [zlib](http://en.wikipedia.org/wiki/Zlib) being the only library dependency. 
 
 ### Usage
 
@@ -38,11 +38,11 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
 	    -maxcor: the maximum number of correction for within a kmer_length window (default: 4)
 
     NOTICE: genome_size does not need to be accurate, but it should be at least as large as the size of the sequenced genome.
-            alpha is decided by the user. A rule of thumb: alpha=(7/C), where C is the coverage of the data set.
+            alpha is the sampling rate and decided by the user. A rule of thumb: alpha=(7/C), where C is the coverage of the data set.
 
 ### Example
 
-Suppose the data sets' coverage is about 70x:
+Suppose the data sets' is from E.Coli whose genome size is about 4.7M and coverage is about 70x:
 
 Single-end data set:
 

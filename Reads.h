@@ -4,7 +4,9 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <zlib.h>
 #include "utils.h"
+#include "File.h"
 
 #define MAX_READ_FILE 100
 
@@ -21,8 +23,8 @@ struct _Read
 class Reads
 {
 	private:
-		FILE *fp[MAX_READ_FILE] ;
-		FILE *outputFp[MAX_READ_FILE] ;
+		File fp[MAX_READ_FILE] ;
+		File outputFp[MAX_READ_FILE] ;
 		int FILE_TYPE[MAX_READ_FILE] ; // 0-FASTA, 1-FASTQ
 		int fpUsed ;
 		int currentFpInd ;
@@ -64,8 +66,8 @@ class Reads
 			int i ;
 			for ( i = 0 ; i < fpUsed ; ++i )
 			{
-				fclose( fp[i] ) ;
-				fclose( outputFp[i] ) ;
+				fp[i].Close() ;
+				outputFp[i].Close() ;
 			}
 		}
 
@@ -82,12 +84,9 @@ class Reads
 				exit( 1 ) ;
 			}
 			char buffer[1024], fileName[1024] ;
-			fp[ fpUsed ] = fopen( file, "r" ) ;
-			if(fp[fpUsed] == NULL) {
-				printf( "Could not open read file \"%s\"\n", file);
-				exit(1);
-			}
-			fscanf( fp[ fpUsed ], "%s", buffer ) ;
+			fp[ fpUsed ].Open( file, "r" ) ;
+			
+			fp[ fpUsed ].Gets( buffer, sizeof( buffer ) ) ;
 			if ( buffer[0] == '>' )
 			{
 				FILE_TYPE[ fpUsed ] = 0 ;
@@ -99,23 +98,32 @@ class Reads
 			}
 			else
 			{
-				printf( "\"%s\"'s file type is unknown.\n", file ) ;
+				printf( "\"%s\"'s format is wrong.\n", file ) ;
 				exit( 1 ) ;
 			}
 
-			fclose( fp[fpUsed] ) ;
-			fp[fpUsed] = fopen( file, "r" ) ;
-			if(fp[fpUsed] == NULL) {
-				printf( "Could not open read file \"%s\"\n", file);
-				exit(1);
-			}
+			fp[fpUsed].Close() ;
+
+			fp[fpUsed].Open( file, "r" ) ;
 
 			GetFileName( file, fileName ) ;
-			if ( FILE_TYPE[ fpUsed ] == 1 )
-				sprintf( buffer, "%s/%s.cor.fq", outputDirectory, fileName ) ;
+
+			int len = strlen( file ) ;
+			if ( file[ len - 2] == 'g' && file[ len - 1 ] == 'z' )
+			{
+				if ( FILE_TYPE[ fpUsed ] == 1 )
+					sprintf( buffer, "%s/%s.cor.fq.gz", outputDirectory, fileName ) ;
+				else
+					sprintf( buffer, "%s/%s.cor.fa.gz", outputDirectory, fileName ) ;
+			}
 			else
-				sprintf( buffer, "%s/%s.cor.fa", outputDirectory, fileName ) ;
-			outputFp[ fpUsed ] = fopen( buffer, "w" ) ;
+			{
+				if ( FILE_TYPE[ fpUsed ] == 1 )
+					sprintf( buffer, "%s/%s.cor.fq", outputDirectory, fileName ) ;
+				else
+					sprintf( buffer, "%s/%s.cor.fa", outputDirectory, fileName ) ;
+			}
+			outputFp[ fpUsed ].Open( buffer, "w" ) ;
 
 			++fpUsed ;
 		}
@@ -135,8 +143,8 @@ class Reads
 			int i ;
 			for ( i = 0 ; i < fpUsed ; ++i )
 			{
-				rewind( fp[i] ) ;
-				rewind( outputFp[i] ) ;
+				fp[i].Rewind() ;
+				outputFp[i].Rewind() ;
 			}
 			currentFpInd = 0 ;
 		}
@@ -145,23 +153,23 @@ class Reads
 		{
 			int len ;
 			char buffer[2048] ;
-			FILE *lfp ;
-			while ( currentFpInd < fpUsed && ( fgets( id, sizeof( id ), fp[ currentFpInd ] ) == NULL ) )
+			while ( currentFpInd < fpUsed && ( fp[currentFpInd].Gets( id, sizeof( id ) ) == NULL ) )
 			{
 				++currentFpInd ;
 			}
 			if ( currentFpInd >= fpUsed )
 				return 0 ;
-			lfp = fp[ currentFpInd ] ;
+
+			File &lfp = fp[currentFpInd] ;
 			if ( FILE_TYPE[ currentFpInd ] == 0 )
 			{
-				fgets( seq, sizeof( seq ), lfp ) ;
+				lfp.Gets( seq, sizeof( seq ) ) ;
 			}
 			else if ( FILE_TYPE[ currentFpInd ] == 1 )
 			{
-				fgets( seq, sizeof( seq ), lfp ) ;
-				fgets( buffer, sizeof( buffer ), lfp ) ;
-				fgets( qual, sizeof( qual ), lfp ) ;
+				lfp.Gets( seq, sizeof( seq ) ) ;
+				lfp.Gets( buffer, sizeof( buffer ) ) ;
+				lfp.Gets( qual, sizeof( qual ) ) ;
 			}
 			// Clean the return symbol	
 			len = (int)strlen( id ) ;
@@ -183,9 +191,8 @@ class Reads
 		{
 			int len ;
 			char buffer[2048] ;
-			FILE *lfp ;
-			while ( currentFpInd < fpUsed && ( fgets( id, sizeof( char ) * MAX_ID_LENGTH, 
-					fp[ currentFpInd ] ) == NULL ) )
+			while ( currentFpInd < fpUsed && 
+				( fp[currentFpInd].Gets( id, sizeof( char ) * MAX_ID_LENGTH ) == NULL ) )
 			{
 				++currentFpInd ;
 				if ( stopWhenFileEnds )
@@ -193,17 +200,17 @@ class Reads
 			}
 			if ( currentFpInd >= fpUsed )
 				return 0 ;
-			lfp = fp[ currentFpInd ] ;
+			File &lfp = fp[ currentFpInd ] ;
 			if ( FILE_TYPE[ currentFpInd ] == 0 )
 			{
-				fgets( seq, sizeof( char ) * MAX_READ_LENGTH, lfp ) ;
+				lfp.Gets( seq, sizeof( char ) * MAX_READ_LENGTH ) ;
 				qual[0] = '\0' ;
 			}
 			else if ( FILE_TYPE[ currentFpInd ] == 1 )
 			{
-				fgets( seq, sizeof( char ) * MAX_READ_LENGTH, lfp ) ;
-				fgets( buffer, sizeof( buffer ), lfp ) ;
-				fgets( qual, sizeof( char ) * MAX_READ_LENGTH, lfp ) ;
+				lfp.Gets( seq, sizeof( char ) * MAX_READ_LENGTH ) ;
+				lfp.Gets( buffer, sizeof( buffer ) ) ;
+				lfp.Gets( qual, sizeof( char ) * MAX_READ_LENGTH ) ;
 			}
 			// Clean the return symbol	
 			if ( removeReturn )
@@ -229,9 +236,9 @@ class Reads
 			/* char buffer[1024] ; */
 			if ( correction == 0 && badPrefix == 0 && badSuffix == 0 )
 			{
-				fprintf( outputFp[ currentFpInd ], "%s\n%s\n", id, seq ) ;
+				outputFp[currentFpInd].Printf( "%s\n%s\n", id, seq ) ;
 				if ( FILE_TYPE[ currentFpInd ] != 0 )
-					fprintf( outputFp[ currentFpInd ], "+\n%s\n", qual ) ;
+					outputFp[currentFpInd].Printf( "+\n%s\n", qual ) ;
 			}
 			else if ( correction == -1 )
 			{
@@ -242,9 +249,9 @@ class Reads
 
 				if ( discard )
 					return ;
-				fprintf( outputFp[ currentFpInd], "%s unfixable_error\n%s\n", id, seq ) ;
+				outputFp[ currentFpInd].Printf( "%s unfixable_error\n%s\n", id, seq ) ;
 				if ( FILE_TYPE[ currentFpInd ] != 0 )
-					fprintf( outputFp[ currentFpInd ], "+\n%s\n", qual ) ;
+					outputFp[ currentFpInd ].Printf( "+\n%s\n", qual ) ;
 				//printf( "%s\n%s\n", readId, read ) ;
 			}
 			else
@@ -276,12 +283,12 @@ class Reads
 						sprintf( buffer3, " bad_suffix=%d", badSuffix ) ;
 				}
 
-				fprintf( outputFp[ currentFpInd ], "%s%s%s%s\n%s\n", id, buffer1, buffer2, buffer3, seq ) ;
+				outputFp[ currentFpInd ].Printf( "%s%s%s%s\n%s\n", id, buffer1, buffer2, buffer3, seq ) ;
 				if ( FILE_TYPE[ currentFpInd ] != 0 )
 				{
 					if ( allowTrimming )
 						qual[ strlen( qual ) - badSuffix ] = '\0' ;
-					fprintf( outputFp[ currentFpInd ], "+\n%s\n", qual ) ;
+					outputFp[ currentFpInd ].Printf( "+\n%s\n", qual ) ;
 				}
 			}
 		}
@@ -324,9 +331,9 @@ class Reads
 				
 				if ( correction == 0 && badPrefix == 0 && badSuffix == 0 )
 				{
-					fprintf( outputFp[ currentFpInd ], "%s\n%s\n", id, seq ) ;
+					outputFp[ currentFpInd ].Printf( "%s\n%s\n", id, seq ) ;
 					if ( FILE_TYPE[ currentFpInd ] != 0 )
-						fprintf( outputFp[ currentFpInd ], "+\n%s\n", qual ) ;
+						outputFp[ currentFpInd ].Printf( "+\n%s\n", qual ) ;
 				}
 				else if ( correction == -1 )
 				{
@@ -336,9 +343,9 @@ class Reads
 					  }*/
 					if ( discard )
 						continue ;
-					fprintf( outputFp[ currentFpInd], "%s unfixable_error\n%s\n", id, seq ) ;
+					outputFp[ currentFpInd].Printf( "%s unfixable_error\n%s\n", id, seq ) ;
 					if ( FILE_TYPE[ currentFpInd ] != 0 )
-						fprintf( outputFp[ currentFpInd ], "+\n%s\n", qual ) ;
+						outputFp[ currentFpInd ].Printf( "+\n%s\n", qual ) ;
 					//printf( "%s\n%s\n", readId, read ) ;
 				}
 				else
@@ -359,12 +366,12 @@ class Reads
 							sprintf( buffer3, " bad_suffix=%d", badSuffix ) ;
 					}
 
-					fprintf( outputFp[ currentFpInd ], "%s%s%s%s\n%s\n", id, buffer1, buffer2, buffer3, seq ) ;
+					outputFp[ currentFpInd ].Printf( "%s%s%s%s\n%s\n", id, buffer1, buffer2, buffer3, seq ) ;
 					if ( FILE_TYPE[ currentFpInd ] != 0 )
 					{
 						if ( allowTrimming )
 							qual[ strlen( qual ) - badSuffix ] = '\0' ;
-						fprintf( outputFp[ currentFpInd ], "+\n%s\n", qual ) ;
+						outputFp[ currentFpInd ].Printf( "+\n%s\n", qual ) ;
 					}
 				}
 			}
