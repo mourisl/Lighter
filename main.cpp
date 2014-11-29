@@ -4,6 +4,7 @@
 #include <math.h>
 #include <pthread.h>
 #include <time.h>
+#include <sys/stat.h>
 
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
@@ -300,6 +301,7 @@ int main( int argc, char *argv[] )
 		}
 		else if ( !strcmp( "-od", argv[i] ) )
 		{
+			mkdir( argv[i + 1], 0700 ) ;
 			reads.SetOutputDirectory( argv[i + 1] ) ;
 			++i ;
 		}
