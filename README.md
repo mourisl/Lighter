@@ -40,11 +40,11 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
 	    -maxcor: the maximum number of correction for within a kmer_length window (default: 4)
 
     NOTICE: genome_size does not need to be accurate, but it should be at least as large as the size of the sequenced genome.
-            alpha is the sampling rate and decided by the user. A rule of thumb: alpha=(7/C), where C is the coverage of the data set.
+            alpha is the sampling rate and decided by the user. A rule of thumb: alpha=(7/C), where C is the average coverage of the data set.
 
 ### Example
 
-Suppose the data sets' is from E.Coli whose genome size is about 4.7M and coverage is about 70x:
+Suppose the data set is from E.Coli whose genome size is about 4.7M. If the data set has 3.3M reads in total with read length 100bp, then the average coverage is about 70x and we can set the alpha to be 7/70=0.1.
 
 Single-end data set:
 
