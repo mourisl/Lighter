@@ -47,7 +47,7 @@ void PrintHelp()
 		"\t-r seq_file: seq_file is the path to the sequence file. Can use multiple -r to specifiy multiple sequence files\n"
 	        "\t             The file can be fasta and fastq, and can be gzip\'ed with extension *.gz.\n"      
 		"\t             When the input file is *.gz, the corresponding output file will also be gzip\'ed.\n"
-		"\t-k kmer_length genome_size alpha\n"
+		"\t-k kmer_length genome_size alpha (see README for information on setting alpha)\n"
 		"Other parameters:\n"
 		"\t-od: output_file_directory (default: ./)\n"
 		"\t-t: number of threads to use (default: 1)\n"
