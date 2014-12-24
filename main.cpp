@@ -393,7 +393,7 @@ int main( int argc, char *argv[] )
 		PrintLog( "Scanning the input files to infer alpha(sampling rate)" ) ;
 		alpha = InferAlpha( reads, genomeSize ) ;
 		
-		sprintf( buffer, "Alpha is %.3lf", alpha ) ;
+		sprintf( buffer, "Average coverage is %.3lf and alpha is %.3lf", 7.0 / alpha, alpha ) ;
 		PrintLog( buffer ) ;
 		
 		reads.Rewind() ;
