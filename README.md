@@ -3,7 +3,7 @@ Lighter
 
 Described in: 
  
-Song, L., Florea, L. and Langmead, B., [Lighter: Fast and Memory-efficient Sequencing Error Correction without Counting](http://genomebiology.com/2014/15/11/509/abstract). Genome Biol. 2014 Nov 15;15(11):509.
+Song, L., Florea, L. and Langmead, B., [Lighter: Fast and Memory-efficient Sequencing Error Correction without Counting](http://genomebiology.com/2014/15/11/509/). Genome Biol. 2014 Nov 15;15(11):509.
 
 Copyright (C) 2012-2013, and GNU GPL, by Li Song, Liliana Florea and Ben Langmead
 
