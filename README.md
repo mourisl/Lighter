@@ -30,6 +30,8 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
                          The file can be fasta and fastq, and can be gzip'ed with extension *.gz. 
                          When the input file is *.gz, the corresponding output file will also be gzip'ed.
 	    -k kmer_length genome_size alpha
+	    		or
+	    -K kmer_length genome_size
     Other parameters:
 	    -od: output_file_directory (default: ./)
 	    -t: number of threads to use (default: 1)
@@ -41,6 +43,7 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
 
     NOTICE: genome_size does not need to be accurate, but it should be at least as large as the size of the sequenced genome.
             alpha is the sampling rate and decided by the user. A rule of thumb: alpha=(7/C), where C is the average coverage of the data set.
+	    When using "-K" instead of "-k", Lighter will go through the reads an extra pass to decide C. And for "-K", genome_size should be relative accurate.
 
 ### Example
 

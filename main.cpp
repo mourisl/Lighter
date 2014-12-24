@@ -48,6 +48,8 @@ void PrintHelp()
 	        "\t             The file can be fasta and fastq, and can be gzip\'ed with extension *.gz.\n"      
 		"\t             When the input file is *.gz, the corresponding output file will also be gzip\'ed.\n"
 		"\t-k kmer_length genome_size alpha (see README for information on setting alpha)\n"
+		"\t\t\t\t\tor\n"
+		"\t-K kmer_length genom_size: in this case, the genome size should be relative accurate.\n"
 		"Other parameters:\n"
 		"\t-od: output_file_directory (default: ./)\n"
 		"\t-t: number of threads to use (default: 1)\n"
@@ -164,6 +166,15 @@ char GetBadQuality( Reads &reads )
 	return (char)( t2 < t1 ? t2 : t1 ) ;
 }
 
+double InferAlpha( Reads &reads, uint64_t genomeSize ) 
+{
+	uint64_t totalLen = 0 ;
+
+	while ( reads.Next() )
+		totalLen += strlen( reads.seq ) ;		
+	
+	return 7.0 / ( (double)totalLen / genomeSize ) ;
+}
 void PrintLog( const char *log )
 {
 	time_t rawtime ;
@@ -216,7 +227,7 @@ void PrintSummary( const struct _summary &summary )
 int main( int argc, char *argv[] )
 {
 	int kmerLength ;
-	double alpha = 0.0 ;
+	double alpha = -1 ;
 	char *readId/**, read, *qual*/ ;
 	char buffer[1023] ;
 	double untrustF[100][100] ;
@@ -225,7 +236,7 @@ int main( int argc, char *argv[] )
 	char goodQuality = '\0', badQuality = '\0' ;
 	int badPrefix, badSuffix ;
 	bool paraDiscard ;
-	bool ignoreQuality, stable ;
+	bool ignoreQuality, stable, inferAlpha ;
 	//double bloomFilterFP = 0.0005 ;
 	int i, j ;
 	//uint64_t kmerCode ;
@@ -260,6 +271,7 @@ int main( int argc, char *argv[] )
 	numOfThreads = 1 ;
 	ignoreQuality = false ;
 	stable = false ;
+	inferAlpha = false ;
 	memset( &summary, 0, sizeof( summary ) ) ;
 	
 	// Parse the arguments
@@ -298,6 +310,22 @@ int main( int argc, char *argv[] )
 			}
 			alpha = (double)atof( argv[i + 3] ) ;
 			i += 3 ;
+		}
+		else if ( !strcmp( "-K", argv[i] ) ) 
+		{
+			if(i + 1 >= argc) {
+				printf("Must specify k-mer length, genome size after -K\n");
+				exit(1);
+			}
+			kmerLength = atoi( argv[i + 1] ) ;
+			if(i + 2 >= argc) {
+				printf("Must specify k-mer length, genome size after -K\n");
+				exit(1);
+			}
+			genomeSize = StringToUint64( argv[i + 2] ) ;
+
+			inferAlpha = true ;
+			i += 2 ;
 		}
 		else if ( !strcmp( "-od", argv[i] ) )
 		{
@@ -340,7 +368,7 @@ int main( int argc, char *argv[] )
 	}
 	if ( kmerLength == -1 )
 	{
-		printf( "Require -k parameter!\n" ) ;
+		printf( "Require -k or -K parameter!\n" ) ;
 		exit( 1 ) ;
 	}
 	if ( kmerLength > 32 )
@@ -348,10 +376,28 @@ int main( int argc, char *argv[] )
 		printf( "K-mer length must be no larger than 32.\n") ;
 		exit( 1 ) ;
 	}
+	
+	if ( alpha != -1 && inferAlpha == true )
+	{
+		printf( "Can not use both -k and -K.\n" ) ;
+		exit( 1 ) ;
+	}
 
 	PrintLog( "=============Start====================" ) ;
 	KmerCode kmerCode( kmerLength ) ;
 	reads.SetDiscard( paraDiscard ) ;	
+
+
+	if ( inferAlpha )
+	{
+		PrintLog( "Scanning the input files to infer alpha(sampling rate)" ) ;
+		alpha = InferAlpha( reads, genomeSize ) ;
+		
+		sprintf( buffer, "Alpha is %.3lf", alpha ) ;
+		PrintLog( buffer ) ;
+		
+		reads.Rewind() ;
+	}
 
 	// Prepare data structures and other data.
 	//Store kmers(1000000000ull) ;
