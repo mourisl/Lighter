@@ -267,7 +267,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		// TODO: if maxTo is far from i, then we may in a repeat. Try keep this base unfixed
 		//       see whether the next fixing makes sense.
 		
-		if ( maxTo == -1 || ( maxCnt > 1 && maxTo <= to ) )
+		if ( maxTo == -1 || ( maxCnt > 1 && ( maxTo <= to || to - i + 1 < kmerLength ) ) )
 		{
 			//printf( "+%s\n", read ) ;
 
@@ -427,7 +427,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			}
 		}
 		//printf( "-hi %d: %d %d=>%d, (%d)\n", i, minTo, to, minChange, minCnt ) ;	
-		if ( minTo == readLength + 1 || ( minCnt > 1 && minTo >= to ) )
+		if ( minTo == readLength + 1 || ( minCnt > 1 && ( minTo >= to || i - to + 1 < kmerLength ) ) )
 		{
 			//printf( "-%s\n", read ) ;
 			//return -1 ;
