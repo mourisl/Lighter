@@ -45,6 +45,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	int tag ;
 	int from, to ;
 	int trimStart = -1 ;
+	int ambiguousCnt = 0 ;
 	
 //	KmerCode kmerCode( inCode ) ;
 	KmerCode tmpKmerCode( 0 ) ;
@@ -109,10 +110,11 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		if ( storedKmer[i] == false )
 			break ;
 	}
-	/*if ( !strcmp( read, "CCAGTACCTGAAATGCTTACGTTGCCGTTGCTGGCTCATCCTGCCCAGAG" ) )
+	/*if ( !strcmp( read, "GTAAACGCCTTATCCGGCCTACGGAGGGTGCGGGAATTTGTAGGCCTGATAAGACGCGCAAGCGTCGCATCAGGCAGTCGGCACGGTTGCCGGATGCAGCG" ) )
 	//if ( !strcmp( read, "ATCATCAGAGGGTCTCGTGTAGTGCTCCAGTACCTGAAATGCTTACGTTG" ) )
 	{
 		printf( "## %d\n", i ) ;
+		exit( 1 ) ;
 	}*/
 	if ( i >= kmerCnt )
 		return 0 ;
@@ -258,8 +260,14 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 					maxCnt = 1 ;
 				}
 			}
+			//printf( "%d\n", j ) ;
 		}
-		if ( maxTo == -1 || maxCnt > 1  )
+		//printf( "hi %d: %d %d=>%d, (%d): code=%llu\n", i, maxTo, to, maxChange, maxCnt, tmpKmerCode.GetCode() ) ;
+
+		// TODO: if maxTo is far from i, then we may in a repeat. Try keep this base unfixed
+		//       see whether the next fixing makes sense.
+		
+		if ( maxTo == -1 || ( maxCnt > 1 && maxTo <= to ) )
 		{
 			//printf( "+%s\n", read ) ;
 
@@ -272,8 +280,13 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			//else
 			//return 0 ;
 		}
-		//printf( "hi %d: %d %d=>%d, (%d): code=%llu\n", i, maxTo, to, maxChange, maxCnt, tmpKmerCode.GetCode() ) ;	
 		fix[i] = maxChange ;
+		if ( maxCnt > 1 )
+		{
+			// Remove the effect of the ambiguous fixing
+			fix[i] = -2 ;
+			++ambiguousCnt ;
+		}
 
 		if ( maxTo >= readLength )
 			break ;
@@ -314,7 +327,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			kmerCode.Restart() ;
 			for ( i = k - 1 + 1 ; i < k - 1 + kmerLength - 1 + 1 ; ++i  )
 			{
-				if ( fix[i] == -1 )
+				if ( fix[i] < 0 )
 					kmerCode.Append( read[i] ) ;
 				else
 					kmerCode.Append( numToNuc[ fix[i] ] ) ;
@@ -414,7 +427,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			}
 		}
 		//printf( "-hi %d: %d %d=>%d, (%d)\n", i, minTo, to, minChange, minCnt ) ;	
-		if ( minTo == readLength + 1 || minCnt > 1  )
+		if ( minTo == readLength + 1 || ( minCnt > 1 && minTo >= to ) )
 		{
 			//printf( "-%s\n", read ) ;
 			//return -1 ;
@@ -423,6 +436,11 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		}
 		//printf( "---%d %d\n", minChange,  nucToNum[read[0] - 'A'] ) ;
 		fix[i] = minChange ;
+		if ( minCnt > 1 )
+		{
+			fix[i] = -2 ;
+			++ambiguousCnt ;
+		}
 
 		if ( minTo < 0 )
 			break ;
@@ -456,7 +474,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			kmerCode.Restart() ;
 			for ( i = k + 2  - 1 ; i < k + 2 + kmerLength - 1 - 1 ; ++i  )
 			{
-				if ( fix[i] == -1 )
+				if ( fix[i] < 0 )
 					kmerCode.Append( read[i] ) ;
 				else
 					kmerCode.Append( numToNuc[ fix[i] ] ) ;
@@ -517,14 +535,14 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 
 	for ( i = 0 ; i < readLength ; ++i )
 	{
-		if ( i >= kmerLength && ( fix[i - kmerLength] != -1 && read[i - kmerLength] != 'N' ) )
+		if ( i >= kmerLength && ( fix[i - kmerLength] >= 0 && read[i - kmerLength] != 'N' ) )
 		{
 			if ( qual[i - kmerLength] <= badQuality )
 				correctCnt -= 0.5 ;
 			else
 				--correctCnt ;
 		}
-		if ( fix[i] != -1 && read[i] != 'N' )
+		if ( fix[i] >= 0 && read[i] != 'N' )
 		{
 			if ( qual[i] <= badQuality )
 				correctCnt += 0.5 ;
@@ -557,7 +575,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 
 	for ( i = badPrefix ; i < trimStart ; ++i )
 	{
-		if ( fix[i] == -1 )
+		if ( fix[i] < 0 )
 			continue ;
 		if ( read[i] != numToNuc[ fix[i] ] )
 		{
@@ -575,6 +593,14 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	//if ( ALLOW_TRIMMING ) // else we do partial correction
 	//	read[ trimStart ] = '\0' ; 
 	//ret += trimmed ;
+	
+	/*if ( !strcmp( read, "GTAAACGCCTTATCCGGCCTACGGAGGGTGCGGGAATTTGTAGGCCTGATAAGACGCGCAAGCGTCGCATCAGGCAGTCGGCACGGTTGCCGGATGCAGCG" ) )
+	{
+		printf( "## %d\n", i ) ;
+		exit( 1 ) ;
+	}*/
+	if ( ret == 0 && badPrefix == 0 && badSuffix == 0 && ambiguousCnt > 0 )
+		return -1 ;
 	return ret ;
 }
 
