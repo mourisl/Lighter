@@ -489,6 +489,11 @@ public:
       return contains(reinterpret_cast<const unsigned char*>(&t),static_cast<std::size_t>(sizeof(T)));
    }
 
+   inline bool contains( const uint64_t &key) const
+   {
+      return contains(reinterpret_cast<const unsigned char*>(&key),8);
+   }
+
    inline bool contains(const std::string& key) const
    {
       return contains(reinterpret_cast<const unsigned char*>(key.c_str()),key.size());
