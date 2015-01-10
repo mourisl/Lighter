@@ -134,7 +134,7 @@ void *SampleKmers_Thread( void *arg )
 			break ;
 	}
 	
-	//TODO: put the remaining
+	//put the remaining
 	if ( threadInit )
 		pthread_join( putThread, &pthreadStatus ) ;
 
@@ -220,20 +220,32 @@ void SampleKmersInRead( char *read, char *qual, int kmerLength, double alpha, Km
 void *StoreKmers_Thread( void *arg )
 {
 	struct _StoreKmersThreadArg *myArg = ( struct _StoreKmersThreadArg *)arg ; 	
-	char read[MAX_READ_LENGTH], qual[MAX_READ_LENGTH], id[MAX_ID_LENGTH] ;
+	int i ;
 	int tmp ;
+	int maxBatchSize = READ_BUFFER_PER_THREAD ; 
+	struct _Read *readBatch = ( struct _Read *)malloc( sizeof( struct _Read ) * maxBatchSize ) ;
+
 	KmerCode kmerCode( myArg->kmerLength ) ;
 	while ( 1 )
 	{
 		pthread_mutex_lock( myArg->lock ) ;
-		tmp = myArg->reads->NextWithBuffer( id, read, qual, false ) ;
+		//tmp = myArg->reads->( id, read, qual, false ) ;
+		tmp = myArg->reads->GetBatch( readBatch, maxBatchSize, false, false ) ;
 		pthread_mutex_unlock( myArg->lock ) ;
-		if ( tmp != 0 )
+
+		if ( tmp == 0 )
+			break ;
+		
+		for ( i = 0 ; i < tmp ; ++i )
 		{
+			/*id = readBatch[i].id ;
 			int len = (int)strlen( id ) ;
 			if ( id[len - 1] == '\n')
-				id[len - 1] = '\0' ;
-			len = (int)strlen( read ) ;
+				id[len - 1] = '\0' ;*/
+			char *read = readBatch[i].seq ;
+			char *qual = readBatch[i].qual ;
+
+			int len = (int)strlen( read ) ;
 			if ( read[len - 1] == '\n' )
 				read[len - 1] = '\0' ;
 
@@ -246,9 +258,10 @@ void *StoreKmers_Thread( void *arg )
 			StoreTrustedKmers( read, qual, myArg->kmerLength, myArg->badQuality, myArg->threshold, 
 				kmerCode, myArg->kmers, myArg->trustedKmers ) ;
 		}
-		else
-			break ;
 	}
+
+	free( readBatch ) ;
+
 	pthread_exit( NULL ) ;
 	return NULL ;
 }
