@@ -17,7 +17,6 @@
 #include "GetKmers.h"
 #include "pthread.h"
 
-#define READ_BUFFER_PER_THREAD 1024
 
 char nucToNum[26] = { 0, -1, 1, -1, -1, -1, 2, 
 	-1, -1, -1, -1, -1, -1, -1,
