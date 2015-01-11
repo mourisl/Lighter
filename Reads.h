@@ -80,7 +80,7 @@ class Reads
 		{
 			if ( fpUsed >= MAX_READ_FILE )
 			{
-				printf( "The number of read files exceeds the limit %d.\n", MAX_READ_FILE ) ;
+				fprintf( stderr, "The number of read files exceeds the limit %d.\n", MAX_READ_FILE ) ;
 				exit( 1 ) ;
 			}
 			char buffer[1024], fileName[1024] ;
@@ -98,7 +98,7 @@ class Reads
 			}
 			else
 			{
-				printf( "\"%s\"'s format is wrong.\n", file ) ;
+				fprintf( stderr, "\"%s\"'s format is wrong.\n", file ) ;
 				exit( 1 ) ;
 			}
 

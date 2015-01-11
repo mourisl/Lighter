@@ -28,6 +28,8 @@ char numToNuc[26] = {'A', 'C', 'G', 'T'} ;
 int MAX_CORRECTION ;
 bool ALLOW_TRIMMING ;
 
+bool zlibVersionChecked = false ; 
+
 struct _summary
 {
 	uint64_t corrCnt ;
@@ -174,7 +176,8 @@ double InferAlpha( Reads &reads, uint64_t genomeSize )
 	
 	return 7.0 / ( (double)totalLen / genomeSize ) ;
 }
-void PrintLog( const char *log )
+
+void PrintLog( const char *log ) 
 {
 	time_t rawtime ;
 	struct tm *timeInfo ;
@@ -185,7 +188,7 @@ void PrintLog( const char *log )
 	timeInfo = localtime( &rawtime ) ;
 	strftime( buffer, sizeof( buffer ), "%F %H:%M:%S", timeInfo ) ;
 
-	printf( "[%s] %s\n", buffer, log ) ;
+	fprintf( stderr, "[%s] %s\n", buffer, log ) ;
 
 	//fclose( fp ) ;
 }
@@ -209,7 +212,7 @@ void UpdateSummary( char *seq, int correction, int badSuffix, bool paraDiscard, 
 
 void PrintSummary( const struct _summary &summary )
 {
-	printf( "Processed %" PRIu64 " reads:\n"
+	fprintf( stderr, "Processed %" PRIu64 " reads:\n"
 		"\t%" PRIu64 " are error-free\n"
 		"\tCorrected %" PRIu64 " bases(%lf corrections for reads with errors)\n"
 		"\tTrimmed %" PRIu64 " reads with average trimmed bases %lf\n"
@@ -294,17 +297,17 @@ int main( int argc, char *argv[] )
 		else if ( !strcmp( "-k", argv[i] ) )
 		{
 			if(i + 1 >= argc) {
-				printf("Must specify k-mer length, genome size, and alpha after -k\n");
+				fprintf( stderr, "Must specify k-mer length, genome size, and alpha after -k\n");
 				exit(1);
 			}
 			kmerLength = atoi( argv[i + 1] ) ;
 			if(i + 2 >= argc) {
-				printf("Must specify k-mer length, genome size, and alpha after -k\n");
+				fprintf( stderr, "Must specify k-mer length, genome size, and alpha after -k\n");
 				exit(1);
 			}
 			genomeSize = StringToUint64( argv[i + 2] ) ;
 			if(i + 3 >= argc) {
-				printf("Must specify k-mer length, genome size, and alpha after -k\n");
+				fprintf( stderr, "Must specify k-mer length, genome size, and alpha after -k\n");
 				exit(1);
 			}
 			alpha = (double)atof( argv[i + 3] ) ;
@@ -313,12 +316,12 @@ int main( int argc, char *argv[] )
 		else if ( !strcmp( "-K", argv[i] ) ) 
 		{
 			if(i + 1 >= argc) {
-				printf("Must specify k-mer length, genome size after -K\n");
+				fprintf( stderr, "Must specify k-mer length, genome size after -K\n");
 				exit(1);
 			}
 			kmerLength = atoi( argv[i + 1] ) ;
 			if(i + 2 >= argc) {
-				printf("Must specify k-mer length, genome size after -K\n");
+				fprintf( stderr, "Must specify k-mer length, genome size after -K\n");
 				exit(1);
 			}
 			genomeSize = StringToUint64( argv[i + 2] ) ;
@@ -351,7 +354,7 @@ int main( int argc, char *argv[] )
 		}
 		else
 		{
-			printf( "Unknown argument %s\n", argv[i] ) ;
+			fprintf( stderr, "Unknown argument %s\n", argv[i] ) ;
 			exit( 1 ) ;
 		}
 	}
@@ -367,25 +370,24 @@ int main( int argc, char *argv[] )
 	}
 	if ( kmerLength == -1 )
 	{
-		printf( "Require -k or -K parameter!\n" ) ;
+		fprintf( stderr, "Require -k or -K parameter!\n" ) ;
 		exit( 1 ) ;
 	}
 	if ( kmerLength > 32 )
 	{
-		printf( "K-mer length must be no larger than 32.\n") ;
+		fprintf( stderr, "K-mer length must be no larger than 32.\n") ;
 		exit( 1 ) ;
 	}
 	
 	if ( alpha != -1 && inferAlpha == true )
 	{
-		printf( "Can not use both -k and -K.\n" ) ;
+		fprintf( stderr, "Can not use both -k and -K.\n" ) ;
 		exit( 1 ) ;
 	}
 
 	PrintLog( "=============Start====================" ) ;
 	KmerCode kmerCode( kmerLength ) ;
 	reads.SetDiscard( paraDiscard ) ;	
-
 
 	if ( inferAlpha )
 	{

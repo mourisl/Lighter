@@ -12,6 +12,8 @@
 #define UNCOMPRESSED_FILE 0
 #define COMPRESSED_FILE 1
 
+extern bool zlibVersionChecked ; 
+
 class File
 {
 private:
@@ -48,8 +50,20 @@ public:
 			gzFp = gzopen( fileName, mode ) ;
 			if ( gzFp == Z_NULL )
 			{
-				printf( "ERROR: Could not access file %s\n", fileName ) ;
+				fprintf( stderr, "ERROR: Could not access file %s\n", fileName ) ;
 				exit( 1 ) ;
+			}
+
+			if ( zlibVersionChecked == false )
+			{
+				zlibVersionChecked = true ;
+#ifdef ZLIB_VERNUM	
+				if ( ZLIB_VERNUM < 0x1240 )
+					fprintf( stderr, "WARNING: zlib version on your system is %s(< 1.2.4)."
+							"Newer veresion (>=1.2.4) is much faster.\n", ZLIB_VERSION ) ;
+#else
+					fprintf( stderr, "WARNING: Unknown zlib version. Newer veresion (>=1.2.4) is much faster.\n" ) ;
+#endif
 			}
 		}
 		else if ( type == UNCOMPRESSED_FILE )
@@ -58,7 +72,7 @@ public:
 			fp = fopen( fileName, mode ) ;
 			if ( fp == NULL )
 			{
-				printf( "ERROR: Could not access file %s\n", fileName ) ;
+				fprintf( stderr, "ERROR: Could not access file %s\n", fileName ) ;
 				exit( 1 ) ;
 			}
 		}
