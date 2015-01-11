@@ -59,7 +59,7 @@ public:
 				zlibVersionChecked = true ;
 #ifdef ZLIB_VERNUM	
 				if ( ZLIB_VERNUM < 0x1240 )
-					fprintf( stderr, "WARNING: zlib version on your system is %s(< 1.2.4)."
+					fprintf( stderr, "WARNING: zlib version on your system is %s(< 1.2.4). "
 							"Newer veresion (>=1.2.4) is much faster.\n", ZLIB_VERSION ) ;
 #else
 					fprintf( stderr, "WARNING: Unknown zlib version. Newer veresion (>=1.2.4) is much faster.\n" ) ;
