@@ -14,10 +14,10 @@ void *SampleKmers_PutThread( void *arg )
 	struct _SampleKmersPutThreadArg *myArg = ( struct _SampleKmersPutThreadArg * )arg ;
 	Store *kmers = myArg->kmers ;
 	int i ;
-	//pthread_mutex_lock( myArg->lockPut ) ;
+	pthread_mutex_lock( myArg->lockPut ) ;
 	for ( i = 0 ; i < myArg->kmerCodesCnt ; ++i )
 		kmers->Put( myArg->kmerCodes[i], true ) ;
-	//pthread_mutex_unlock( myArg->lockPut ) ;
+	pthread_mutex_unlock( myArg->lockPut ) ;
 
 	pthread_exit( NULL ) ;
 	return NULL ;
