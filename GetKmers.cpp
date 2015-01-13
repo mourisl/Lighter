@@ -119,7 +119,7 @@ void *SampleKmers_Thread( void *arg )
 					putArg.kmers = kmers ;
 					putArg.kmerCodes = ( KmerCode *)kmerCodeBuffer[ bufferTag ] ;
 					putArg.kmerCodesCnt = kmerCodeBufferUsed ;
-					//putArg.lockPut = myArg->lockPut ;
+					putArg.lockPut = myArg->lockPut ;
 					//printf( "%d %d\n", bufferTag, kmerCodeBufferUsed ) ;
 					pthread_create( &putThread, &pthreadAttr, SampleKmers_PutThread, ( void *)&putArg ) ;
 
