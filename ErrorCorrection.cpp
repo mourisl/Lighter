@@ -11,11 +11,13 @@ void *ErrorCorrection_Thread( void *arg )
 	int ind ;
 	int correction, badPrefix, badSuffix ;
 	struct _ErrorCorrectionThreadArg *myArg = ( struct _ErrorCorrectionThreadArg *)arg ; 	
-	
+	bool init = true ;
 	KmerCode kmerCode( myArg->kmerLength ) ;
 	while ( 1 )
 	{
 		pthread_mutex_lock( myArg->lock ) ;
+		if ( !init )
+			++myArg->batchFinished ;
 		ind = myArg->batchUsed ;
 		++myArg->batchUsed ;
 		pthread_mutex_unlock( myArg->lock ) ;
@@ -27,6 +29,7 @@ void *ErrorCorrection_Thread( void *arg )
 		myArg->readBatch[ind].correction = correction ;
 		myArg->readBatch[ind].badPrefix = badPrefix ;
 		myArg->readBatch[ind].badSuffix = badSuffix ;
+		init = false ;
 	}
 
 	pthread_exit( NULL ) ;

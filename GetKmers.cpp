@@ -28,6 +28,7 @@ void *SampleKmers_Thread( void *arg )
 	struct _SampleKmersThreadArg *myArg = ( struct _SampleKmersThreadArg *)arg ; 	
 	//char read[MAX_READ_LENGTH], qual[MAX_READ_LENGTH], id[MAX_ID_LENGTH] ;
 	int i, tmp ;
+	int fileInd ;
 	struct _Read *readBatch = ( struct _Read *)malloc( sizeof( *readBatch ) * 128 ) ;
 	struct _SamplePattern *samplePatterns = myArg->samplePatterns ;
 	int kmerLength = myArg->kmerLength ;
@@ -60,7 +61,7 @@ void *SampleKmers_Thread( void *arg )
 	{
 		pthread_mutex_lock( myArg->lock ) ;
 		//tmp = myArg->reads->NextWithBuffer( id, read, qual, false ) ;
-		tmp = myArg->reads->GetBatch( readBatch, 128, false, false ) ;
+		tmp = myArg->reads->GetBatch( readBatch, 128, fileInd, false, false ) ;
 		pthread_mutex_unlock( myArg->lock ) ;
 		int k ;
 		if ( tmp != 0 )
@@ -221,7 +222,7 @@ void *StoreKmers_Thread( void *arg )
 {
 	struct _StoreKmersThreadArg *myArg = ( struct _StoreKmersThreadArg *)arg ; 	
 	int i ;
-	int tmp ;
+	int tmp, fileInd ;
 	int maxBatchSize = READ_BUFFER_PER_THREAD ; 
 	struct _Read *readBatch = ( struct _Read *)malloc( sizeof( struct _Read ) * maxBatchSize ) ;
 
@@ -230,7 +231,7 @@ void *StoreKmers_Thread( void *arg )
 	{
 		pthread_mutex_lock( myArg->lock ) ;
 		//tmp = myArg->reads->( id, read, qual, false ) ;
-		tmp = myArg->reads->GetBatch( readBatch, maxBatchSize, false, false ) ;
+		tmp = myArg->reads->GetBatch( readBatch, maxBatchSize, fileInd, false, false ) ;
 		pthread_mutex_unlock( myArg->lock ) ;
 
 		if ( tmp == 0 )

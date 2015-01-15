@@ -20,6 +20,7 @@ private:
 	bool type ; 
 	FILE *fp ;
 	gzFile gzFp ;
+	int gzCompressLevel ;
 
 	bool opened ;
 public:
@@ -47,7 +48,16 @@ public:
 
 		if ( type == COMPRESSED_FILE )
 		{
-			gzFp = gzopen( fileName, mode ) ;
+			char modeBuffer[5] ;
+			strcpy( modeBuffer, mode ) ;
+
+			if ( modeBuffer[0] == 'w' )
+			{
+				modeBuffer[1] = gzCompressLevel + '0' ;
+				modeBuffer[2] = '\0' ;
+			}
+
+			gzFp = gzopen( fileName, modeBuffer ) ;
 			if ( gzFp == Z_NULL )
 			{
 				fprintf( stderr, "ERROR: Could not access file %s\n", fileName ) ;
@@ -106,7 +116,7 @@ public:
 	{
 		if ( type == COMPRESSED_FILE )
 		{
-			return gzputs( gzFp, buf ) ;
+			return gzwrite( gzFp, buf, strlen( buf ) ) ;
 		}
 		else if ( type == UNCOMPRESSED_FILE )
 		{
@@ -123,7 +133,7 @@ public:
 		vsprintf( buffer, fmt, args ) ;
 		if ( type == COMPRESSED_FILE )
 		{
-			return gzputs( gzFp, buffer ) ;
+			return gzwrite( gzFp, buffer, strlen( buffer ) ) ;
 		}
 		else if ( type == UNCOMPRESSED_FILE )
 		{
@@ -142,6 +152,16 @@ public:
 		{
 			rewind( fp ) ;
 		}
+	}
+
+	void SetCompressLevel( int cl )
+	{
+		if ( cl < 1 || cl > 9 )
+		{
+			fprintf( stderr, "Compress level must be 1-9.\n" ) ;
+			exit( 1 ) ;
+		}
+		gzCompressLevel = cl ;
 	}
 } ;
 

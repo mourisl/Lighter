@@ -30,6 +30,7 @@ class Reads
 		int currentFpInd ;
 		char outputDirectory[256] ;
 		bool discard ;
+		int compressLevel ;
 
 		void GetFileName( char *in, char *out ) 
 		{
@@ -58,6 +59,7 @@ class Reads
 
 		Reads(): fpUsed(0), currentFpInd(0)
 		{
+			compressLevel = 1 ;
 			strcpy( outputDirectory, "./" ) ;
 		}
 
@@ -75,6 +77,11 @@ class Reads
 		{
 			discard = d ;
 		} 
+
+		void SetCompressLevel( int cl )
+		{
+			compressLevel = cl ;
+		}
 
 		void AddReadFile( char *file )
 		{
@@ -123,8 +130,9 @@ class Reads
 				else
 					sprintf( buffer, "%s/%s.cor.fa", outputDirectory, fileName ) ;
 			}
+			
+			outputFp[ fpUsed ].SetCompressLevel( compressLevel ) ;
 			outputFp[ fpUsed ].Open( buffer, "w" ) ;
-
 			++fpUsed ;
 		}
 
@@ -132,6 +140,7 @@ class Reads
 		{
 			strcpy( outputDirectory, d ) ;
 		}
+		
 
 		bool HasQuality()
 		{
@@ -295,7 +304,7 @@ class Reads
 
 		// Get a batch of reads, it terminates until the buffer is full or 
 		// the file ends.
-		int GetBatch( struct _Read *readBatch, int maxBatchSize, bool trimReturn, bool stopWhenFileEnds  )
+		int GetBatch( struct _Read *readBatch, int maxBatchSize, int &fileInd, bool trimReturn, bool stopWhenFileEnds  )
 		{
 			int batchSize = 0 ;
 			while ( batchSize < maxBatchSize ) 
@@ -305,21 +314,29 @@ class Reads
 				if ( tmp == -1 && batchSize > 0 )
 				{
 					--currentFpInd ;
+					fileInd = currentFpInd ;
 					return batchSize ; // Finished read current file.
 				}
 				else if ( tmp == -1 && batchSize == 0 )
 					continue ; // The current read file is empty
 				else if ( tmp == 0 && batchSize == 0 )
+				{
+					fileInd = currentFpInd ;
 					return 0 ; // Finished reading	
+				}
 
 				++batchSize ;
 			}
+
+			fileInd = currentFpInd ;
 			return batchSize ;
 		}
 
-		void OutputBatch( struct _Read *readBatch, int batchSize, bool allowTrimming )
+		void OutputBatch( struct _Read *readBatch, int batchSize, bool allowTrimming, int fileInd = -1 )
 		{
 			int i ;
+			if ( fileInd == -1 )
+				fileInd = currentFpInd ;
 			for ( i = 0 ; i < batchSize ; ++i )
 			{
 				char *id = readBatch[i].id ;
@@ -331,9 +348,9 @@ class Reads
 				
 				if ( correction == 0 && badPrefix == 0 && badSuffix == 0 )
 				{
-					outputFp[ currentFpInd ].Printf( "%s\n%s\n", id, seq ) ;
-					if ( FILE_TYPE[ currentFpInd ] != 0 )
-						outputFp[ currentFpInd ].Printf( "+\n%s\n", qual ) ;
+					outputFp[ fileInd ].Printf( "%s\n%s\n", id, seq ) ;
+					if ( FILE_TYPE[ fileInd ] != 0 )
+						outputFp[ fileInd ].Printf( "+\n%s\n", qual ) ;
 				}
 				else if ( correction == -1 )
 				{
@@ -343,9 +360,9 @@ class Reads
 					  }*/
 					if ( discard )
 						continue ;
-					outputFp[ currentFpInd].Printf( "%s unfixable_error\n%s\n", id, seq ) ;
-					if ( FILE_TYPE[ currentFpInd ] != 0 )
-						outputFp[ currentFpInd ].Printf( "+\n%s\n", qual ) ;
+					outputFp[ fileInd ].Printf( "%s unfixable_error\n%s\n", id, seq ) ;
+					if ( FILE_TYPE[ fileInd ] != 0 )
+						outputFp[ fileInd ].Printf( "+\n%s\n", qual ) ;
 					//printf( "%s\n%s\n", readId, read ) ;
 				}
 				else
@@ -366,12 +383,12 @@ class Reads
 							sprintf( buffer3, " bad_suffix=%d", badSuffix ) ;
 					}
 
-					outputFp[ currentFpInd ].Printf( "%s%s%s%s\n%s\n", id, buffer1, buffer2, buffer3, seq ) ;
-					if ( FILE_TYPE[ currentFpInd ] != 0 )
+					outputFp[ fileInd ].Printf( "%s%s%s%s\n%s\n", id, buffer1, buffer2, buffer3, seq ) ;
+					if ( FILE_TYPE[ fileInd ] != 0 )
 					{
 						if ( allowTrimming )
 							qual[ strlen( qual ) - badSuffix ] = '\0' ;
-						outputFp[ currentFpInd ].Printf( "+\n%s\n", qual ) ;
+						outputFp[ fileInd ].Printf( "+\n%s\n", qual ) ;
 					}
 				}
 			}

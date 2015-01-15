@@ -48,7 +48,7 @@ void PrintHelp()
 		"\t-r seq_file: seq_file is the path to the sequence file. Can use multiple -r to specifiy multiple sequence files\n"
 	        "\t             The file can be fasta and fastq, and can be gzip\'ed with extension *.gz.\n"      
 		"\t             When the input file is *.gz, the corresponding output file will also be gzip\'ed.\n"
-		"\t-k kmer_length genome_size alpha (see README for information on setting alpha)\n"
+		"\t-k kmer_length genome_size alpha: (see README for information on setting alpha)\n"
 		"\t\t\t\t\tor\n"
 		"\t-K kmer_length genom_size: in this case, the genome size should be relative accurate.\n"
 		"Other parameters:\n"
@@ -56,9 +56,10 @@ void PrintHelp()
 		"\t-t: number of threads to use (default: 1)\n"
 		"\t-trim: allow trimming (default: false)\n"
 		"\t-discard: discard unfixable reads. Will LOSE paired-end matching when discarding (default: false)\n"
-		"\t-noQual: ignore the quality socre (default: false)\n"
+		"\t-noQual: ignore the quality score (default: false)\n"
 		"\t-stable: sequentialize the sampling stage, output the same result with different runs (default: false)\n"
-		"\t-maxcor: the maximum number of correction for within a kmer_length window (default: 4)\n" ) ;
+		"\t-maxcor: the maximum number of correction for within a kmer_length window (default: 4)\n"
+		"\t-zlib compress_level: set the compression level(1-9) of gzip (default: 1)\n" ) ;
 }
 
 uint64_t StringToUint64( char *s )   
@@ -239,6 +240,7 @@ int main( int argc, char *argv[] )
 	int badPrefix, badSuffix ;
 	bool paraDiscard ;
 	bool ignoreQuality, stable, inferAlpha ;
+	int zlibLevel ;
 	//double bloomFilterFP = 0.0005 ;
 	int i, j ;
 	//uint64_t kmerCode ;
@@ -274,6 +276,7 @@ int main( int argc, char *argv[] )
 	ignoreQuality = false ;
 	stable = false ;
 	inferAlpha = false ;
+	zlibLevel = 1 ;
 	memset( &summary, 0, sizeof( summary ) ) ;
 	
 	// Parse the arguments
@@ -351,6 +354,12 @@ int main( int argc, char *argv[] )
 		else if ( !strcmp( "-stable", argv[i] ) )
 		{
 			stable = true ;
+		}
+		else if ( !strcmp( "-zlib", argv[i] ) )
+		{
+			zlibLevel = atoi( argv[i+1] ) ;
+			reads.SetCompressLevel( zlibLevel ) ;
+			++i ;
 		}
 		else
 		{
@@ -647,41 +656,95 @@ int main( int argc, char *argv[] )
 	}
 	else
 	{
-		int maxBatchSize = READ_BUFFER_PER_THREAD * numOfThreads ;
-		int batchSize ;
+		int maxBatchSize = READ_BUFFER_PER_THREAD * ( numOfThreads - 1 ) ;
+		int batchSize[2] ;
+		bool init = true ;
+		int tag = 1 ;
+		int fileInd[2] ;
+
 		struct _ErrorCorrectionThreadArg arg ;
 		pthread_mutex_t errorCorrectionLock ;
 		void *pthreadStatus ;
-
-		struct _Read *readBatch = ( struct _Read *)malloc( sizeof( struct _Read ) * maxBatchSize ) ;
+		
+		struct _Read *readBatch[2] ;
+		readBatch[0] = ( struct _Read *)malloc( sizeof( struct _Read ) * maxBatchSize ) ;
+		readBatch[1] = ( struct _Read *)malloc( sizeof( struct _Read ) * maxBatchSize ) ;
+		
 		pthread_mutex_init( &errorCorrectionLock, NULL ) ;
 
 		arg.kmerLength = kmerLength ;
 		arg.trustedKmers = &trustedKmers ;
-		arg.readBatch = readBatch ;
+		//arg.readBatch = readBatch ;
 		arg.lock = &errorCorrectionLock ;
 		arg.badQuality = badQuality ;
+		arg.batchFinished = 0 ;
 
 		while ( 1 )
 		{
-			batchSize = reads.GetBatch( readBatch, maxBatchSize, true, true ) ;
-			if ( batchSize == 0 )
-				break ; 
-			//printf( "batchSize=%d\n", batchSize ) ;
-			arg.batchSize = batchSize ;
-			arg.batchUsed = 0 ;
-			for ( i = 0 ; i < numOfThreads ; ++i )
-				pthread_create( &threads[i], &pthreadAttr, ErrorCorrection_Thread, (void *)&arg ) ;	
+			tag = 1 - tag ;
+			batchSize[tag] = reads.GetBatch( readBatch[tag], maxBatchSize, fileInd[tag], true, true ) ;
 
-			for ( i = 0 ; i < numOfThreads ; ++i )
-				pthread_join( threads[i], &pthreadStatus ) ;
-			
-			for ( i = 0 ; i < batchSize ; ++i )
-				UpdateSummary( readBatch[i].seq, readBatch[i].correction, readBatch[i].badSuffix, paraDiscard, summary ) ;			
-			reads.OutputBatch( readBatch, batchSize, ALLOW_TRIMMING ) ;
+			// Output previous batch that already finished
+			int tmp = arg.batchFinished ;
+			int k = 0 ;
+			//printf( "%d %d\n", tmp, batchSize[1 - tag] ) ;
+			if ( tmp < batchSize[1 - tag] / 2 )
+			{
+				for ( k = 0 ; k < tmp ; ++k )
+					UpdateSummary( readBatch[1 - tag][k].seq, readBatch[1 - tag][k].correction, readBatch[1 - tag][k].badSuffix, paraDiscard, summary ) ;			
+				reads.OutputBatch( readBatch[1 - tag], tmp, ALLOW_TRIMMING, fileInd[1 - tag] ) ;
+			}
+
+			// Wait for the previous batch finish
+			if ( !init )
+			{
+				for ( i = 0 ; i < numOfThreads - 1 ; ++i )
+					pthread_join( threads[i], &pthreadStatus ) ;
+			}
+
+			// Start current batch
+			if ( batchSize[tag] != 0 )
+			{
+
+				//printf( "batchSize=%d\n", batchSize ) ;
+				arg.batchSize = batchSize[tag] ;
+				arg.readBatch = readBatch[tag] ;
+				arg.batchUsed = 0 ;
+				arg.batchFinished = 0 ;
+				for ( i = 0 ; i < numOfThreads - 1 ; ++i )
+					pthread_create( &threads[i], &pthreadAttr, ErrorCorrection_Thread, (void *)&arg ) ;	
+
+				//for ( i = 0 ; i < numOfThreads - 1 ; ++i )
+				//	pthread_join( threads[i], &pthreadStatus ) ;
+			}
+
+			// Output previous batch
+			if ( !init )
+			{
+				reads.OutputBatch( &readBatch[1 - tag][k], batchSize[1 - tag] - k, ALLOW_TRIMMING, fileInd[1 - tag] ) ;
+				for (  ; k < batchSize[1 - tag] ; ++k )
+					UpdateSummary( readBatch[1 - tag][k].seq, readBatch[1 - tag][k].correction, readBatch[1 - tag][k].badSuffix, paraDiscard, summary ) ;			
+			}
+
+			if ( batchSize[tag] == 0 )
+				break ;
+
+			init = false ;
 		}
+		//fprintf( stderr, "jump out\n" ) ;
+		// Output the last batch
+		/*if ( !init )
+		{
+			//tag = 1 - tag ;
+			//for ( i = 0 ; i < numOfThreads - 1 ; ++i )
+			//	pthread_join( threads[i], &pthreadStatus ) ;
+			for ( i = 0 ; i < batchSize[1 - tag] ; ++i )
+				UpdateSummary( readBatch[1 - tag][i].seq, readBatch[1 - tag][i].correction, readBatch[1 - tag][i].badSuffix, paraDiscard, summary ) ;			
+			reads.OutputBatch( readBatch[1 - tag], batchSize[1 - tag], ALLOW_TRIMMING ) ;
+		}*/
 
-		free( readBatch ) ;	
+		free( readBatch[1] ) ;	
+		free( readBatch[0] ) ;
 	}
 	
 
