@@ -40,6 +40,7 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
 	    -trim: allow trimming (default: false)
 	    -discard: discard unfixable reads. Will LOSE paired-end mataching when discarding (default: false)
 	    -maxcor: the maximum number of correction for within a kmer_length window (default: 4)
+	    -zlib compress_level: set the compression level(1-9) of gzip (default: 1)
 
     NOTICE: genome_size does not need to be accurate, but it should be at least as large as the size of the sequenced genome.
             alpha is the sampling rate and decided by the user. A rule of thumb: alpha=(7/C), where C is the average coverage of the data set.
