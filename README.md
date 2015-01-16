@@ -35,11 +35,12 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
     Other parameters:
 	    -od: output_file_directory (default: ./)
 	    -t: number of threads to use (default: 1)
-	    -noQual: ignore the quality socre (default: false)
-	    -stable: sequentialize the sampling stage, output the same result with different runs (default: false)
-	    -trim: allow trimming (default: false)
-	    -discard: discard unfixable reads. Will LOSE paired-end mataching when discarding (default: false)
 	    -maxcor: the maximum number of correction for within a kmer_length window (default: 4)
+	    -trim: allow trimming (default: false)\n
+	    -discard: discard unfixable reads. Will LOSE paired-end matching when discarding (default: false)
+	    -noQual: ignore the quality socre (default: false)
+	    -newQual ascii_quality_score: set the quality for the bases corrected to the specified score (default: not used)
+	    -stable: sequentialize the sampling stage, output the same result with different runs (default: false)
 	    -zlib compress_level: set the compression level(1-9) of gzip (default: 1)
 
     NOTICE: genome_size does not need to be accurate, but it should be at least as large as the size of the sequenced genome.

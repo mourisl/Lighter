@@ -5,6 +5,7 @@ extern char nucToNum[26] ;
 extern char numToNuc[26] ;
 extern int MAX_CORRECTION ;
 extern bool ALLOW_TRIMMING ;
+extern int SET_NEW_QUAL ;
 
 void *ErrorCorrection_Thread( void *arg )
 {
@@ -584,6 +585,8 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		{
 			read[i] = numToNuc[ fix[i] ] ;
 			//if ( read[i] != 'N' )
+			if ( qual[0] != '\0' && SET_NEW_QUAL >= 0 )
+				qual[i] = (char)SET_NEW_QUAL ;
 			++ret ;
 		}
 	}

@@ -27,7 +27,7 @@ char numToNuc[26] = {'A', 'C', 'G', 'T'} ;
 
 int MAX_CORRECTION ;
 bool ALLOW_TRIMMING ;
-
+int SET_NEW_QUAL ;
 bool zlibVersionChecked = false ; 
 
 struct _summary
@@ -54,11 +54,12 @@ void PrintHelp()
 		"Other parameters:\n"
 		"\t-od: output_file_directory (default: ./)\n"
 		"\t-t: number of threads to use (default: 1)\n"
+		"\t-maxcor: the maximum number of correction for within a kmer_length window (default: 4)\n"
 		"\t-trim: allow trimming (default: false)\n"
 		"\t-discard: discard unfixable reads. Will LOSE paired-end matching when discarding (default: false)\n"
-		"\t-noQual: ignore the quality score (default: false)\n"
+		"\t-noQual: ignore the quality socre (default: false)\n"
+		"\t-newQual ascii_quality_score: set the quality for the bases corrected to the specified score (default: not used)\n"
 		"\t-stable: sequentialize the sampling stage, output the same result with different runs (default: false)\n"
-		"\t-maxcor: the maximum number of correction for within a kmer_length window (default: 4)\n"
 		"\t-zlib compress_level: set the compression level(1-9) of gzip (default: 1)\n" ) ;
 }
 
@@ -271,6 +272,7 @@ int main( int argc, char *argv[] )
 	paraDiscard = false ; 
 	MAX_CORRECTION = 4 ;
 	ALLOW_TRIMMING = false ;
+	SET_NEW_QUAL = -1 ;
 	kmerLength = -1 ;
 	numOfThreads = 1 ;
 	ignoreQuality = false ;
@@ -350,6 +352,11 @@ int main( int argc, char *argv[] )
 		else if ( !strcmp( "-noQual", argv[i] ) )
 		{
 			ignoreQuality = true ;
+		}
+		else if ( !strcmp( "-newQual", argv[i] ) )
+		{
+			SET_NEW_QUAL = (int)argv[i + 1][0] ;
+			++i ;
 		}
 		else if ( !strcmp( "-stable", argv[i] ) )
 		{
