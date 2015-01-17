@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 
-#define MAX_READ_LENGTH 1024 
-#define MAX_ID_LENGTH 2048
+#define MAX_READ_LENGTH 1024
+#define MAX_ID_LENGTH 512
 
 #define READ_BUFFER_PER_THREAD 1024
 /*char nucToNum[26] = { 0, -1, 1, -1, -1, -1, 2, 

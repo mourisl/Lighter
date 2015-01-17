@@ -40,6 +40,17 @@ struct _summary
 	uint64_t errorFreeReadsCnt ;
 } ;
 
+struct _OutputThreadArg
+{
+	struct _summary *summary ;
+	struct _Read *readBatch ;
+	int batchSize ;
+	bool paraDiscard ;
+
+	Reads *reads ;
+	int fileInd ;
+} ;
+
 void PrintHelp()
 {
 	printf( "Usage: ./lighter [OPTIONS]\n"
@@ -226,6 +237,22 @@ void PrintSummary( const struct _summary &summary )
 		summary.trimReadsCnt, 
 		summary.trimReadsCnt == 0 ? 0.0 : (double)summary.trimBaseCnt / summary.trimReadsCnt, 
 		summary.discardReadsCnt ) ;	
+}
+
+
+void *Output_Thread( void *arg )
+{
+	int i ;
+	struct _OutputThreadArg *myArg = ( struct _OutputThreadArg *)arg ;
+	struct _Read *readBatch = myArg->readBatch ;
+	int batchSize = myArg->batchSize ;
+	
+	//fprintf( stderr, "hi\n"  ) ;
+	for ( i = 0 ; i < batchSize ; ++i )
+		UpdateSummary( readBatch[i].seq, readBatch[i].correction, readBatch[i].badSuffix, myArg->paraDiscard, *( myArg->summary ) ) ;			
+	myArg->reads->OutputBatch( readBatch, batchSize, ALLOW_TRIMMING, myArg->fileInd ) ;
+	pthread_exit( NULL ) ;
+	return NULL ;
 }
 
 int main( int argc, char *argv[] )
@@ -489,7 +516,7 @@ int main( int argc, char *argv[] )
 			}
 		}
 	}
-	// It seems serialization is faster than parallel
+	// It seems serialization is faster than parallel. NOT true now!
 	if ( numOfThreads == 1 || stable == true )
 	{
 		while ( reads.Next() != 0 )
@@ -620,6 +647,7 @@ int main( int argc, char *argv[] )
 	// Step 3: error correction
 	//printf( "%lf %lf\n", kmers.GetFP(), trustedKmers.GetFP() ) ;
 	reads.Rewind() ;
+	// Different ways of parallel depending on the number of threads.
 	if ( numOfThreads == 1 )
 	{
 		while ( reads.Next() )
@@ -661,21 +689,66 @@ int main( int argc, char *argv[] )
 			reads.Output( tmp, badPrefix, badSuffix, ALLOW_TRIMMING ) ;
 		}
 	}
-	else
+	else if ( numOfThreads == 2 )
 	{
+		int maxBatchSize = READ_BUFFER_PER_THREAD * numOfThreads ;
+		int batchSize ;
+		int fileInd ;
+		struct _ErrorCorrectionThreadArg arg ;
+		pthread_mutex_t errorCorrectionLock ;
+		void *pthreadStatus ;
+
+		struct _Read *readBatch = ( struct _Read *)malloc( sizeof( struct _Read ) * maxBatchSize ) ;
+		pthread_mutex_init( &errorCorrectionLock, NULL ) ;
+
+		arg.kmerLength = kmerLength ;
+		arg.trustedKmers = &trustedKmers ;
+		arg.readBatch = readBatch ;
+		arg.lock = &errorCorrectionLock ;
+		arg.badQuality = badQuality ;
+
+		while ( 1 )
+		{
+			batchSize = reads.GetBatch( readBatch, maxBatchSize, fileInd, true, true ) ;
+			if ( batchSize == 0 )
+				break ; 
+			//printf( "batchSize=%d\n", batchSize ) ;
+			arg.batchSize = batchSize ;
+			arg.batchUsed = 0 ;
+			for ( i = 0 ; i < numOfThreads ; ++i )
+				pthread_create( &threads[i], &pthreadAttr, ErrorCorrection_Thread, (void *)&arg ) ;	
+
+			for ( i = 0 ; i < numOfThreads ; ++i )
+				pthread_join( threads[i], &pthreadStatus ) ;
+			
+			for ( i = 0 ; i < batchSize ; ++i )
+				UpdateSummary( readBatch[i].seq, readBatch[i].correction, readBatch[i].badSuffix, paraDiscard, summary ) ;			
+			reads.OutputBatch( readBatch, batchSize, ALLOW_TRIMMING, fileInd ) ;
+		}
+
+		free( readBatch ) ;	
+	}
+	else 
+	{
+		//printf( "hi\n" ) ;
 		int maxBatchSize = READ_BUFFER_PER_THREAD * ( numOfThreads - 1 ) ;
 		int batchSize[2] ;
-		bool init = true ;
-		int tag = 1 ;
+		bool init = true, canJoinOutputThread = false ;
+		int tag = 2, prevTag ;
 		int fileInd[2] ;
+
+		int useOutputThread = 0 ;
+		pthread_t outputThread ;
+		struct _OutputThreadArg outputArg ;
 
 		struct _ErrorCorrectionThreadArg arg ;
 		pthread_mutex_t errorCorrectionLock ;
 		void *pthreadStatus ;
 		
-		struct _Read *readBatch[2] ;
+		struct _Read *readBatch[3] ;
 		readBatch[0] = ( struct _Read *)malloc( sizeof( struct _Read ) * maxBatchSize ) ;
 		readBatch[1] = ( struct _Read *)malloc( sizeof( struct _Read ) * maxBatchSize ) ;
+		readBatch[2] = ( struct _Read *)malloc( sizeof( struct _Read ) * maxBatchSize ) ;
 		
 		pthread_mutex_init( &errorCorrectionLock, NULL ) ;
 
@@ -685,27 +758,23 @@ int main( int argc, char *argv[] )
 		arg.lock = &errorCorrectionLock ;
 		arg.badQuality = badQuality ;
 		arg.batchFinished = 0 ;
+		
+		if ( numOfThreads > 10 )
+			useOutputThread = 1 ;
 
 		while ( 1 )
 		{
-			tag = 1 - tag ;
-			batchSize[tag] = reads.GetBatch( readBatch[tag], maxBatchSize, fileInd[tag], true, true ) ;
+			prevTag = tag ;
+			tag = ( tag + 1 > 2 ) ? 0 : ( tag + 1 ) ;
 
-			// Output previous batch that already finished
-			int tmp = arg.batchFinished ;
-			int k = 0 ;
-			//printf( "%d %d\n", tmp, batchSize[1 - tag] ) ;
-			if ( tmp < batchSize[1 - tag] / 2 )
-			{
-				for ( k = 0 ; k < tmp ; ++k )
-					UpdateSummary( readBatch[1 - tag][k].seq, readBatch[1 - tag][k].correction, readBatch[1 - tag][k].badSuffix, paraDiscard, summary ) ;			
-				reads.OutputBatch( readBatch[1 - tag], tmp, ALLOW_TRIMMING, fileInd[1 - tag] ) ;
-			}
+			batchSize[tag] = reads.GetBatch( readBatch[tag], maxBatchSize, fileInd[tag], true, true ) ;
 
 			// Wait for the previous batch finish
 			if ( !init )
 			{
-				for ( i = 0 ; i < numOfThreads - 1 ; ++i )
+				if ( canJoinOutputThread  ) // wait for the finish of the previous previous batch's output
+					pthread_join( outputThread, &pthreadStatus ) ;
+				for ( i = 0 ; i < numOfThreads - 1 - useOutputThread ; ++i )
 					pthread_join( threads[i], &pthreadStatus ) ;
 			}
 
@@ -718,19 +787,35 @@ int main( int argc, char *argv[] )
 				arg.readBatch = readBatch[tag] ;
 				arg.batchUsed = 0 ;
 				arg.batchFinished = 0 ;
-				for ( i = 0 ; i < numOfThreads - 1 ; ++i )
+				for ( i = 0 ; i < numOfThreads - 1 - useOutputThread ; ++i )
 					pthread_create( &threads[i], &pthreadAttr, ErrorCorrection_Thread, (void *)&arg ) ;	
 
 				//for ( i = 0 ; i < numOfThreads - 1 ; ++i )
 				//	pthread_join( threads[i], &pthreadStatus ) ;
 			}
 
-			// Output previous batch
+			// Output previous batch 
 			if ( !init )
 			{
-				reads.OutputBatch( &readBatch[1 - tag][k], batchSize[1 - tag] - k, ALLOW_TRIMMING, fileInd[1 - tag] ) ;
-				for (  ; k < batchSize[1 - tag] ; ++k )
-					UpdateSummary( readBatch[1 - tag][k].seq, readBatch[1 - tag][k].correction, readBatch[1 - tag][k].badSuffix, paraDiscard, summary ) ;			
+				// Create another thread to output previous batch
+				if ( !useOutputThread )
+				{
+					for (  i = 0 ; i < batchSize[prevTag] ; ++i )
+						UpdateSummary( readBatch[prevTag][i].seq, readBatch[prevTag][i].correction, readBatch[prevTag][i].badSuffix, paraDiscard, summary ) ;			
+					reads.OutputBatch( readBatch[prevTag], batchSize[prevTag], ALLOW_TRIMMING, fileInd[prevTag] ) ;
+				}
+				else
+				{	
+					outputArg.readBatch = readBatch[ prevTag ] ;
+					outputArg.batchSize = batchSize[prevTag] ;
+					outputArg.summary = &summary ;
+					outputArg.paraDiscard = paraDiscard ;
+					outputArg.reads = &reads ;
+					outputArg.fileInd = fileInd[ prevTag] ;
+
+					pthread_create( &outputThread, &pthreadAttr, Output_Thread, (void *)&outputArg ) ;	
+					canJoinOutputThread = true ;
+				}
 			}
 
 			if ( batchSize[tag] == 0 )
@@ -738,22 +823,14 @@ int main( int argc, char *argv[] )
 
 			init = false ;
 		}
-		//fprintf( stderr, "jump out\n" ) ;
-		// Output the last batch
-		/*if ( !init )
-		{
-			//tag = 1 - tag ;
-			//for ( i = 0 ; i < numOfThreads - 1 ; ++i )
-			//	pthread_join( threads[i], &pthreadStatus ) ;
-			for ( i = 0 ; i < batchSize[1 - tag] ; ++i )
-				UpdateSummary( readBatch[1 - tag][i].seq, readBatch[1 - tag][i].correction, readBatch[1 - tag][i].badSuffix, paraDiscard, summary ) ;			
-			reads.OutputBatch( readBatch[1 - tag], batchSize[1 - tag], ALLOW_TRIMMING ) ;
-		}*/
 
+		if ( canJoinOutputThread )
+			pthread_join( outputThread, &pthreadStatus ) ;
+		//fprintf( stderr, "jump out\n" ) ;
+		free( readBatch[2] ) ;
 		free( readBatch[1] ) ;	
 		free( readBatch[0] ) ;
 	}
-	
 
 	PrintLog( "Finish error correction" ) ;
 	PrintSummary( summary ) ;
