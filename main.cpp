@@ -757,9 +757,10 @@ int main( int argc, char *argv[] )
 		//arg.readBatch = readBatch ;
 		arg.lock = &errorCorrectionLock ;
 		arg.badQuality = badQuality ;
+		arg.batchSize = 0 ;
 		arg.batchFinished = 0 ;
 		
-		if ( numOfThreads > 10 )
+		if ( numOfThreads >= 6 )
 			useOutputThread = 1 ;
 
 		while ( 1 )
