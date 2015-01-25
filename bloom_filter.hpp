@@ -349,7 +349,7 @@ public:
 	   	blockFP[i] = pow( (double)i / BLOCK_SIZE, salt_.size() ) ;
 	   
 	   //printf( "(%llu)\n", table_size_ ) ;
-	   for ( i = 0, j = 0 ; i <raw_table_size_ ; ++i, j += bits_per_char )
+	   for ( i = 0, j = 0 ; i <raw_table_size_ && i < 1000000 ; ++i, j += bits_per_char )
 	   {
 		int tmp = bit_table_[i] ;
 		unsigned long long int t = 0 ;
