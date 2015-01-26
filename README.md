@@ -33,8 +33,8 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
 	    		or
 	    -K kmer_length genome_size
     Other parameters:
-	    -od: output_file_directory (default: ./)
-	    -t: number of threads to use (default: 1)
+	    -od output_file_directory: (default: ./)
+	    -t num_of_threads: number of threads to use (default: 1)
 	    -maxcor: the maximum number of correction for within a kmer_length window (default: 4)
 	    -trim: allow trimming (default: false)\n
 	    -discard: discard unfixable reads. Will LOSE paired-end matching when discarding (default: false)
