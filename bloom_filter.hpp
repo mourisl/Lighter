@@ -778,7 +778,7 @@ public:
 		std::size_t i, k ;
 		for ( k = 1 ; k <= (std::size_t)in ; k *= 2 )
 			;
-		k *= 2 ;
+		k *= 8 ;
 		lockMask = k - 1 ;
 		locks = ( pthread_mutex_t * )malloc( sizeof( pthread_mutex_t ) * k ) ;
 		for ( i = 0 ; i < k ; ++i )
