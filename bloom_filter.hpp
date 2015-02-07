@@ -784,6 +784,21 @@ public:
 		for ( i = 0 ; i < k ; ++i )
 			pthread_mutex_init( &locks[i], NULL ) ;
 	}
+
+	void Output( FILE *fp )
+	{
+		// Output the patterns
+		fwrite( patterns, sizeof( patterns ), 1, fp ) ;
+
+		// Output the bit table
+		fwrite( bit_table_, sizeof( unsigned char ), raw_table_size_, fp ) ;
+	}
+
+	void Input( FILE *fp )
+	{
+		fread( patterns, sizeof( patterns ), 1, fp ) ;
+		fread( bit_table_,sizeof( unsigned char ), raw_table_size_, fp ) ;
+	}
 };
 
 inline bloom_filter operator & (const bloom_filter& a, const bloom_filter& b)

@@ -524,7 +524,7 @@ int main( int argc, char *argv[] )
 			SampleKmersInRead( reads.seq, reads.qual, kmerLength, alpha, kmerCode, &kmers ) ;
 		}
 	}
-	else
+	else 
 	{
 		struct _SampleKmersThreadArg arg ;
 		void *pthreadStatus ;
@@ -553,6 +553,7 @@ int main( int argc, char *argv[] )
 	}
 	if ( numOfThreads > 1 && stable == false )
 		free( samplePatterns ) ;
+	//kmers.TemporaryInput( "sample_bf.out" ) ;
 
 	// Update the bloom filter's false positive rate.
 	// Compute the distribution of the # of sampled kmers from untrusted and trusted position
@@ -644,6 +645,9 @@ int main( int argc, char *argv[] )
 		}
 	}
 	PrintLog( "Finish storing trusted kmers" ) ;
+
+	//trustedKmers.TemporaryInput( "bf.out ") ;
+
 	// Step 3: error correction
 	//printf( "%lf %lf\n", kmers.GetFP(), trustedKmers.GetFP() ) ;
 	reads.Rewind() ;

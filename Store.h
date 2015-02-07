@@ -117,6 +117,20 @@ public:
 		return crCode < code ? crCode : code ;
 	}
 
+	void TemporaryOutput( char *file)
+	{
+		FILE *fp = fopen( file, "w" ) ;
+		bf.Output( fp ) ;
+		fclose( fp ) ;
+	}
+
+	void TemporaryInput( char *file ) 
+	{
+		FILE *fp = fopen( file, "r" ) ;
+		bf.Input( fp ) ;
+		fclose( fp ) ;
+	}
+
 	int Clear() 
 	{
 		return 0 ;

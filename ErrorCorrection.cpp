@@ -114,8 +114,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		if ( storedKmer[i] == false )
 			break ;
 	}
-	/*if ( !strcmp( read, "GTAAACGCCTTATCCGGCCTACGGAGGGTGCGGGAATTTGTAGGCCTGATAAGACGCGCAAGCGTCGCATCAGGCAGTCGGCACGGTTGCCGGATGCAGCG" ) )
-	//if ( !strcmp( read, "ATCATCAGAGGGTCTCGTGTAGTGCTCCAGTACCTGAAATGCTTACGTTG" ) )
+	/*if ( !strcmp( read, "TTGCGTAAGATGGGGGTACCCACGTGGTGTCAGAGTGTCTCTCATTTCGGTTTGATCTACGCAGATCTACAAAAAATGCGGGAGAATAGACGCAGAGTTCT" ) )
 	{
 		printf( "## %d\n", i ) ;
 		exit( 1 ) ;
@@ -170,9 +169,56 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		i = readLength + 1 ;
 	else
 	{
-		for ( i = k - 1 + 1 ; i < k - 1 + kmerLength - 1 + 1 ; ++i  )
+		if ( longestStoredKmerCnt < kmerLength )
 		{
-			kmerCode.Append( read[i] ) ;
+			for ( i = k - 1 + 1 ; i < k - 1 + kmerLength - 1 + 1 ; ++i  )
+			{
+				kmerCode.Append( read[i] ) ;
+			}
+		}
+		else
+		{
+			// Adjust the anchor if necessary
+			
+			// Adjust the right side
+			for ( j = kmerLength / 2 - 1 ; j >= 0 ; --j )
+			{
+				int c ;
+				KmerCode tmpKmerCode( kmerLength ) ;
+			
+				for ( i = k - j - 1 ; i < k - j + kmerLength - 1 ; ++i )
+					kmerCode.Append( read[i] ) ;
+				//printf( "%d %d %c\n", j, i, read[i - 1] ) ;
+				for ( c = 0 ; c < 4 ; ++c )
+				{
+					if ( numToNuc[c] == read[i - 1] )
+						continue ;
+					tmpKmerCode = kmerCode ;
+					tmpKmerCode.ShiftRight( 1 ) ;
+					tmpKmerCode.Append( numToNuc[c] ) ;
+					if ( kmers->IsIn( tmpKmerCode ) ) 
+					{	
+						// Test whether this branch makes sense
+						int t = 0 ;
+						for ( t = 0 ; t <= kmerLength / 2 && read[i + t] ; ++t ) // and it is should be a very good fix 
+						{
+							tmpKmerCode.Append( read[i + t] ) ;
+							if ( !kmers->IsIn( tmpKmerCode ) )
+								break ;
+						}
+						if ( t > kmerLength / 2 )
+							break ;
+					}
+				}
+				if ( c < 4 )
+				{
+					// adjust the anchor
+					--i ;
+					kmerCode.ShiftRight( 1 ) ;
+					break ;
+				}
+			}
+
 		}
 	}
 	/*for ( i = k ; i < k + kmerLength - 1 ; ++i  )
@@ -180,6 +226,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		kmerCode = ( kmerCode << (uint64_t)2 ) & mask ;
 		kmerCode = kmerCode | (uint64_t)nucToNum[ read[i] - 'A' ] ;
 	}*/
+
 
 	for ( ; i < readLength ; )
 	{
@@ -266,7 +313,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			}
 			//printf( "%d\n", j ) ;
 		}
-		//printf( "hi %d: %d %d=>%d, (%d): code=%llu\n", i, maxTo, to, maxChange, maxCnt, tmpKmerCode.GetCode() ) ;
+		//printf( "+hi %d: %d %d=>%d, (%d): code=%llu\n", i, maxTo, to, maxChange, maxCnt, tmpKmerCode.GetCode() ) ;
 
 		// TODO: if maxTo is far from i, then we may in a repeat. Try keep this base unfixed
 		//       see whether the next fixing makes sense.
@@ -341,17 +388,65 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	}
 
 	// Scan towards left
-	kmerCode.Restart() ;
-	for ( i = tag + 1 - 1 ; i < tag + kmerLength - 1 ; ++i )
-	{
-		kmerCode.Append( read[i] ) ;	
-	}
-	kmerCode.Append( 'A' ) ;
 	//printf( "%d\n", tag ) ;
 	if ( tag == 0 )
 	{
 		// Force skip
 		tag = -1 ;
+	}
+	else
+	{
+		if ( longestStoredKmerCnt < kmerLength )
+		{
+			kmerCode.Restart() ;
+			for ( i = tag + 1 - 1 ; i < tag + kmerLength - 1 ; ++i )
+			{
+				kmerCode.Append( read[i] ) ;	
+			}
+			kmerCode.Append( 'A' ) ;
+		}
+		else
+		{
+			// Adjust the left side of the anchor
+			for ( j = kmerLength / 2 - 1 ; j >= 0 ; --j )
+			{
+				int c ;
+				KmerCode tmpKmerCode( kmerLength ) ;
+				
+				kmerCode.Restart() ;
+				for ( i = tag + j ; i < tag + j + kmerLength ; ++i )
+					kmerCode.Append( read[i] ) ;
+				//printf( "%d %d %c\n", j, i, read[i - 1] ) ;
+				for ( c = 0 ; c < 4 ; ++c )
+				{
+					if ( numToNuc[c] == read[tag + j] )
+						continue ;
+					tmpKmerCode = kmerCode ;
+					tmpKmerCode.Append( 'A' ) ;
+					tmpKmerCode.Prepend( numToNuc[c] ) ;
+					if ( kmers->IsIn( tmpKmerCode ) ) 
+					{	
+						// Test whether this branch makes sense
+						int t = 0 ;
+						for ( t = 0 ; t <= kmerLength / 2 && tag + j - t - 1 >= 0 ; ++t ) // and it is should be a very good fix 
+						{
+							tmpKmerCode.Prepend( read[tag + j - t - 1] ) ;
+							if ( !kmers->IsIn( tmpKmerCode ) )
+								break ;
+						}
+						if ( t > kmerLength / 2 )
+							break ;
+					}
+				}
+				if ( c < 4 )
+				{
+					// adjust the anchor
+					tag = tag + j + 1 ;
+					kmerCode.Append( 'A' ) ;
+					break ;
+				}
+			}
+		}
 	}
 	//kmerCode = ( kmerCode << (uint64_t)2 ) & mask ;
 	for ( i = tag - 1 ; i >= 0 ;  )
