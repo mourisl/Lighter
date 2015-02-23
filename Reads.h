@@ -116,7 +116,7 @@ class Reads
 			GetFileName( file, fileName ) ;
 
 			int len = strlen( file ) ;
-			if ( file[ len - 2] == 'g' && file[ len - 1 ] == 'z' )
+			if ( file[ len - 2] == 'g' && file[ len - 1 ] == 'z' && compressLevel > 0 )
 			{
 				if ( FILE_TYPE[ fpUsed ] == 1 )
 					sprintf( buffer, "%s/%s.cor.fq.gz", outputDirectory, fileName ) ;

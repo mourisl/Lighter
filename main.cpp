@@ -71,7 +71,7 @@ void PrintHelp()
 		"\t-noQual: ignore the quality socre (default: false)\n"
 		"\t-newQual ascii_quality_score: set the quality for the bases corrected to the specified score (default: not used)\n"
 		"\t-stable: sequentialize the sampling stage, output the same result with different runs (default: false)\n"
-		"\t-zlib compress_level: set the compression level(1-9) of gzip (default: 1)\n" ) ;
+		"\t-zlib compress_level: set the compression level(0-9) of gzip (default: 1)\n" ) ;
 }
 
 uint64_t StringToUint64( char *s )   

@@ -156,9 +156,9 @@ public:
 
 	void SetCompressLevel( int cl )
 	{
-		if ( cl < 1 || cl > 9 )
+		if ( cl < 0 || cl > 9 )
 		{
-			fprintf( stderr, "Compress level must be 1-9.\n" ) ;
+			fprintf( stderr, "Compress level must be 0-9.\n" ) ;
 			exit( 1 ) ;
 		}
 		gzCompressLevel = cl ;
