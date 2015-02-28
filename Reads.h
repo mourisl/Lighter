@@ -38,6 +38,24 @@ class Reads
 			int len = (int)strlen( in ) ;
 			for ( i = len ; i >= 0 && in[i] != '.' && in[i] != '/' ; --i )
 				;
+			if ( i >= 0 && !strcmp( &in[i], ".gz" ) )
+			{
+				int tmp = i ;
+				for ( i = i - 1 ; i >= 0 && in[i] != '.' && in[i] != '/' ; --i )
+					;
+				in[tmp] = '\0' ;
+				if ( i >= 0 && ( !strcmp( &in[i], ".fastq" ) || !strcmp( &in[i], ".fasta" ) ||
+					!strcmp( &in[i], ".fq" ) || !strcmp( &in[i], ".fa" ) ) )
+				{
+					;
+				}
+				else
+				{
+					i = tmp ;
+				}
+				in[tmp] = '.' ;
+			}
+
 			for ( j = len ; j >= 0 && in[j] != '/' ; --j )
 				;
 			if ( i >= 0 && in[i] == '.' )
