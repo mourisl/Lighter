@@ -47,6 +47,10 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
             alpha is the sampling rate and decided by the user. A rule of thumb: alpha=(7/C), where C is the average coverage of the data set.
 	    When using "-K" instead of "-k", Lighter will go through the reads an extra pass to decide C. And for "-K", genome_size should be relative accurate.
 
+### Output
+
+For each input file (specified by -r), Lighter will create a corresponding file containing the corrected reads in the directory specified by "-od". If the name of a read file is like A.fq or A.fastq, the corresponding output file name is A.cor.fq. For A.fa or A.fasta, the output file is A.cor.fa. For A.fastq.gz or A.fq.gz, the output file is A.cor.fq.gz. For A.fasta.gz or A.fa.gz, the output file is A.cor.fa.gz.
+
 ### Example
 
 Suppose the data set is from E.Coli whose genome size is about 4.7M. If the data set has 3.3M reads in total with read length 100bp, then the average coverage is about 70x and we can set the alpha to be 7/70=0.1.
