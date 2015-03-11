@@ -91,11 +91,10 @@ void *SampleKmers_Thread( void *arg )
 
 				for ( i = 0 ; id[i] ; ++i )	
 					tag = tag * 17  + ( id[i] - 'A' ) ;
-				tag = tag * 17 ;
 
 				for ( i = 0 ; read[i] ; ++i )
 					tag = tag * 7 + ( read[i] - 'A' )  ;
-				tag = tag * 17 ;
+				
 				for ( i = 0 ; qual[i] ; ++i )
 					tag = tag * 17+ ( qual[i] - 'A' )  ;
 					
