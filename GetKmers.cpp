@@ -68,14 +68,17 @@ void *SampleKmers_Thread( void *arg )
 		{
 			for ( k = 0 ; k < tmp ; ++k )
 			{
-				int len ;
+				int len ; 
+				char *id = readBatch[k].id ;
 				char *read = readBatch[k].seq ;
 				char *qual = readBatch[k].qual ;
 				/*len = strlen( id ) ;		
 				  if ( id[len - 1] == '\n')
 				  id[len - 1] = '\0' ;*/
 
-				int tag = rand() % SAMPLE_PATTERN_COUNT ; // Decide to use which pattern
+				//int tag = rand() % SAMPLE_PATTERN_COUNT ; // Decide to use which pattern
+				int tag = 0 ;
+
 				len = (int)strlen( read ) ;
 				if ( read[len - 1] == '\n' )
 					read[len - 1] = '\0' ;
@@ -85,6 +88,22 @@ void *SampleKmers_Thread( void *arg )
 					if ( qual[len - 1] == '\n' )
 						qual[len - 1] = '\0' ;
 				}
+
+				for ( i = 0 ; id[i] ; ++i )	
+					tag = tag * 17  + ( id[i] - 'A' ) ;
+				tag = tag * 17 ;
+
+				for ( i = 0 ; read[i] ; ++i )
+					tag = tag * 7 + ( read[i] - 'A' )  ;
+				tag = tag * 17 ;
+				for ( i = 0 ; qual[i] ; ++i )
+					tag = tag * 17+ ( qual[i] - 'A' )  ;
+					
+				tag %= SAMPLE_PATTERN_COUNT ;
+				if ( tag < 0 )
+					tag += SAMPLE_PATTERN_COUNT ;
+				//tag = rand() % SAMPLE_PATTERN_COUNT ; // Decide to use which pattern
+				//printf( "%d\n", tag ) ;
 				//printf( "%s\n", read ) ;
 				//SampleKmersInRead( read, qual, myArg->kmerLength, myArg->alpha, 
 				//		kmerCode, myArg->kmers ) ;

@@ -70,7 +70,7 @@ void PrintHelp()
 		"\t-discard: discard unfixable reads. Will LOSE paired-end matching when discarding (default: false)\n"
 		"\t-noQual: ignore the quality socre (default: false)\n"
 		"\t-newQual ascii_quality_score: set the quality for the bases corrected to the specified score (default: not used)\n"
-		"\t-stable: sequentialize the sampling stage, output the same result with different runs (default: false)\n"
+		//"\t-stable: sequentialize the sampling stage, output the same result with different runs (default: false)\n"
 		"\t-zlib compress_level: set the compression level(0-9) of gzip (default: 1)\n" ) ;
 }
 
@@ -387,7 +387,7 @@ int main( int argc, char *argv[] )
 		}
 		else if ( !strcmp( "-stable", argv[i] ) )
 		{
-			stable = true ;
+			//stable = true ;
 		}
 		else if ( !strcmp( "-zlib", argv[i] ) )
 		{
@@ -497,7 +497,7 @@ int main( int argc, char *argv[] )
 	//printf( "Begin step1. \n" ) ; fflush( stdout ) ;
 	srand( 17 ) ;
 	// Build the patterns for sampling
-	if ( numOfThreads > 1 && stable == false )
+	if ( numOfThreads > 1 )//&& stable == false )
 	{
 		samplePatterns = ( struct _SamplePattern *)malloc( sizeof( *samplePatterns ) * SAMPLE_PATTERN_COUNT ) ;
 
@@ -517,7 +517,7 @@ int main( int argc, char *argv[] )
 		}
 	}
 	// It seems serialization is faster than parallel. NOT true now!
-	if ( numOfThreads == 1 || stable == true )
+	if ( numOfThreads == 1 ) //|| stable == true )
 	{
 		while ( reads.Next() != 0 )
 		{
@@ -551,7 +551,7 @@ int main( int argc, char *argv[] )
 			pthread_join( threads[i], &pthreadStatus ) ;
 		}
 	}
-	if ( numOfThreads > 1 && stable == false )
+	if ( numOfThreads > 1 ) //&& stable == false )
 		free( samplePatterns ) ;
 	//kmers.TemporaryInput( "sample_bf.out" ) ;
 
