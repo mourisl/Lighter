@@ -77,7 +77,7 @@ void *SampleKmers_Thread( void *arg )
 				  id[len - 1] = '\0' ;*/
 
 				//int tag = rand() % SAMPLE_PATTERN_COUNT ; // Decide to use which pattern
-				int tag = 0 ;
+				int tag = fileInd ;
 
 				len = (int)strlen( read ) ;
 				if ( read[len - 1] == '\n' )
