@@ -524,7 +524,7 @@ int main( int argc, char *argv[] )
 			SampleKmersInRead( reads.seq, reads.qual, kmerLength, alpha, kmerCode, &kmers ) ;
 		}
 	}
-	else 
+	else //if ( 0 ) 
 	{
 		struct _SampleKmersThreadArg arg ;
 		void *pthreadStatus ;
@@ -554,6 +554,7 @@ int main( int argc, char *argv[] )
 	if ( numOfThreads > 1 ) //&& stable == false )
 		free( samplePatterns ) ;
 	//kmers.TemporaryInput( "sample_bf.out" ) ;
+	//kmers.TemporaryOutput( "sample_bf.out" ) ;
 
 	// Update the bloom filter's false positive rate.
 	// Compute the distribution of the # of sampled kmers from untrusted and trusted position
@@ -607,7 +608,7 @@ int main( int argc, char *argv[] )
 	exit( 1 ) ;*/
 	PrintLog( "Finish sampling kmers" ) ;
 	
-	sprintf( buffer, "Bloom filter A's error rate: %lf", tableAFP ) ;
+	sprintf( buffer, "Bloom filter A's false positive rate: %lf", tableAFP ) ;
 	PrintLog( buffer ) ;
 	// Step 2: Store the trusted kmers
 	//printf( "Begin step2.\n") ; fflush( stdout ) ;
@@ -620,7 +621,7 @@ int main( int argc, char *argv[] )
 					kmerCode, &kmers, &trustedKmers ) ;
 		}
 	}
-	else
+	else //if ( 0 )
 	{
 		struct _StoreKmersThreadArg arg ;
 		void *pthreadStatus ;
@@ -647,6 +648,7 @@ int main( int argc, char *argv[] )
 	PrintLog( "Finish storing trusted kmers" ) ;
 
 	//trustedKmers.TemporaryInput( "bf.out ") ;
+	//trustedKmers.TemporaryOutput( "bf.out ") ;
 
 	// Step 3: error correction
 	//printf( "%lf %lf\n", kmers.GetFP(), trustedKmers.GetFP() ) ;
@@ -734,7 +736,6 @@ int main( int argc, char *argv[] )
 	}
 	else 
 	{
-		//printf( "hi\n" ) ;
 		int maxBatchSize = READ_BUFFER_PER_THREAD * ( numOfThreads - 1 ) ;
 		int batchSize[2] ;
 		bool init = true, canJoinOutputThread = false ;

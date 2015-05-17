@@ -179,46 +179,83 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		else
 		{
 			// Adjust the anchor if necessary
-			
-			// Adjust the right side
-			for ( j = kmerLength / 2 - 1 ; j >= 0 ; --j )
+			// Test whether the current anchor is good
+			for ( i = k ; i < k + kmerLength ; ++i )
+				kmerCode.Append( read[i] ) ;
+			int c ;
+			for ( c = 0 ; c < 4 ; ++c )
 			{
-				int c ;
-				KmerCode tmpKmerCode( kmerLength ) ;
-			
-				for ( i = k - j - 1 ; i < k - j + kmerLength - 1 ; ++i )
-					kmerCode.Append( read[i] ) ;
-				//printf( "%d %d %c\n", j, i, read[i - 1] ) ;
-				for ( c = 0 ; c < 4 ; ++c )
-				{
-					if ( numToNuc[c] == read[i - 1] )
-						continue ;
-					tmpKmerCode = kmerCode ;
-					tmpKmerCode.ShiftRight( 1 ) ;
-					tmpKmerCode.Append( numToNuc[c] ) ;
-					if ( kmers->IsIn( tmpKmerCode ) ) 
-					{	
-						// Test whether this branch makes sense
-						int t = 0 ;
-						for ( t = 0 ; t <= kmerLength / 2 && read[i + t] ; ++t ) // and it is should be a very good fix 
-						{
-							tmpKmerCode.Append( read[i + t] ) ;
-							if ( !kmers->IsIn( tmpKmerCode ) )
-								break ;
-						}
-						if ( t > kmerLength / 2 )
+				if ( numToNuc[c] == read[i - 1] )
+					continue ;
+
+				if ( numToNuc[c] == read[i - 1] )
+					continue ;
+				tmpKmerCode = kmerCode ;
+				tmpKmerCode.ShiftRight( 1 ) ;
+				tmpKmerCode.Append( numToNuc[c] ) ;
+				if ( kmers->IsIn( tmpKmerCode ) ) 
+				{	
+					// Test whether this branch makes sense
+					int t = 0 ;
+					for ( t = 0 ; t < kmerLength && read[i + t] ; ++t ) // and it is should be a very good fix 
+					{
+						tmpKmerCode.Append( read[i + t] ) ;
+						if ( !kmers->IsIn( tmpKmerCode ) )
 							break ;
 					}
-				}
-				if ( c < 4 )
-				{
-					// adjust the anchor
-					--i ;
-					kmerCode.ShiftRight( 1 ) ;
-					break ;
+					if ( !read[i + t] || t >= kmerLength )
+						break ;
 				}
 			}
 
+			if ( c < 4 )
+			{
+				//kmerCode.ShiftRight( 1 ) ; Seems wrong
+				for ( i = k - 1 ; i < k + kmerLength - 1 ; ++i )
+					kmerCode.Append( read[i] ) ;
+			}
+			else
+			{
+
+				// Adjust the right side
+				for ( j = kmerLength / 2 - 1 ; j >= 0 ; --j )
+				{
+					int c ;
+					KmerCode tmpKmerCode( kmerLength ) ;
+
+					for ( i = k - j - 1 ; i < k - j + kmerLength - 1 ; ++i )
+						kmerCode.Append( read[i] ) ;
+					//printf( "%d %d %c\n", j, i, read[i - 1] ) ;
+					for ( c = 0 ; c < 4 ; ++c )
+					{
+						if ( numToNuc[c] == read[i - 1] )
+							continue ;
+						tmpKmerCode = kmerCode ;
+						tmpKmerCode.ShiftRight( 1 ) ;
+						tmpKmerCode.Append( numToNuc[c] ) ;
+						if ( kmers->IsIn( tmpKmerCode ) ) 
+						{	
+							// Test whether this branch makes sense
+							int t = 0 ;
+							for ( t = 0 ; t <= kmerLength / 2 && read[i + t] ; ++t ) // and it is should be a very good fix 
+							{
+								tmpKmerCode.Append( read[i + t] ) ;
+								if ( !kmers->IsIn( tmpKmerCode ) )
+									break ;
+							}
+							if ( t > kmerLength / 2 )
+								break ;
+						}
+					}
+					if ( c < 4 )
+					{
+						// adjust the anchor
+						--i ;
+						kmerCode.ShiftRight( 1 ) ;
+						break ;
+					}
+				}
+			}
 		}
 	}
 	/*for ( i = k ; i < k + kmerLength - 1 ; ++i  )
@@ -407,43 +444,81 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		}
 		else
 		{
-			// Adjust the left side of the anchor
-			for ( j = kmerLength / 2 - 1 ; j >= 0 ; --j )
+			// Test whether the current anchor is good
+			int c ;
+			j = -1 ;
+			for ( i = tag -1 ; i < tag - 1 + kmerLength ; ++i )
+				kmerCode.Append( read[i] ) ;
+
+			for ( c = 0 ; c < 4 ; ++c )
 			{
-				int c ;
-				KmerCode tmpKmerCode( kmerLength ) ;
-				
+				if ( numToNuc[c] == read[tag + j] )
+					continue ;
+				tmpKmerCode = kmerCode ;
+				tmpKmerCode.Append( 'A' ) ;
+				tmpKmerCode.Prepend( numToNuc[c] ) ;
+				if ( kmers->IsIn( tmpKmerCode ) ) 
+				{	
+					// Test whether this branch makes sense
+					int t = 0 ;
+					for ( t = 0 ; t <= kmerLength - 1 && tag + j - t - 1 >= 0 ; ++t ) // and it is should be a very good fix 
+					{
+						tmpKmerCode.Prepend( read[tag + j - t - 1] ) ;
+						if ( !kmers->IsIn( tmpKmerCode ) )
+							break ;
+					}
+					if ( t > kmerLength - 1 || tag + j -t -1 < 0 )
+						break ;
+				}
+			}
+
+			if ( c < 4 )
+			{
+				j = 0 ;
 				kmerCode.Restart() ;
 				for ( i = tag + j ; i < tag + j + kmerLength ; ++i )
 					kmerCode.Append( read[i] ) ;
-				//printf( "%d %d %c\n", j, i, read[i - 1] ) ;
-				for ( c = 0 ; c < 4 ; ++c )
+			}
+			else
+			{
+				// Adjust the left side of the anchor
+				for ( j = kmerLength / 2 - 1 ; j >= 0 ; --j )
 				{
-					if ( numToNuc[c] == read[tag + j] )
-						continue ;
-					tmpKmerCode = kmerCode ;
-					tmpKmerCode.Append( 'A' ) ;
-					tmpKmerCode.Prepend( numToNuc[c] ) ;
-					if ( kmers->IsIn( tmpKmerCode ) ) 
-					{	
-						// Test whether this branch makes sense
-						int t = 0 ;
-						for ( t = 0 ; t <= kmerLength / 2 && tag + j - t - 1 >= 0 ; ++t ) // and it is should be a very good fix 
-						{
-							tmpKmerCode.Prepend( read[tag + j - t - 1] ) ;
-							if ( !kmers->IsIn( tmpKmerCode ) )
+					int c ;
+					KmerCode tmpKmerCode( kmerLength ) ;
+
+					kmerCode.Restart() ;
+					for ( i = tag + j ; i < tag + j + kmerLength ; ++i )
+						kmerCode.Append( read[i] ) ;
+					//printf( "%d %d %c\n", j, i, read[i - 1] ) ;
+					for ( c = 0 ; c < 4 ; ++c )
+					{
+						if ( numToNuc[c] == read[tag + j] )
+							continue ;
+						tmpKmerCode = kmerCode ;
+						tmpKmerCode.Append( 'A' ) ;
+						tmpKmerCode.Prepend( numToNuc[c] ) ;
+						if ( kmers->IsIn( tmpKmerCode ) ) 
+						{	
+							// Test whether this branch makes sense
+							int t = 0 ;
+							for ( t = 0 ; t <= kmerLength / 2 && tag + j - t - 1 >= 0 ; ++t ) // and it is should be a very good fix 
+							{
+								tmpKmerCode.Prepend( read[tag + j - t - 1] ) ;
+								if ( !kmers->IsIn( tmpKmerCode ) )
+									break ;
+							}
+							if ( t > kmerLength / 2 )
 								break ;
 						}
-						if ( t > kmerLength / 2 )
-							break ;
 					}
-				}
-				if ( c < 4 )
-				{
-					// adjust the anchor
-					tag = tag + j + 1 ;
-					kmerCode.Append( 'A' ) ;
-					break ;
+					if ( c < 4 )
+					{
+						// adjust the anchor
+						tag = tag + j + 1 ;
+						kmerCode.Append( 'A' ) ;
+						break ;
+					}
 				}
 			}
 		}
