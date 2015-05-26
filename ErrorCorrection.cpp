@@ -57,7 +57,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 
 	int kmerLength = kmerCode.GetKmerLength() ;
 	kmerCode.Restart() ;
-	for ( i = 0 ; i < kmerLength ; ++i )
+	for ( i = 0 ; i < kmerLength && read[i] ; ++i )
 	{
 		kmerCode.Append( read[i] ) ;
 	}
@@ -77,6 +77,9 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	}
 
 	readLength = i ;
+	if ( readLength < kmerLength )
+		return 0 ;
+	
 	trimStart = readLength ;
 	for ( i = 0 ; i < readLength ; ++i )
 		fix[i] = -1 ;
