@@ -106,6 +106,10 @@ void *SampleKmers_Thread( void *arg )
 				//printf( "%s\n", read ) ;
 				//SampleKmersInRead( read, qual, myArg->kmerLength, myArg->alpha, 
 				//		kmerCode, myArg->kmers ) ;
+
+				if ( len - 1 < kmerLength )
+					continue ;
+
 				for ( i = 0 ; i < kmerLength ; ++i )
 				{
 					kmerCode.Append( read[i] ) ;
@@ -196,10 +200,13 @@ void SampleKmersInRead( char *read, char *qual, int kmerLength, double alpha, Km
 			badQualPartialCount[i + 1] = i + 1 ;
 	}*/
 	kmerCode.Restart() ;
-	for ( i = 0 ; i < kmerLength ; ++i )
+	for ( i = 0 ; i < kmerLength && read[i] ; ++i )
 	{
 		kmerCode.Append( read[i] ) ;
 	}
+
+	if ( i < kmerLength )
+		return ;
 
 	p = rand() / (double)RAND_MAX ;
 	/*if ( badQualPartialCount[kmerLength] - badQualPartialCount[0] == 0 )
