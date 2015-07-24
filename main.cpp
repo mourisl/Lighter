@@ -211,7 +211,7 @@ void UpdateSummary( char *seq, int correction, int badSuffix, bool paraDiscard, 
 	if ( correction == 0 )
 		++summary.errorFreeReadsCnt ;			
 	else if ( correction > 0 )
-		++summary.corrCnt ;	
+		summary.corrCnt += correction ;	
 	else if ( paraDiscard ) // tmp < 0
 		++summary.discardReadsCnt ;
 
