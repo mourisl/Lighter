@@ -1,6 +1,8 @@
 #include "ErrorCorrection.h"
 #include <string.h>
 
+//#define DEBUG 
+
 extern char nucToNum[26] ; 
 extern char numToNuc[26] ;
 extern int MAX_CORRECTION ;
@@ -45,7 +47,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	int kmerCnt = 0 ;
 	int readLength = 0 ;
 	int fix[MAX_READ_LENGTH] ; // The fixed character for each untrusted position.
-	bool trusted[MAX_READ_LENGTH] ; // Do not correct these makred positions.
+	//bool trusted[MAX_READ_LENGTH] ; // Do not correct these makred positions.
 	int tag ;
 	int from, to ;
 	int trimStart = -1 ;
@@ -84,7 +86,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	for ( i = 0 ; i < readLength ; ++i )
 		fix[i] = -1 ;
 
-	for ( i = 0 ; i < readLength ; ++i )
+	/*for ( i = 0 ; i < readLength ; ++i )
 		trusted[i] = false ;
 	tag = -1 ;
 	for ( i = 0 ; i < kmerCnt ; ++i )
@@ -103,13 +105,15 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			}
 			tag = -1 ;
 		}
-	}
+	}*/
 	//printf( "%d %d %d\n", kmerLength, kmerCnt, i ) ;	
-	
-	/*printf( "%s\n", read ) ;
+
+#ifdef DEBUG
+	printf( "%s\n", read ) ;
 	for ( i = 0 ; i < kmerCnt ; ++i )
 		printf( "%d", storedKmer[i] ) ;
-	printf( "\n" ) ;*/
+	printf( "\n" ) ;
+#endif
 	//exit( 1 ) ;
 	// All the kmers are reliable. 
 	for ( i = 0 ; i < kmerCnt ; ++i )
@@ -353,7 +357,9 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			}
 			//printf( "%d\n", j ) ;
 		}
-		//printf( "+hi %d: %d %d=>%d, (%d): code=%llu\n", i, maxTo, to, maxChange, maxCnt, tmpKmerCode.GetCode() ) ;
+#ifdef DEBUG
+		printf( "+hi %d: %d %d=>%d, (%d): code=%llu\n", i, maxTo, to, maxChange, maxCnt, tmpKmerCode.GetCode() ) ;
+#endif
 
 		// TODO: if maxTo is far from i, then we may in a repeat. Try keep this base unfixed
 		//       see whether the next fixing makes sense.
@@ -667,11 +673,20 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			i = minTo ;
 		}*/
 	}
-	
-	/*printf( "fix: ") ;
+
+#ifdef DEBUG
+	printf( "fix: ") ;
 	for ( i = 0 ; i < readLength; ++i )
-		printf( "%d", fix[i] ) ;
-	printf( "\n" ) ;*/
+	{
+		if ( fix[i] == -1  )
+			printf( "5" ) ;
+		else if ( fix[i] == -2  )
+			printf( "6" ) ;
+		else
+			printf( "%d", fix[i] ) ;
+	}
+	printf( "\n" ) ;
+#endif
 
 	int ret = 0 ;
 	double correctCnt = 0 ;
@@ -710,6 +725,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		}
 	}*/
 
+	bool overCorrected = false ;
 	for ( i = 0 ; i < readLength ; ++i )
 	{
 		if ( i >= kmerLength && ( fix[i - kmerLength] >= 0 && read[i - kmerLength] != 'N' ) )
@@ -727,7 +743,41 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 				++correctCnt ;
 		}
 		if ( correctCnt > maxCorrection )
-			return -1 ;
+		{
+			//return -1 ;
+			if ( fix[i] >= 0 )
+			{
+				fix[i] = 4 ;
+				overCorrected = true ;
+			}
+		}
+	}
+
+	if ( overCorrected )
+	{
+		for ( i = 0 ; i < readLength ; ++i )	
+		{
+			if ( fix[i] == 4 )
+			{
+				fix[i] = -1 ; 
+				int tag = i ;
+				for ( j = i - 1 ; j >= 0 && j >= tag - kmerLength + 1 ; --j )
+					if ( fix[j] >= 0 )
+					{
+						fix[j] = -1 ;
+						tag = j ;
+					}
+
+				tag = i ;
+				for ( j = i + 1 ; j < readLength && j <= tag + kmerLength - 1 ; ++j )
+					if ( fix[j] >= 0 )
+					{
+						fix[j] = -1 ;
+						tag = j ;
+					}
+				i = j ;
+			}
+		}
 	}
 	/*if ( correctCnt > MAX_CORRECTION )
 	{
@@ -749,6 +799,21 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		//for ( i = 0 ; i < trimStart ; ++i )
 		
 	}*/
+
+#ifdef DEBUG
+	printf( "prefix=%d suffix=%d\n", badPrefix, trimStart ) ;
+	printf( "fix: ") ;
+	for ( i = 0 ; i < readLength; ++i )
+	{
+		if ( fix[i] == -1  )
+			printf( "5" ) ;
+		else if ( fix[i] == -2  )
+			printf( "6" ) ;
+		else
+			printf( "%d", fix[i] ) ;
+	}
+	printf( "\n" ) ;
+#endif
 
 	for ( i = badPrefix ; i < trimStart ; ++i )
 	{
@@ -841,6 +906,5 @@ int ErrorCorrection_Wrapper( char *read, char *qual, KmerCode& kmerCode, char ba
 	{
 		read[len - badSuffix] = '\0' ;
 	}
-
 	return correction ;
 }

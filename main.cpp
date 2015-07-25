@@ -176,7 +176,6 @@ char GetBadQuality( Reads &reads )
 			break ;
 	}
 	t2 = i ;
-	//printf( "%d %d\n", t1, t2 ) ;
 	return (char)( t2 < t1 ? t2 : t1 ) ;
 }
 
@@ -259,7 +258,7 @@ int main( int argc, char *argv[] )
 {
 	int kmerLength ;
 	double alpha = -1 ;
-	char *readId/**, read, *qual*/ ;
+	//char *readId/**, read, *qual*/ ;
 	char buffer[1023] ;
 	double untrustF[100][100] ;
 	//double trustF[100][100] ;
@@ -267,7 +266,7 @@ int main( int argc, char *argv[] )
 	char goodQuality = '\0', badQuality = '\0' ;
 	int badPrefix, badSuffix ;
 	bool paraDiscard ;
-	bool ignoreQuality, stable, inferAlpha ;
+	bool ignoreQuality, inferAlpha ; //stable ;
 	int zlibLevel ;
 	//double bloomFilterFP = 0.0005 ;
 	int i, j ;
@@ -303,7 +302,7 @@ int main( int argc, char *argv[] )
 	kmerLength = -1 ;
 	numOfThreads = 1 ;
 	ignoreQuality = false ;
-	stable = false ;
+	//stable = false ;
 	inferAlpha = false ;
 	zlibLevel = 1 ;
 	memset( &summary, 0, sizeof( summary ) ) ;
@@ -658,7 +657,7 @@ int main( int argc, char *argv[] )
 	{
 		while ( reads.Next() )
 		{
-			readId = reads.id ;
+			//readId = reads.id ;
 			//read = reads.seq ;
 			/*kmerCode = 0 ;
 			  for ( i = 0 ; i < kmerLength ; ++i )
