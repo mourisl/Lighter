@@ -297,14 +297,13 @@ void StoreTrustedKmers( char *read, char *qual, int kmerLength, char badQuality,
 {
 	bool occur[MAX_READ_LENGTH] ;
 	bool trustedPosition[MAX_READ_LENGTH] ;
-	int i, k ;
+	int i ;
 
 	kmerCode.Restart() ;
 	for ( i = 0 ; i < kmerLength ; ++i )
 	{
 		kmerCode.Append( read[i] ) ;
 	}
-	k = 0 ;
 	if ( kmers->IsIn( kmerCode) )
 		occur[i - kmerLength] = true ;
 	else
