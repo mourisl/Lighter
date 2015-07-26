@@ -47,12 +47,13 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	int kmerCnt = 0 ;
 	int readLength = 0 ;
 	int fix[MAX_READ_LENGTH] ; // The fixed character for each untrusted position.
-	//bool trusted[MAX_READ_LENGTH] ; // Do not correct these makred positions.
+	bool trusted[MAX_READ_LENGTH] ; // Do not correct these makred positions.
 	int tag ;
 	int from, to ;
 	int trimStart = -1 ;
 	int ambiguousCnt = 0 ;
-	
+	int alternativeCnt = 0 ;
+
 //	KmerCode kmerCode( inCode ) ;
 	KmerCode tmpKmerCode( 0 ) ;
 	badPrefix = badSuffix = 0 ;
@@ -86,7 +87,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	for ( i = 0 ; i < readLength ; ++i )
 		fix[i] = -1 ;
 
-	/*for ( i = 0 ; i < readLength ; ++i )
+	for ( i = 0 ; i < readLength ; ++i )
 		trusted[i] = false ;
 	tag = -1 ;
 	for ( i = 0 ; i < kmerCnt ; ++i )
@@ -98,14 +99,14 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		}
 		else
 		{
-			if ( tag != -1 && i - tag >= 3 )
+			if ( tag != -1 )// && i - tag >= 3 )
 			{
 				for ( j = tag ; j < i + kmerLength - 1 ; ++j )
 					trusted[j] = true ;
 			}
 			tag = -1 ;
 		}
-	}*/
+	}
 	//printf( "%d %d %d\n", kmerLength, kmerCnt, i ) ;	
 
 #ifdef DEBUG
@@ -242,6 +243,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 						tmpKmerCode.Append( numToNuc[c] ) ;
 						if ( kmers->IsIn( tmpKmerCode ) ) 
 						{	
+							++alternativeCnt ;
 							// Test whether this branch makes sense
 							int t = 0 ;
 							for ( t = 0 ; t <= kmerLength / 2 && read[i + t] ; ++t ) // and it is should be a very good fix 
@@ -278,6 +280,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		int maxTo = -1 ;
 		int maxChange = -1 ;
 		int maxCnt = 0 ;
+		int testCnt = 0 ;
 		from = i + 1 ;
 		to = ( i + kmerLength - 1 < readLength ) ? i + kmerLength - 1 : readLength - 1 ; 
 		for ( j = 0 ; j < 4 ; ++j )
@@ -289,9 +292,10 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			//printf( "?code=%llu\n", kmerCode.GetCode() ) ;
 			if ( !kmers->IsIn( kmerCode ) )
 				continue ;
-
+			
 			if ( maxTo == -1 )
 				maxTo = i ;
+			++testCnt ; 
 			// How many kmers this change can fix
 			for ( k = from ; k <= to ; ++k )
 			{
@@ -360,10 +364,10 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 #ifdef DEBUG
 		printf( "+hi %d: %d %d=>%d, (%d): code=%llu\n", i, maxTo, to, maxChange, maxCnt, tmpKmerCode.GetCode() ) ;
 #endif
-
+		if ( testCnt > 1 )
+			alternativeCnt += ( testCnt - 1 ) ;
 		// TODO: if maxTo is far from i, then we may in a repeat. Try keep this base unfixed
-		//       see whether the next fixing makes sense.
-		
+		//       see whether the next fixing makes sense.	
 		if ( maxTo == -1 || ( maxCnt > 1 && ( maxTo <= to || to - i + 1 < kmerLength ) ) )
 		{
 			//printf( "+%s\n", read ) ;
@@ -508,7 +512,8 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 						tmpKmerCode.Append( 'A' ) ;
 						tmpKmerCode.Prepend( numToNuc[c] ) ;
 						if ( kmers->IsIn( tmpKmerCode ) ) 
-						{	
+						{
+							++alternativeCnt ;
 							// Test whether this branch makes sense
 							int t = 0 ;
 							for ( t = 0 ; t <= kmerLength / 2 && tag + j - t - 1 >= 0 ; ++t ) // and it is should be a very good fix 
@@ -539,6 +544,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		int minTo = readLength + 1 ;
 		int minChange = -1 ;
 		int minCnt = 0 ;
+		int testCnt = 0 ;
 		from = i - 1 ;
 		to = ( i - kmerLength + 1 < 0 ) ? 0 : ( i - kmerLength + 1 ) ; 
 		for ( j = 0 ; j < 4 ; ++j )
@@ -556,6 +562,8 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 				continue ;
 			if ( minTo == tag + 1 )
 				minTo = i ;
+			++testCnt ;
+
 			// How many kmers this change can fix
 			for ( k = from ; k >= to ; --k )
 			{
@@ -609,7 +617,12 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 				}
 			}
 		}
-		//printf( "-hi %d: %d %d=>%d, (%d)\n", i, minTo, to, minChange, minCnt ) ;	
+#ifdef DEUBG
+		printf( "-hi %d: %d %d=>%d, (%d)\n", i, minTo, to, minChange, minCnt ) ;	
+#endif
+		if ( testCnt > 1 )
+			alternativeCnt += ( testCnt - 1 ) ;
+		
 		if ( minTo == readLength + 1 || ( minCnt > 1 && ( minTo >= to || i - to + 1 < kmerLength ) ) )
 		{
 			//printf( "-%s\n", read ) ;
@@ -726,6 +739,13 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	}*/
 
 	bool overCorrected = false ;
+	int adjustMaxCor = 0 ;
+	for ( i = 0 ; i < readLength ; ++i )	
+		if ( trusted[i] && fix[i] != -1 )
+			break ;
+	if ( alternativeCnt == 0 && i >= readLength )
+		adjustMaxCor = 1 ;
+
 	for ( i = 0 ; i < readLength ; ++i )
 	{
 		if ( i >= kmerLength && ( fix[i - kmerLength] >= 0 && read[i - kmerLength] != 'N' ) )
@@ -742,9 +762,11 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			else
 				++correctCnt ;
 		}
-		if ( correctCnt > maxCorrection )
+		int tmp = maxCorrection ;
+		if ( i >= kmerLength  && i + kmerLength - 1 < readLength )
+			tmp += adjustMaxCor ;
+		if ( correctCnt > tmp ) //maxCorrection )
 		{
-			//return -1 ;
 			if ( fix[i] >= 0 )
 			{
 				fix[i] = 4 ;
