@@ -867,6 +867,8 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	}*/
 	if ( ret == 0 && badPrefix == 0 && badSuffix == 0 && ambiguousCnt > 0 )
 		return -1 ;
+	if ( ret == 0 && badPrefix == 0 && badSuffix == 0 && overCorrected )
+		return -1 ;
 	return ret ;
 }
 
