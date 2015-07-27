@@ -329,7 +329,7 @@ class Reads
 			{
 				int tmp = NextWithBuffer( readBatch[ batchSize].id, readBatch[batchSize].seq,
 							readBatch[batchSize].qual, trimReturn, stopWhenFileEnds ) ;
-				if ( tmp == -1 && batchSize > 0 )
+				if ( tmp <= 0 && batchSize > 0 )
 				{
 					--currentFpInd ;
 					fileInd = currentFpInd ;
