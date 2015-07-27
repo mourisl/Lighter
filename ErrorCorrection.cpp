@@ -44,6 +44,7 @@ void *ErrorCorrection_Thread( void *arg )
 // return-which position is changed. -1: failed
 int CreateAnchor( char *read, char *qual, int *fix, bool *storedKmer, KmerCode &kmerCode, Store *kmers )
 {
+	return -1 ;
 	int readLength = strlen( read ) ;	
 	int kmerLength = kmerCode.GetKmerLength() ; 
 	int i, j, k ;
