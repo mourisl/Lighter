@@ -39,6 +39,105 @@ void *ErrorCorrection_Thread( void *arg )
 	return NULL ;
 }
 
+// If we could not find an anchor, it is mostly likely there are errors in every kmer.
+// We will try to find 1 position that can create a stretch of stored kmers.
+// return-which position is changed. -1: failed
+int CreateAnchor( char *read, char *qual, int *fix, bool *storedKmer, KmerCode &kmerCode, Store *kmers )
+{
+	int readLength = strlen( read ) ;	
+	int kmerLength = kmerCode.GetKmerLength() ; 
+	int i, j, k ;
+	
+	int maxLen = 0 ;
+	int maxLenStats[2] = {0, 0}; // 0-position, 1-which nucleutide changed to
+
+	// This stored the partial result of substitution, we use two arrays
+	// to keep the result for the optimal plan.
+	int tag = 0 ;
+	int stored[2][MAX_READ_LENGTH] ; 
+	int scnt = 0 ;
+
+	for ( i = 0 ; i < readLength ; ++i )
+	{
+		int from = i - kmerLength + 1 ;
+		if ( from < 0 )
+			from = 0 ;
+		for ( j = 0 ; j < 4 ; ++j )
+		{
+			if ( numToNuc[j] == read[i] )
+				continue ;	
+			kmerCode.Restart() ;
+			char c = read[i] ;
+			read[i] = numToNuc[j] ;
+
+			scnt = 0 ;
+			for ( k = from ; k < from + kmerLength - 1 ; ++k )
+				kmerCode.Append( read[k] ) ;
+			scnt = 0 ;
+			for ( ; k < readLength && k < i + kmerLength ; ++k, ++scnt )
+			{
+				kmerCode.Append( read[k] ) ;
+				if ( kmers->IsIn( kmerCode ) )
+					stored[tag][scnt] = 1 ;
+				else
+					stored[tag][scnt] = 0 ;
+			}
+
+			int sum = 0 ;
+			int max = 0 ;
+			for ( k = 0 ; k < scnt ; ++k )
+			{
+				if ( stored[tag][k] == 0 )
+				{
+					if ( sum > max )
+						max = sum ;
+					sum = 0 ;
+				}
+				else
+					++sum ;
+			}
+			if ( sum > max )
+				max = sum ;
+
+			if ( max > maxLen )
+			{
+				maxLen = max ;
+				maxLenStats[0] = i ;
+				maxLenStats[1] = j ;
+				/*for ( int l = 0 ; l < scnt ; ++l )
+					printf( "%d ", stored[tag][l] ) ;
+				printf( "\n" ) ;*/
+				tag = 1 - tag ; 
+			}
+			else if ( max > 0 && max == maxLen && qual[i] < qual[ maxLenStats[0] ] )
+			{
+				maxLenStats[0] = i ;
+				maxLenStats[1] = j ;
+				tag = 1 - tag ;
+			}
+			
+			read[i] = c ;
+		}
+	}
+
+	if ( maxLen == 0 )
+		return -1 ;
+
+	// Pass the effect of substitution
+	fix[ maxLenStats[0] ] = maxLenStats[1] ;
+	i = maxLenStats[0] ;
+	//printf( "%d: %d %d\n", maxLen, i, maxLenStats[1] ) ;
+	int from = i - kmerLength + 1 ;
+	if ( from < 0 )
+		from = 0 ;
+	for ( j = 0, k = from ; k + kmerLength - 1 < readLength && k <= i ; ++k, ++j )
+	{
+		//printf( "%d %d %d\n", j, k, stored[1 - tag][j] ) ;
+		storedKmer[k] = ( stored[1 - tag][j] == 1 ) ? true : false ;
+	}
+
+	return maxLenStats[0] ;
+}
 
 int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrection, char badQuality, Store *kmers, int &badPrefix, int &badSuffix )
 {
@@ -53,12 +152,16 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	int trimStart = -1 ;
 	int ambiguousCnt = 0 ;
 	int alternativeCnt = 0 ;
+	bool hasAnchor = false ;
+	int createAnchorPos = -1 ;
 
 //	KmerCode kmerCode( inCode ) ;
 	KmerCode tmpKmerCode( 0 ) ;
 	badPrefix = badSuffix = 0 ;
 
 	int kmerLength = kmerCode.GetKmerLength() ;
+
+
 	kmerCode.Restart() ;
 	for ( i = 0 ; i < kmerLength && read[i] ; ++i )
 	{
@@ -76,7 +179,10 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		if ( !kmers->IsIn( kmerCode ) )
 			storedKmer[ kmerCnt ] = false ;
 		else
+		{
 			storedKmer[ kmerCnt ] = true ;
+			hasAnchor = true ;
+		}
 	}
 
 	readLength = i ;
@@ -87,6 +193,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	for ( i = 0 ; i < readLength ; ++i )
 		fix[i] = -1 ;
 
+	
 	for ( i = 0 ; i < readLength ; ++i )
 		trusted[i] = false ;
 	tag = -1 ;
@@ -107,6 +214,16 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			tag = -1 ;
 		}
 	}
+
+	if ( !hasAnchor )
+	{
+		int createAnchorPos = CreateAnchor( read, qual, fix, storedKmer, kmerCode, kmers ) ;
+		if ( createAnchorPos == -1 )
+			return -1 ;
+
+		++alternativeCnt ;
+	}
+
 	//printf( "%d %d %d\n", kmerLength, kmerCnt, i ) ;	
 
 #ifdef DEBUG
@@ -156,7 +273,9 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	}
 
 	if ( longestStoredKmerCnt == 0 )
+	{
 		return -1 ;
+	}
 
 	if ( longestStoredKmerCnt >= kmerCnt )
 	{
@@ -177,6 +296,13 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		i = readLength + 1 ;
 	else
 	{
+		char backupC ;
+		if ( createAnchorPos != -1 )
+		{
+			backupC = read[ createAnchorPos ] ;
+			read[ createAnchorPos ] = numToNuc[ fix[ createAnchorPos ] ] ;
+		}
+
 		if ( longestStoredKmerCnt < kmerLength )
 		{
 			for ( i = k - 1 + 1 ; i < k - 1 + kmerLength - 1 + 1 ; ++i  )
@@ -265,6 +391,11 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 					}
 				}
 			}
+		}
+
+		if ( createAnchorPos != -1 )
+		{
+			read[ createAnchorPos ] = backupC ;
 		}
 	}
 	/*for ( i = k ; i < k + kmerLength - 1 ; ++i  )
