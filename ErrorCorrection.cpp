@@ -44,11 +44,11 @@ void *ErrorCorrection_Thread( void *arg )
 // return-which position is changed. -1: failed
 int CreateAnchor( char *read, char *qual, int *fix, bool *storedKmer, KmerCode &kmerCode, Store *kmers )
 {
-	return -1 ;
 	int readLength = strlen( read ) ;	
 	int kmerLength = kmerCode.GetKmerLength() ; 
 	int i, j, k ;
-	
+	//if ( readLength < 2 * kmerLength )
+	//	return -1 ;
 	int maxLen = 0 ;
 	int maxLenStats[2] = {0, 0}; // 0-position, 1-which nucleutide changed to
 
@@ -58,7 +58,15 @@ int CreateAnchor( char *read, char *qual, int *fix, bool *storedKmer, KmerCode &
 	int stored[2][MAX_READ_LENGTH] ; 
 	int scnt = 0 ;
 
-	for ( i = 0 ; i < readLength ; ++i )
+	int start = readLength / 2 - kmerLength ;
+	int end = readLength / 2 + kmerLength + 1 ;
+	/*if ( start < 0 )
+		start = 0 ;
+	if ( end > readLength )
+		end = readLength ;*/
+	start = 0 ;
+	end = readLength ;
+	for ( i = start ; i < end ; ++i )
 	{
 		int from = i - kmerLength + 1 ;
 		if ( from < 0 )
@@ -66,22 +74,47 @@ int CreateAnchor( char *read, char *qual, int *fix, bool *storedKmer, KmerCode &
 		for ( j = 0 ; j < 4 ; ++j )
 		{
 			if ( numToNuc[j] == read[i] )
-				continue ;	
-			kmerCode.Restart() ;
+				continue ;
 			char c = read[i] ;
 			read[i] = numToNuc[j] ;
+			
+			// For efficiency, use one kmer to test whether we want to choose this candidate
+			int l = i - kmerLength / 2 + 1 ;
+			if ( l < 0 )
+				l = 0 ;
+			if ( l + kmerLength - 1 >= readLength )
+				l = readLength - 1 - kmerLength + 1 ;
+			kmerCode.Restart() ;
+			for ( k = l ; k <= l + kmerLength - 1 ; ++k )
+				kmerCode.Append( read[k] ) ;
+			if ( !kmers->IsIn( kmerCode ) )
+			{
+				read[i] = c ;
+				continue ;
+			}
 
 			scnt = 0 ;
 			for ( k = from ; k < from + kmerLength - 1 ; ++k )
 				kmerCode.Append( read[k] ) ;
 			scnt = 0 ;
+			int missCnt = 0 ;
+			int hitCnt = 0 ;
 			for ( ; k < readLength && k < i + kmerLength ; ++k, ++scnt )
 			{
 				kmerCode.Append( read[k] ) ;
 				if ( kmers->IsIn( kmerCode ) )
+				{
 					stored[tag][scnt] = 1 ;
+					++hitCnt ;
+				}
 				else
+				{
 					stored[tag][scnt] = 0 ;
+					++missCnt ;
+					
+					if ( kmerLength - missCnt < maxLen )
+						break ;
+				}
 			}
 
 			int sum = 0 ;
@@ -109,6 +142,9 @@ int CreateAnchor( char *read, char *qual, int *fix, bool *storedKmer, KmerCode &
 					printf( "%d ", stored[tag][l] ) ;
 				printf( "\n" ) ;*/
 				tag = 1 - tag ; 
+				
+				//read[i] = c ;
+				//break ;
 			}
 			else if ( max > 0 && max == maxLen && qual[i] < qual[ maxLenStats[0] ] )
 			{
@@ -122,7 +158,10 @@ int CreateAnchor( char *read, char *qual, int *fix, bool *storedKmer, KmerCode &
 	}
 
 	if ( maxLen == 0 )
+	{
+		//printf( "%s\n", read ) ;
 		return -1 ;
+	}
 
 	// Pass the effect of substitution
 	fix[ maxLenStats[0] ] = maxLenStats[1] ;
@@ -218,7 +257,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 
 	if ( !hasAnchor )
 	{
-		int createAnchorPos = CreateAnchor( read, qual, fix, storedKmer, kmerCode, kmers ) ;
+		createAnchorPos = CreateAnchor( read, qual, fix, storedKmer, kmerCode, kmers ) ;
 		if ( createAnchorPos == -1 )
 			return -1 ;
 
@@ -297,7 +336,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		i = readLength + 1 ;
 	else
 	{
-		char backupC ;
+		char backupC = '\0' ;
 		if ( createAnchorPos != -1 )
 		{
 			backupC = read[ createAnchorPos ] ;
@@ -749,7 +788,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 				}
 			}
 		}
-#ifdef DEUBG
+#ifdef DEBUG
 		printf( "-hi %d: %d %d=>%d, (%d)\n", i, minTo, to, minChange, minCnt ) ;	
 #endif
 		if ( testCnt > 1 )
