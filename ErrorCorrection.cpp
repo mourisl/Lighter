@@ -48,7 +48,7 @@ int CreateAnchor( char *read, char *qual, int *fix, bool *storedKmer, KmerCode &
 	int kmerLength = kmerCode.GetKmerLength() ; 
 	int i, j, k ;
 	//if ( readLength < 2 * kmerLength )
-	//	return -1 ;
+  	//	return -1 ;
 	int maxLen = 0 ;
 	int maxLenStats[2] = {0, 0}; // 0-position, 1-which nucleutide changed to
 
@@ -146,7 +146,7 @@ int CreateAnchor( char *read, char *qual, int *fix, bool *storedKmer, KmerCode &
 				//read[i] = c ;
 				//break ;
 			}
-			else if ( max > 0 && max == maxLen && qual[i] < qual[ maxLenStats[0] ] )
+			else if ( max > 0 && max == maxLen && qual[0] != '\0' && qual[i] < qual[ maxLenStats[0] ] )
 			{
 				maxLenStats[0] = i ;
 				maxLenStats[1] = j ;
@@ -921,14 +921,14 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	{
 		if ( i >= kmerLength && ( fix[i - kmerLength] >= 0 && read[i - kmerLength] != 'N' ) )
 		{
-			if ( qual[i - kmerLength] <= badQuality )
+			if ( qual[0] != '\0' && qual[i - kmerLength] <= badQuality )
 				correctCnt -= 0.5 ;
 			else
 				--correctCnt ;
 		}
 		if ( fix[i] >= 0 && read[i] != 'N' )
 		{
-			if ( qual[i] <= badQuality )
+			if ( qual[0] != '\0' && qual[i] <= badQuality )
 				correctCnt += 0.5 ;
 			else
 				++correctCnt ;
