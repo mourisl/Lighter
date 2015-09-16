@@ -71,7 +71,9 @@ void PrintHelp()
 		"\t-noQual: ignore the quality socre (default: false)\n"
 		"\t-newQual ascii_quality_score: set the quality for the bases corrected to the specified score (default: not used)\n"
 		//"\t-stable: sequentialize the sampling stage, output the same result with different runs (default: false)\n"
-		"\t-zlib compress_level: set the compression level(0-9) of gzip (default: 1)\n" ) ;
+		"\t-zlib compress_level: set the compression level(0-9) of gzip (default: 1)\n"
+		"\t-h: print the help message and quit\n"
+		"\t-v: print the version information and quit\n") ;
 }
 
 uint64_t StringToUint64( char *s )   
@@ -393,6 +395,16 @@ int main( int argc, char *argv[] )
 			zlibLevel = atoi( argv[i+1] ) ;
 			reads.SetCompressLevel( zlibLevel ) ;
 			++i ;
+		}
+		else if ( !strcmp( "-h", argv[i] ) )
+		{
+			PrintHelp() ;
+			exit( 0 ) ;
+		}
+		else if ( !strcmp( "-v", argv[i] ) )
+		{
+			printf( "Lighter v1.0.7\n") ;
+			exit( 0 ) ;
 		}
 		else
 		{

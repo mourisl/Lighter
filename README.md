@@ -41,6 +41,8 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
 	    -noQual: ignore the quality socre (default: false)
 	    -newQual ascii_quality_score: set the quality for the bases corrected to the specified score (default: not used)
 	    -zlib compress_level: set the compression level(1-9) of gzip (default: 1)
+	    -h: print the help message and quit
+	    -v: print the version information and quit
 
     NOTICE: genome_size does not need to be accurate, but it should be at least as large as the size of the sequenced genome.
             alpha is the sampling rate and decided by the user. A rule of thumb: alpha=(7/C), where C is the average coverage of the data set.
