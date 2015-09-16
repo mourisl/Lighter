@@ -62,7 +62,7 @@ Paired-end data set:
 
     ./lighter -r left.fq -r right.fq -k 17 5000000 0.1 -t 10
 
-Instead of "-k 17 5000000 0.1", you can use "-K 17 4700000" where Lighter will go through the data set an extra pass to decide the sampling rate. 
+Instead of "-k 17 5000000 0.1", you can use "-K 17 4700000" so that Lighter will go through the data set an extra pass to decide alpha. 
 
 ### Terms of use
 
