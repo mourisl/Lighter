@@ -287,10 +287,10 @@ int main( int argc, char *argv[] )
 	pthread_t *threads = NULL;
 	pthread_mutex_t mutexSampleKmers, mutexStoreKmers ;
 
-	if ( argc == 1 || !strcmp( "-h", argv[1] ) )
+	if ( argc == 1 )
 	{
 		PrintHelp() ;
-		exit( 0 ) ;
+		exit( EXIT_FAILURE ) ;
 	}
 
 	Reads reads ;
@@ -333,17 +333,17 @@ int main( int argc, char *argv[] )
 		{
 			if(i + 1 >= argc) {
 				fprintf( stderr, "Must specify k-mer length, genome size, and alpha after -k\n");
-				exit(1);
+				exit( EXIT_FAILURE );
 			}
 			kmerLength = atoi( argv[i + 1] ) ;
 			if(i + 2 >= argc) {
 				fprintf( stderr, "Must specify k-mer length, genome size, and alpha after -k\n");
-				exit(1);
+				exit( EXIT_FAILURE );
 			}
 			genomeSize = StringToUint64( argv[i + 2] ) ;
 			if(i + 3 >= argc) {
 				fprintf( stderr, "Must specify k-mer length, genome size, and alpha after -k\n");
-				exit(1);
+				exit( EXIT_FAILURE );
 			}
 			alpha = (double)atof( argv[i + 3] ) ;
 			i += 3 ;
@@ -352,12 +352,12 @@ int main( int argc, char *argv[] )
 		{
 			if(i + 1 >= argc) {
 				fprintf( stderr, "Must specify k-mer length, genome size after -K\n");
-				exit(1);
+				exit( EXIT_FAILURE );
 			}
 			kmerLength = atoi( argv[i + 1] ) ;
 			if(i + 2 >= argc) {
 				fprintf( stderr, "Must specify k-mer length, genome size after -K\n");
-				exit(1);
+				exit( EXIT_FAILURE );
 			}
 			genomeSize = StringToUint64( argv[i + 2] ) ;
 
@@ -411,7 +411,7 @@ int main( int argc, char *argv[] )
 		else
 		{
 			fprintf( stderr, "Unknown argument %s\n", argv[i] ) ;
-			exit( 1 ) ;
+			exit( EXIT_FAILURE ) ;
 		}
 	}
 
@@ -427,18 +427,18 @@ int main( int argc, char *argv[] )
 	if ( kmerLength == -1 )
 	{
 		fprintf( stderr, "Require -k or -K parameter!\n" ) ;
-		exit( 1 ) ;
+		exit( EXIT_FAILURE ) ;
 	}
 	if ( kmerLength > 32 )
 	{
 		fprintf( stderr, "K-mer length must be no larger than 32.\n") ;
-		exit( 1 ) ;
+		exit( EXIT_FAILURE ) ;
 	}
 	
 	if ( alpha != -1 && inferAlpha == true )
 	{
 		fprintf( stderr, "Can not use both -k and -K.\n" ) ;
-		exit( 1 ) ;
+		exit( EXIT_FAILURE ) ;
 	}
 
 	PrintLog( "=============Start====================" ) ;
