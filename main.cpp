@@ -18,6 +18,8 @@
 #include "pthread.h"
 
 
+char LIGHTER_VERSION[] = "Lighter v1.0.7" ;
+
 char nucToNum[26] = { 0, -1, 1, -1, -1, -1, 2, 
 	-1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, 3,
@@ -403,7 +405,7 @@ int main( int argc, char *argv[] )
 		}
 		else if ( !strcmp( "-v", argv[i] ) )
 		{
-			printf( "Lighter v1.0.7\n") ;
+			printf( "%s\n", LIGHTER_VERSION ) ;
 			exit( 0 ) ;
 		}
 		else
