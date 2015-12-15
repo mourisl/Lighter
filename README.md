@@ -52,6 +52,16 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
 
 For each input file (specified by -r), Lighter will create a corresponding file containing the corrected reads in the directory specified by "-od". If the name of a read file is like A.fq or A.fastq, the corresponding output file name is A.cor.fq. For A.fa or A.fasta, the output file is A.cor.fa. For A.fastq.gz or A.fq.gz, the output file is A.cor.fq.gz. For A.fasta.gz or A.fa.gz, the output file is A.cor.fa.gz.
 
+For each header line, Lighter will append some information regarding the correction result. 
+	
+	"cor": some bases of the sequence are corrected
+	"bad_suffix", "bad_prefix": the errors in the suffix or prefix of indicated length could not be corrected
+	"unfixable_error": the errors could not be corrected
+	There are some two-characters string to indicate the reason why Lighter could not correct the errors:
+		"lc": low coverage
+		"ak": ambiguous kmer
+		"oc": over corrected
+
 ### Example
 
 Suppose the data set is from E.Coli whose genome size is about 4.7M. If the data set has 3.3M reads in total with read length 100bp, then the average coverage is about 70x and we can set the alpha to be 7/70=0.1.
