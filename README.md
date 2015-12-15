@@ -59,7 +59,7 @@ For each header line, Lighter will append some information regarding the correct
 	"unfixable_error": the errors could not be corrected
 	There are some two-characters string to indicate the reason why Lighter could not correct the errors:
 		"lc": low coverage
-		"ak": ambiguous kmer
+		"ak": ambiguous candidate kmer
 		"oc": over corrected
 
 ### Example
