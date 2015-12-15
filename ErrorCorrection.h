@@ -25,6 +25,6 @@ void *ErrorCorrection_Thread( void *arg ) ;
 
 //@ return:0: this read is correct. -1-this read is unfixable. Otherwise, return the number 
 // of corrected positions.
-int ErrorCorrection_Wrapper( char *read, char *qual, KmerCode& kmerCode, char badQuality, Store *kmers, int &badPrefix, int &badSuffix ) ;
+int ErrorCorrection_Wrapper( char *read, char *qual, KmerCode& kmerCode, char badQuality, Store *kmers, int &badPrefix, int &badSuffix, int &info ) ;
 
 #endif

@@ -459,8 +459,8 @@ int main( int argc, char *argv[] )
 	// Prepare data structures and other data.
 	//Store kmers(1000000000ull) ;
 	//Store trustedKmers(1000000000ull) ;
-	Store kmers((uint64_t)genomeSize * 1.5, 0.01 ) ;
-	Store trustedKmers((uint64_t)genomeSize * 1.5, 0.0005 ) ;
+	Store kmers((uint64_t)( genomeSize * 1.5 ), 0.01 ) ;
+	Store trustedKmers((uint64_t)( genomeSize * 1.5 ), 0.0005 ) ;
 
 
 	if ( numOfThreads > 1 )
@@ -697,7 +697,8 @@ int main( int argc, char *argv[] )
 			}
 			}
 			continue ;*/
-			int tmp = ErrorCorrection_Wrapper( reads.seq, reads.qual, kmerCode, badQuality, &trustedKmers, badPrefix, badSuffix ) ;
+			int info ;
+			int tmp = ErrorCorrection_Wrapper( reads.seq, reads.qual, kmerCode, badQuality, &trustedKmers, badPrefix, badSuffix, info ) ;
 
 			//if ( reads.HasQuality() )
 			//	
@@ -705,7 +706,7 @@ int main( int argc, char *argv[] )
 			//	readId[0] = '>' ;
 			UpdateSummary( reads.seq, tmp, badSuffix, paraDiscard, summary ) ;			
 
-			reads.Output( tmp, badPrefix, badSuffix, ALLOW_TRIMMING ) ;
+			reads.Output( tmp, badPrefix, badSuffix, info, ALLOW_TRIMMING ) ;
 		}
 	}
 	else if ( numOfThreads == 2 )

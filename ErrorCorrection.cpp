@@ -12,7 +12,7 @@ extern int SET_NEW_QUAL ;
 void *ErrorCorrection_Thread( void *arg )
 {
 	int ind ;
-	int correction, badPrefix, badSuffix ;
+	int correction, badPrefix, badSuffix, info ;
 	struct _ErrorCorrectionThreadArg *myArg = ( struct _ErrorCorrectionThreadArg *)arg ; 	
 	bool init = true ;
 	KmerCode kmerCode( myArg->kmerLength ) ;
@@ -28,10 +28,11 @@ void *ErrorCorrection_Thread( void *arg )
 		if ( ind >= myArg->batchSize )
 			break ;
 		correction = ErrorCorrection_Wrapper( myArg->readBatch[ind].seq, myArg->readBatch[ind].qual, kmerCode, 
-					myArg->badQuality, myArg->trustedKmers, badPrefix, badSuffix ) ;
+					myArg->badQuality, myArg->trustedKmers, badPrefix, badSuffix, info ) ;
 		myArg->readBatch[ind].correction = correction ;
 		myArg->readBatch[ind].badPrefix = badPrefix ;
 		myArg->readBatch[ind].badSuffix = badSuffix ;
+		myArg->readBatch[ind].info = info ;
 		init = false ;
 	}
 
@@ -179,7 +180,7 @@ int CreateAnchor( char *read, char *qual, int *fix, bool *storedKmer, KmerCode &
 	return maxLenStats[0] ;
 }
 
-int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrection, char badQuality, Store *kmers, int &badPrefix, int &badSuffix )
+int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrection, char badQuality, Store *kmers, int &badPrefix, int &badSuffix, int &info )
 {
 	int i, j, k ;	
 	bool storedKmer[MAX_READ_LENGTH] ;
@@ -194,10 +195,13 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	int alternativeCnt = 0 ;
 	bool hasAnchor = false ;
 	int createAnchorPos = -1 ;
+	
+	bool noCandidateKmer = false ;
 
 //	KmerCode kmerCode( inCode ) ;
 	KmerCode tmpKmerCode( 0 ) ;
 	badPrefix = badSuffix = 0 ;
+	info = 0 ;
 
 	int kmerLength = kmerCode.GetKmerLength() ;
 
@@ -259,7 +263,10 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	{
 		createAnchorPos = CreateAnchor( read, qual, fix, storedKmer, kmerCode, kmers ) ;
 		if ( createAnchorPos == -1 )
+		{
+			info = 3 ;
 			return -1 ;
+		}
 
 		++alternativeCnt ;
 	}
@@ -314,6 +321,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 
 	if ( longestStoredKmerCnt == 0 )
 	{
+		info = 3 ;
 		return -1 ;
 	}
 
@@ -546,7 +554,10 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			// trim
 			//if ( maxCnt > 1 )
 			//{
+			if ( maxTo == -1 )
+				noCandidateKmer = true ;
 			trimStart = i ;
+			info = 2 ;
 			break ;
 			//}
 			//else
@@ -798,7 +809,10 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		{
 			//printf( "-%s\n", read ) ;
 			//return -1 ;
+			if ( minTo == readLength + 1 )
+				noCandidateKmer = true ;
 			badPrefix = i + 1 ;
+			info = 2 ;
 			break ;
 		}
 		//printf( "---%d %d\n", minChange,  nucToNum[read[0] - 'A'] ) ;
@@ -1037,37 +1051,52 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 		exit( 1 ) ;
 	}*/
 	if ( ret == 0 && badPrefix == 0 && badSuffix == 0 && ambiguousCnt > 0 )
-		return -1 ;
-	if ( ret == 0 && badPrefix == 0 && badSuffix == 0 && overCorrected )
-		return -1 ;
+	{
+		info = 2 ;		
+		ret = -1 ;
+	}
+	else if ( ret == 0 && badPrefix == 0 && badSuffix == 0 && overCorrected )
+	{
+		info = 1 ;
+		ret = -1 ;
+	}
+	if ( noCandidateKmer )
+		info = 3 ;
+	/*if ( ret == 0 && badSuffix > 0 )	
+	{
+		printf( "%d\n", info ) ;
+	}*/
 	return ret ;
 }
 
-int ErrorCorrection_Wrapper( char *read, char *qual, KmerCode& kmerCode, char badQuality, Store *kmers, int &badPrefix, int &badSuffix )
+int ErrorCorrection_Wrapper( char *read, char *qual, KmerCode& kmerCode, char badQuality, Store *kmers, int &badPrefix, int &badSuffix, int &info )
 {
 	int correction ;
-	int tmpBadPrefix, tmpBadSuffix ;
+	int tmpBadPrefix, tmpBadSuffix, tmpInfo ;
 	int len = (int)strlen( read ) ;
 	int interim = 0 ;
 
+	info = 0 ;
 	correction = ErrorCorrection( read, qual, kmerCode, MAX_CORRECTION, badQuality, kmers, 
-			tmpBadPrefix, tmpBadSuffix ) ;
-
+			tmpBadPrefix, tmpBadSuffix, tmpInfo ) ;
+	
 	if ( correction == -1 )
 	{
 		badPrefix = badSuffix = 0 ;
+		info = tmpInfo ;
 		return -1 ;
 	}
 
 	badPrefix = tmpBadPrefix ;
 	badSuffix = tmpBadSuffix ;
+	info = tmpInfo ;
 	if ( badPrefix > len / 2 || badPrefix > kmerCode.GetKmerLength() * 2 )
 	{
 		int tmp ;
 		char c = read[badPrefix] ;
 		read[ badPrefix ] = '\0' ;
 		tmp = ErrorCorrection( read, qual, kmerCode, MAX_CORRECTION, badQuality, kmers,   
-				tmpBadPrefix, tmpBadSuffix ) ;
+				tmpBadPrefix, tmpBadSuffix, tmpInfo ) ;
 
 		read[ badPrefix ] = c ;
 		if ( tmp != -1 )
@@ -1076,6 +1105,8 @@ int ErrorCorrection_Wrapper( char *read, char *qual, KmerCode& kmerCode, char ba
 			correction += tmp ;
 			interim += tmpBadSuffix ;
 		}
+		if ( tmpInfo > info )
+			info = tmpInfo ;
 	}
 
 	if ( badSuffix > len / 2 || badSuffix > kmerCode.GetKmerLength() * 2 )
@@ -1083,13 +1114,16 @@ int ErrorCorrection_Wrapper( char *read, char *qual, KmerCode& kmerCode, char ba
 		int tmp ;
 
 		tmp = ErrorCorrection( read + len - badSuffix, qual + len - badSuffix, kmerCode, MAX_CORRECTION, badQuality, kmers, 
-				tmpBadPrefix, tmpBadSuffix ) ;	
+				tmpBadPrefix, tmpBadSuffix, tmpInfo ) ;	
 		if ( tmp != -1 )
 		{
 			badSuffix = tmpBadSuffix ;
 			correction += tmp ;
 			interim += tmpBadPrefix ;
 		}
+
+		if ( tmpInfo > info )
+			info = tmpInfo ;
 	}
 
 	if ( correction == 0 && interim > 0 )

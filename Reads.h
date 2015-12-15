@@ -18,6 +18,7 @@ struct _Read
 
 	int correction ;
 	int badPrefix, badSuffix ;
+	int info ;
 } ;
 
 class Reads
@@ -258,9 +259,17 @@ class Reads
 			return 1 ;
 		}
 
-		void Output( int correction, int badPrefix, int badSuffix, bool allowTrimming )
+		void Output( int correction, int badPrefix, int badSuffix, int info, bool allowTrimming )
 		{
 			/* char buffer[1024] ; */
+			char failReason[4] = "" ;
+			if ( info == 1 )
+				strcpy( failReason, " oc" ) ;
+			else if ( info == 2 )
+				strcpy( failReason, " ak" ) ;
+			else if ( info == 3 )
+				strcpy( failReason, " lc" ) ;
+
 			if ( correction == 0 && badPrefix == 0 && badSuffix == 0 )
 			{
 				outputFp[currentFpInd].Printf( "%s\n%s\n", id, seq ) ;
@@ -276,7 +285,8 @@ class Reads
 
 				if ( discard )
 					return ;
-				outputFp[ currentFpInd].Printf( "%s unfixable_error\n%s\n", id, seq ) ;
+									
+				outputFp[ currentFpInd].Printf( "%s unfixable_error%s\n%s\n", id, failReason, seq ) ;
 				if ( FILE_TYPE[ currentFpInd ] != 0 )
 					outputFp[ currentFpInd ].Printf( "+\n%s\n", qual ) ;
 				//printf( "%s\n%s\n", readId, read ) ;
@@ -310,7 +320,7 @@ class Reads
 						sprintf( buffer3, " bad_suffix=%d", badSuffix ) ;
 				}
 
-				outputFp[ currentFpInd ].Printf( "%s%s%s%s\n%s\n", id, buffer1, buffer2, buffer3, seq ) ;
+				outputFp[ currentFpInd ].Printf( "%s%s%s%s%s\n%s\n", id, buffer1, buffer2, buffer3, failReason, seq ) ;
 				if ( FILE_TYPE[ currentFpInd ] != 0 )
 				{
 					if ( allowTrimming )
@@ -363,7 +373,16 @@ class Reads
 				int correction = readBatch[i].correction ;
 				int badPrefix = readBatch[i].badPrefix ;
 				int badSuffix = readBatch[i].badSuffix ;
+				int info = readBatch[i].info ;
 				
+				char failReason[4] = "" ;
+				if ( info == 1 )
+					strcpy( failReason, " oc" ) ;
+				else if ( info == 2 )
+					strcpy( failReason, " ak" ) ;
+				else if ( info == 3 )
+					strcpy( failReason, " lc" ) ;
+
 				if ( correction == 0 && badPrefix == 0 && badSuffix == 0 )
 				{
 					outputFp[ fileInd ].Printf( "%s\n%s\n", id, seq ) ;
@@ -378,7 +397,7 @@ class Reads
 					  }*/
 					if ( discard )
 						continue ;
-					outputFp[ fileInd ].Printf( "%s unfixable_error\n%s\n", id, seq ) ;
+					outputFp[ fileInd ].Printf( "%s unfixable_error%s\n%s\n", id, failReason, seq ) ;
 					if ( FILE_TYPE[ fileInd ] != 0 )
 						outputFp[ fileInd ].Printf( "+\n%s\n", qual ) ;
 					//printf( "%s\n%s\n", readId, read ) ;
@@ -401,7 +420,7 @@ class Reads
 							sprintf( buffer3, " bad_suffix=%d", badSuffix ) ;
 					}
 
-					outputFp[ fileInd ].Printf( "%s%s%s%s\n%s\n", id, buffer1, buffer2, buffer3, seq ) ;
+					outputFp[ fileInd ].Printf( "%s%s%s%s%s\n%s\n", id, buffer1, buffer2, buffer3, failReason, seq ) ;
 					if ( FILE_TYPE[ fileInd ] != 0 )
 					{
 						if ( allowTrimming )
