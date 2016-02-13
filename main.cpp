@@ -280,6 +280,7 @@ int main( int argc, char *argv[] )
 	struct _summary summary ;
 
 	struct _SamplePattern *samplePatterns = NULL ;
+	bool setMaxCor ;
 
 	// variables for threads
 	int numOfThreads ;
@@ -301,6 +302,7 @@ int main( int argc, char *argv[] )
 
 	paraDiscard = false ; 
 	MAX_CORRECTION = 4 ;
+	setMaxCor = false ;
 	ALLOW_TRIMMING = false ;
 	SET_NEW_QUAL = -1 ;
 	kmerLength = -1 ;
@@ -321,6 +323,7 @@ int main( int argc, char *argv[] )
 		else if ( !strcmp( "-maxcor", argv[i] ) )
 		{
 			MAX_CORRECTION = atoi( argv[i + 1] ) ;
+			setMaxCor = true ;
 			++i ;
 		}
 		else if ( !strcmp( "-r", argv[i] ) )
@@ -429,9 +432,9 @@ int main( int argc, char *argv[] )
 		fprintf( stderr, "Require -k or -K parameter!\n" ) ;
 		exit( EXIT_FAILURE ) ;
 	}
-	if ( kmerLength > 32 )
+	if ( kmerLength > MAX_KMER_LENGTH )
 	{
-		fprintf( stderr, "K-mer length must be no larger than 32.\n") ;
+		fprintf( stderr, "K-mer length must be no larger than %d.\n", MAX_KMER_LENGTH ) ;
 		exit( EXIT_FAILURE ) ;
 	}
 	
@@ -623,6 +626,19 @@ int main( int argc, char *argv[] )
 	
 	sprintf( buffer, "Bloom filter A's false positive rate: %lf", tableAFP ) ;
 	PrintLog( buffer ) ;
+
+	if ( setMaxCor == false && tableAFP > 0.1 )
+	{
+		++MAX_CORRECTION ;
+		if ( badQuality != '\0' )
+		{
+			++badQuality ;
+			sprintf( buffer, "The error rate is high. Lighter adjusts -maxcor to %d and bad quality threshold to \"%c\".", MAX_CORRECTION, badQuality ) ;
+		}
+		else
+			sprintf( buffer, "The error rate is high. Lighter adjusts -maxcor to %d.", MAX_CORRECTION ) ;
+		PrintLog( buffer ) ;
+	}
 	// Step 2: Store the trusted kmers
 	//printf( "Begin step2.\n") ; fflush( stdout ) ;
 	reads.Rewind() ;
