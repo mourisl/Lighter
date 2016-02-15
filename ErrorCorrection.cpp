@@ -373,7 +373,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 				if ( numToNuc[c] == read[i - 1] )
 					continue ;
 				tmpKmerCode = kmerCode ;
-				tmpKmerCode.ShiftRight( 1 ) ;
+				tmpKmerCode.ShiftRight() ;
 				tmpKmerCode.Append( numToNuc[c] ) ;
 				if ( kmers->IsIn( tmpKmerCode ) ) 
 				{	
@@ -413,7 +413,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 						if ( numToNuc[c] == read[i - 1] )
 							continue ;
 						tmpKmerCode = kmerCode ;
-						tmpKmerCode.ShiftRight( 1 ) ;
+						tmpKmerCode.ShiftRight() ;
 						tmpKmerCode.Append( numToNuc[c] ) ;
 						if ( kmers->IsIn( tmpKmerCode ) ) 
 						{	
@@ -434,7 +434,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 					{
 						// adjust the anchor
 						--i ;
-						kmerCode.ShiftRight( 1 ) ;
+						kmerCode.ShiftRight() ;
 						break ;
 					}
 				}
@@ -592,7 +592,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			else
 			{
 				kmerCode = tmpKmerCode ;
-				kmerCode.ShiftRight( 1 ) ;
+				kmerCode.ShiftRight() ;
 				i = maxTo ;
 			}
 			continue ;

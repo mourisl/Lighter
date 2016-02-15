@@ -434,7 +434,7 @@ int main( int argc, char *argv[] )
 	}
 	if ( kmerLength > MAX_KMER_LENGTH )
 	{
-		fprintf( stderr, "K-mer length must be no larger than %d.\n", MAX_KMER_LENGTH ) ;
+		fprintf( stderr, "K-mer length must be no larger than %d. You can adjust the MAX_KMER_LENGTH constraints in utils.h.\n", MAX_KMER_LENGTH ) ;
 		exit( EXIT_FAILURE ) ;
 	}
 	
