@@ -48,7 +48,7 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
             alpha is the sampling rate and decided by the user. A rule of thumb: alpha=(7/C), where C is the average coverage of the data set.
 	    When using "-K" instead of "-k", Lighter will go through the reads an extra pass to decide C. And for "-K", genome_size should be relative accurate.
 	    Lighter may adjust -maxcor and bad quality threshold if it decides the error rate of the data set is high. You can specify "-maxcor" explicitly to turn off this feature.
-	    If you want to use longer kmer length, you can adjust the constraints "MAX_KMER_LENGTH" in "utils.h" file before compiling lighter.
+	    If you want to use longer kmer, you can adjust the constraints "MAX_KMER_LENGTH" in "utils.h" file before compiling lighter.
 
 ### Output
 
