@@ -7,6 +7,8 @@
 #define MAX_READ_LENGTH 1024
 #define MAX_ID_LENGTH 512
 
+// By chaning this definition, the user can use longer kmer length.
+// Using longer kmer does NOT mean better accuracy!!
 #define MAX_KMER_LENGTH 32
 
 #define READ_BUFFER_PER_THREAD 1024

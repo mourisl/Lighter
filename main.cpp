@@ -67,7 +67,7 @@ void PrintHelp()
 		"Other parameters:\n"
 		"\t-od output_file_directory: (default: ./)\n"
 		"\t-t num_of_threads: number of threads to use (default: 1)\n"
-		"\t-maxcor: the maximum number of correction for within a kmer_length window (default: 4)\n"
+		"\t-maxcor INT: the maximum number of corrections within a 20bp window (default: 4)\n"
 		"\t-trim: allow trimming (default: false)\n"
 		"\t-discard: discard unfixable reads. Will LOSE paired-end matching when discarding (default: false)\n"
 		"\t-noQual: ignore the quality socre (default: false)\n"
@@ -266,7 +266,7 @@ int main( int argc, char *argv[] )
 	char buffer[1023] ;
 	double untrustF[100][100] ;
 	//double trustF[100][100] ;
-	int threshold[100] ;
+	int threshold[MAX_KMER_LENGTH+1] ;
 	char goodQuality = '\0', badQuality = '\0' ;
 	int badPrefix, badSuffix ;
 	bool paraDiscard ;

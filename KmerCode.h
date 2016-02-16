@@ -158,6 +158,11 @@ class KmerCode
 				outCode[i] = code[i] ;
 			return K_BLOCK_NUM ;
 		} 
+
+		uint64_t GetCodeI( int index )
+		{
+			return code[index] ;
+		}
 		int GetKmerLength() { return kmerLength ; }
 
 		bool IsValid() 

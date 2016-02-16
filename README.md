@@ -35,7 +35,7 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
     Other parameters:
 	    -od output_file_directory: (default: ./)
 	    -t num_of_threads: number of threads to use (default: 1)
-	    -maxcor: the maximum number of correction for within a kmer_length window (default: 4)
+	    -maxcor INT: the maximum number of corrections within a 20bp window (default: 4)
 	    -trim: allow trimming (default: false)
 	    -discard: discard unfixable reads. Will LOSE paired-end matching when discarding (default: false)
 	    -noQual: ignore the quality socre (default: false)

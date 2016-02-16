@@ -80,20 +80,33 @@ int CreateAnchor( char *read, char *qual, int *fix, bool *storedKmer, KmerCode &
 			read[i] = numToNuc[j] ;
 			
 			// For efficiency, use one kmer to test whether we want to choose this candidate
-			int l = i - kmerLength / 2 + 1 ;
-			if ( l < 0 )
-				l = 0 ;
-			if ( l + kmerLength - 1 >= readLength )
-				l = readLength - 1 - kmerLength + 1 ;
-			kmerCode.Restart() ;
-			for ( k = l ; k <= l + kmerLength - 1 ; ++k )
-				kmerCode.Append( read[k] ) ;
-			if ( !kmers->IsIn( kmerCode ) )
+			// But for bigger kmer, we need more effort
+
+			// kind of test 1/32 of the kmers. Since the sequencing error are less likely on left-side,
+			// we shift more on left
+			int loop = ( kmerLength - 1 ) / 32 + 1 ;
+			int t ;
+			for ( t = 0 ; t < loop ; ++t )
+			{
+				int l = i - ( 2 * loop - t - 1 ) * kmerLength / ( 2 * loop ) + 1 ;
+				if ( l < 0 )
+					l = 0 ;
+				if ( l + kmerLength - 1 >= readLength )
+					l = readLength - 1 - kmerLength + 1 ;
+				kmerCode.Restart() ;
+				for ( k = l ; k <= l + kmerLength - 1 ; ++k )
+					kmerCode.Append( read[k] ) ;
+				if ( kmers->IsIn( kmerCode ) )
+				{
+					break ;
+				}
+			}
+			if ( t >= loop )
 			{
 				read[i] = c ;
 				continue ;
 			}
-
+			
 			scnt = 0 ;
 			for ( k = from ; k < from + kmerLength - 1 ; ++k )
 				kmerCode.Append( read[k] ) ;
@@ -214,7 +227,10 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	if ( !kmers->IsIn( kmerCode ) )
 		storedKmer[0] = false ;
 	else
+	{
 		storedKmer[0] = true ;
+		hasAnchor = true ;
+	}
 	kmerCnt = 1 ;
 	for (  ; read[i] ; ++i, ++kmerCnt )
 	{
@@ -541,7 +557,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 			//printf( "%d\n", j ) ;
 		}
 #ifdef DEBUG
-		printf( "+hi %d: %d %d=>%d, (%d): code=%llu\n", i, maxTo, to, maxChange, maxCnt, tmpKmerCode.GetCode() ) ;
+		printf( "+hi %d: %d %d=>%d, (%d)\n", i, maxTo, to, maxChange, maxCnt ) ;
 #endif
 		if ( testCnt > 1 )
 			alternativeCnt += ( testCnt - 1 ) ;
@@ -628,6 +644,13 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 	}
 	else
 	{
+		char backupC = '\0' ;
+		if ( createAnchorPos != -1 )
+		{
+			backupC = read[ createAnchorPos ] ;
+			read[ createAnchorPos ] = numToNuc[ fix[ createAnchorPos ] ] ;
+		}
+
 		if ( longestStoredKmerCnt < kmerLength )
 		{
 			kmerCode.Restart() ;
@@ -717,6 +740,11 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 					}
 				}
 			}
+		}
+
+		if ( createAnchorPos != -1 )
+		{
+			read[ createAnchorPos ] = backupC ;
 		}
 	}
 	//kmerCode = ( kmerCode << (uint64_t)2 ) & mask ;
@@ -933,9 +961,10 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 
 	for ( i = 0 ; i < readLength ; ++i )
 	{
-		if ( i >= kmerLength && ( fix[i - kmerLength] >= 0 && read[i - kmerLength] != 'N' ) )
+		int overCorrectWindow = 20 ;
+		if ( i >= overCorrectWindow && ( fix[i - overCorrectWindow] >= 0 && read[i - overCorrectWindow] != 'N' ) )
 		{
-			if ( qual[0] != '\0' && qual[i - kmerLength] <= badQuality )
+			if ( qual[0] != '\0' && qual[i - overCorrectWindow] <= badQuality )
 				correctCnt -= 0.5 ;
 			else
 				--correctCnt ;
@@ -948,7 +977,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 				++correctCnt ;
 		}
 		int tmp = maxCorrection ;
-		if ( i >= kmerLength  && i + kmerLength - 1 < readLength )
+		if ( i >= overCorrectWindow  && i + overCorrectWindow - 1 < readLength )
 			tmp += adjustMaxCor ;
 		if ( correctCnt > tmp ) //maxCorrection )
 		{
