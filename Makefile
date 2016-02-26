@@ -16,7 +16,7 @@ lighter: main.o $(OBJECTS)
 
 main.o: main.cpp utils.h Reads.h Store.h File.h KmerCode.h bloom_filter.hpp
 ErrorCorrection.o: ErrorCorrection.cpp ErrorCorrection.h utils.h
-GetKmers.o: GetKmers.cpp GetKmers.h
+GetKmers.o: GetKmers.cpp GetKmers.h utils.h
 
 clean:
 	rm -f *.o *.gch lighter
