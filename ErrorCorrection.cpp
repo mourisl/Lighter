@@ -1011,7 +1011,7 @@ int ErrorCorrection( char *read, char *qual, KmerCode& kmerCode, int maxCorrecti
 						fix[j] = -1 ;
 						tag = j ;
 					}
-				i = j ;
+				i = j - 1 ; // the minus 1 here is to compensate for the ++i in the outer-loop
 			}
 		}
 	}
