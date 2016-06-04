@@ -16,10 +16,27 @@ containing sequence errors.
 
 ### Install
 
+Lighter is available as conda package and can be installed with:
+
+```bash
+conda install lighter --channel bioconda
+```
+
+A Docker container is available with:
+
+```bash
+docker run quay.io/mulled/lighter:1.1.1--1 lighter -h
+```
+
+To compile Lighter from source do the following:
+
 1. Clone the [GitHub repo](https://github.com/mourisl/lighter), e.g. with `git clone https://github.com/mourisl/Lighter.git`
 2. Run `make` in the repo directory
 
 Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSIX_Threads) and [zlib](http://en.wikipedia.org/wiki/Zlib) being the only library dependency. 
+
+If you have a [Galaxy](https://galaxyproject.org/) instance you can install Lighter from the [Galaxy Tool Shed](https://toolshed.g2.bx.psu.edu/view/bgruening/lighter).
+
 
 ### Usage
 
