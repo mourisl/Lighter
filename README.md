@@ -95,7 +95,11 @@ docker run quay.io/mulled/lighter:1.1.1--1 lighter -h
 
 If you have a [Galaxy](https://galaxyproject.org/) instance you can install Lighter from the [Galaxy Tool Shed](https://toolshed.g2.bx.psu.edu/view/bgruening/lighter).
 
+If you are using Brew or Linuxbrew, you can install Lighter with:
 
+```bash
+brew install lighter
+```
 
 ### Terms of use
 
