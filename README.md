@@ -21,6 +21,7 @@ containing sequence errors.
 
 Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSIX_Threads) and [zlib](http://en.wikipedia.org/wiki/Zlib) being the only library dependency. 
 
+
 ### Usage
 
     Usage: ./lighter [OPTIONS]
@@ -77,6 +78,24 @@ Paired-end data set:
     ./lighter -r left.fq -r right.fq -k 17 5000000 0.1 -t 10
 
 Instead of "-k 17 5000000 0.1", you can use "-K 17 4700000" so that Lighter will go through the data set an extra pass to decide alpha. 
+
+### Miscellaneous
+
+Lighter is available as conda package and can be installed with:
+
+```bash
+conda install lighter --channel bioconda
+```
+
+A Docker container is available with:
+
+```bash
+docker run quay.io/mulled/lighter:1.1.1--1 lighter -h
+```
+
+If you have a [Galaxy](https://galaxyproject.org/) instance you can install Lighter from the [Galaxy Tool Shed](https://toolshed.g2.bx.psu.edu/view/bgruening/lighter).
+
+
 
 ### Terms of use
 
