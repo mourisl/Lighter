@@ -210,16 +210,26 @@ public:
 	}
 #endif
 
-	void TemporaryOutput( char *file)
+	void BloomOutput( char *file)
 	{
 		FILE *fp = fopen( file, "w" ) ;
+		if ( fp == NULL )
+		{
+			printf( "Could not find file %s.\n", file ) ;
+			exit( EXIT_FAILURE ) ;
+		}
 		bf.Output( fp ) ;
 		fclose( fp ) ;
 	}
 
-	void TemporaryInput( char *file ) 
+	void BloomInput( char *file ) 
 	{
 		FILE *fp = fopen( file, "r" ) ;
+		if ( fp == NULL )
+		{
+			printf( "Could not find file %s.\n", file ) ;
+			exit( EXIT_FAILURE ) ;
+		}
 		bf.Input( fp ) ;
 		fclose( fp ) ;
 	}

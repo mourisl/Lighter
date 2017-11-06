@@ -41,6 +41,8 @@ Lighter is small and portable, with [pthreads](http://en.wikipedia.org/wiki/POSI
 	    -discard: discard unfixable reads. Will LOSE paired-end matching when discarding (default: false)
 	    -noQual: ignore the quality socre (default: false)
 	    -newQual ascii_quality_score: set the quality for the bases corrected to the specified score (default: not used)
+            -saveTrustedKmers file: save the trusted kmers to specified file then stop (default: not used)
+            -loadTrustedKmers file: directly get solid kmers from specified file (default: not used)
 	    -zlib compress_level: set the compression level(1-9) of gzip (default: 1)
 	    -h: print the help message and quit
 	    -v: print the version information and quit

@@ -73,6 +73,8 @@ void PrintHelp()
 		"\t-noQual: ignore the quality socre (default: false)\n"
 		"\t-newQual ascii_quality_score: set the quality for the bases corrected to the specified score (default: not used)\n"
 		//"\t-stable: sequentialize the sampling stage, output the same result with different runs (default: false)\n"
+		"\t-saveTrustedKmers file: save the trusted kmers to specified file then stop (default: not used)\n"
+		"\t-loadTrustedKmers file: directly get solid kmers from specified file (default: not used)\n"
 		"\t-zlib compress_level: set the compression level(0-9) of gzip (default: 1)\n"
 		"\t-h: print the help message and quit\n"
 		"\t-v: print the version information and quit\n") ;
@@ -272,6 +274,8 @@ int main( int argc, char *argv[] )
 	bool paraDiscard ;
 	bool ignoreQuality, inferAlpha ; //stable ;
 	int zlibLevel ;
+	char *saveTrustedKmers, *loadTrustedKmers ;
+
 	//double bloomFilterFP = 0.0005 ;
 	int i, j ;
 	//uint64_t kmerCode ;
@@ -310,6 +314,8 @@ int main( int argc, char *argv[] )
 	ignoreQuality = false ;
 	//stable = false ;
 	inferAlpha = false ;
+	loadTrustedKmers = NULL ;
+	saveTrustedKmers = NULL ;
 	zlibLevel = 1 ;
 	memset( &summary, 0, sizeof( summary ) ) ;
 	
@@ -395,6 +401,16 @@ int main( int argc, char *argv[] )
 		{
 			//stable = true ;
 		}
+		else if ( !strcmp( "-saveTrustedKmers", argv[i] ) )
+		{
+			saveTrustedKmers = argv[i + 1] ;
+			++i ;
+		}
+		else if ( !strcmp( "-loadTrustedKmers", argv[i] ) )
+		{
+			loadTrustedKmers = argv[i + 1] ;
+			++i ;
+		}
 		else if ( !strcmp( "-zlib", argv[i] ) )
 		{
 			zlibLevel = atoi( argv[i+1] ) ;
@@ -444,11 +460,17 @@ int main( int argc, char *argv[] )
 		exit( EXIT_FAILURE ) ;
 	}
 
+	if ( loadTrustedKmers != NULL && saveTrustedKmers != NULL )
+	{
+		fprintf( stderr, "Can't use both -saveTrustedKmers and -loadTrustedKmers at the same time.\n" ) ;
+		exit( EXIT_FAILURE ) ;
+	}
+
 	PrintLog( "=============Start====================" ) ;
 	KmerCode kmerCode( kmerLength ) ;
 	reads.SetDiscard( paraDiscard ) ;	
 
-	if ( inferAlpha )
+	if ( inferAlpha && loadTrustedKmers == NULL )
 	{
 		PrintLog( "Scanning the input files to infer alpha(sampling rate)" ) ;
 		alpha = InferAlpha( reads, genomeSize ) ;
@@ -464,7 +486,7 @@ int main( int argc, char *argv[] )
 	//Store trustedKmers(1000000000ull) ;
 	Store kmers((uint64_t)( genomeSize * 1.5 ), 0.01 ) ;
 	Store trustedKmers((uint64_t)( genomeSize * 1.5 ), 0.0005 ) ;
-
+	
 
 	if ( numOfThreads > 1 )
 	{
@@ -508,7 +530,14 @@ int main( int argc, char *argv[] )
 	//Store kmers((uint64_t)50000000 * 4, 0.001 ) ;
 	//Store trustedKmers((uint64_t)50000000 * 2, 0.001 ) ;
 		
-	
+	if ( loadTrustedKmers != NULL )
+	{
+		trustedKmers.BloomInput( loadTrustedKmers ) ;
+		sprintf( buffer, "Finish loading trusted kmers from file %s.", loadTrustedKmers ) ;
+		PrintLog( buffer ) ;
+	}
+if ( loadTrustedKmers == NULL ) // a very long if state-ment, I avoid the indent here to regard this a macro.
+{
 	// Step 1: Sample the kmers 
 	//printf( "Begin step1. \n" ) ; fflush( stdout ) ;
 	srand( 17 ) ;
@@ -569,8 +598,8 @@ int main( int argc, char *argv[] )
 	}
 	if ( numOfThreads > 1 ) //&& stable == false )
 		free( samplePatterns ) ;
-	//kmers.TemporaryInput( "sample_bf.out" ) ;
-	//kmers.TemporaryOutput( "sample_bf.out" ) ;
+	//kmers.BloomInput( "sample_bf.out" ) ;
+	//kmers.BloomOutput( "sample_bf.out" ) ;
 
 	// Update the bloom filter's false positive rate.
 	// Compute the distribution of the # of sampled kmers from untrusted and trusted position
@@ -675,9 +704,16 @@ int main( int argc, char *argv[] )
 		}
 	}
 	PrintLog( "Finish storing trusted kmers" ) ;
-
-	//trustedKmers.TemporaryInput( "bf.out ") ;
-	//trustedKmers.TemporaryOutput( "bf.out ") ;
+	if ( saveTrustedKmers != NULL )
+	{
+		trustedKmers.BloomOutput( saveTrustedKmers ) ;
+		sprintf( buffer, "The trusted kmers are saved in file %s.", saveTrustedKmers ) ;
+		PrintLog( buffer ) ;
+		return 0 ;
+	}
+}
+	//trustedKmers.BloomInput( "bf.out ") ;
+	//trustedKmers.BloomOutput( "bf.out ") ;
 
 	// Step 3: error correction
 	//printf( "%lf %lf\n", kmers.GetFP(), trustedKmers.GetFP() ) ;
