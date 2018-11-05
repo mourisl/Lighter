@@ -803,10 +803,10 @@ if ( loadTrustedKmers == NULL ) // a very long if state-ment, I avoid the indent
 	else 
 	{
 		int maxBatchSize = READ_BUFFER_PER_THREAD * ( numOfThreads - 1 ) ;
-		int batchSize[2] ;
+		int batchSize[3] ;
 		bool init = true, canJoinOutputThread = false ;
 		int tag = 2, prevTag ;
-		int fileInd[2] ;
+		int fileInd[3] ;
 
 		int useOutputThread = 0 ;
 		pthread_t outputThread ;
