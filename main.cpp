@@ -18,7 +18,7 @@
 #include "pthread.h"
 
 
-char LIGHTER_VERSION[] = "Lighter v1.1.1" ;
+char LIGHTER_VERSION[] = "Lighter v1.1.2" ;
 
 char nucToNum[26] = { 0, -1, 1, -1, -1, -1, 2, 
 	-1, -1, -1, -1, -1, -1, -1,
