@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS= -Wall -O3
+CXXFLAGS= -Wall -O3 -msse4.2 #-march=native
 LINKFLAGS = -lpthread -lz 
 DEBUG=
 OBJECTS = ErrorCorrection.o GetKmers.o

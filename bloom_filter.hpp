@@ -32,7 +32,15 @@
 #include <pthread.h>
 #include <memory.h>
 
-#define BLOCK_SIZE 256ull 
+#ifdef __AVX__
+#include <immintrin.h>
+#endif
+
+#ifdef __SSE4_2__
+#include <xmmintrin.h>
+#endif
+
+#define BLOCK_SIZE 256ull  // Should be multiple of 256's when using AVX 
 #define NUM_OF_PATTERN 65536ull 
 
 static const std::size_t bits_per_char = 0x08;    // 8 bits in 1 char(unsigned)
@@ -477,9 +485,33 @@ public:
       start = ( hash_ap( key_begin, length, salt_[0] ) ) % ( table_size_ - BLOCK_SIZE + 1 );
       start /= bits_per_char ;
       int pid = ( hash_ap( key_begin, length, salt_[1] ) ) & ( NUM_OF_PATTERN - 1 ) ;
+#ifdef __AVX__ 
+      for ( std::size_t j = 0 ; j < BLOCK_SIZE / 256 ; ++j )
+      {
+        __m256i b = _mm256_loadu_si256((__m256i*)(&bit_table_[start + 32 * j])) ;// bit_table
+        __m256i p = _mm256_loadu_si256((__m256i*)(&patterns[pid][4 * j])) ; // pattern
+        __m256i a = _mm256_and_si256(b, p) ;
+        __m256i eq = _mm256_cmpeq_epi64(a, p) ;
+        if (_mm256_movemask_pd((__m256d)eq) != 0x0F)
+          return false ;
+      }
+#else
+#ifdef __SSE4_2__
+      for ( std::size_t j = 0 ; j < BLOCK_SIZE / 128 ; ++j )
+      {
+        __m128i b = _mm_loadu_si128((__m128i*)(&bit_table_[start + 16 * j])) ;// bit_table
+        __m128i p = _mm_loadu_si128((__m128i*)(&patterns[pid][2 * j])) ; // pattern
+        __m128i a = _mm_and_si128(b, p) ;
+        __m128i eq = _mm_cmpeq_epi32(a, p) ;
+        if (_mm_movemask_epi8(eq) != 0xFFFF)
+          return false ;
+      }
+#else
       for ( std::size_t j = 0 ; j < BLOCK_SIZE / 64 ; ++j )
-	if ( ( *(uint64_t *)( &bit_table_[start + 8 * j ] ) & patterns[ pid ][ j ] ) != patterns[ pid ][j] )
-		return false ;
+        if ( ( *(uint64_t *)( &bit_table_[start + 8 * j ] ) & patterns[ pid ][ j ] ) != patterns[ pid ][j] )
+          return false ;
+#endif
+#endif
       return true;
    }
 
