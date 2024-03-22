@@ -18,7 +18,7 @@
 #include "pthread.h"
 
 
-char LIGHTER_VERSION[] = "Lighter v1.1.2" ;
+char LIGHTER_VERSION[] = "Lighter v1.1.3" ;
 
 char nucToNum[26] = { 0, -1, 1, -1, -1, -1, 2, 
 	-1, -1, -1, -1, -1, -1, -1,
@@ -375,6 +375,16 @@ int main( int argc, char *argv[] )
 		}
 		else if ( !strcmp( "-od", argv[i] ) )
 		{
+			int j ;
+			for (j = 0 ; argv[i + 1][j] ; ++j)
+			{
+				if (argv[i + 1][j] == '/')
+				{
+					argv[i + 1][j] = '\0' ;
+					mkdir( argv[i + 1], 0700 ) ;
+					argv[i + 1][j] = '/' ;
+				}
+			}
 			mkdir( argv[i + 1], 0700 ) ;
 			reads.SetOutputDirectory( argv[i + 1] ) ;
 			++i ;
